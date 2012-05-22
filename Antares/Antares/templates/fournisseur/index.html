@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block center %}
+
+<h2>Liste de fournisseurs</h2>
+<table>
+	<tr><th>Nom:</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
+	{% for four in listFour %}
+	<tr>
+	  <td>{{ four.nom }}</td>
+	  <td>{{ four.tel }}</td>
+	  <td>{{ four.email }}</td>
+	  <td><a href="{% url fournisseur four.id %}">Voir</a></td>
+	</tr>
+	{% endfor %}
+</table>
+
+<h2>Ajouter un fournisseur</h2>
+<form method="POST" action="">{% csrf_token %}
+<table>
+{{ formFour.as_table }}
+</table>
+<input type="submit" value="OK" name="nouvFour">
+</form>
+
+{% endblock %}
