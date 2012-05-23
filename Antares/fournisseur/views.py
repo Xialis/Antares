@@ -42,10 +42,14 @@ def fournisseur(request, fid):
         
         if 'ajTraitement' in POST:
             formTraitement = TraitementForm(POST)
-            
-    
+            if formTraitement.is_valid():
+                traitement = formTraitement.save(commit=False)
+                traitement.fournisseur = Fournisseur.objects.get(id=fid)
+                traitement.save()
+                
     #Context : Form Intitulé
     c['formTraitement'] = formTraitement
+    c['listTraitement'] = Traitement.objects.filter(fournisseur__id=fid)
     c['formDiametre'] = formDiametre
     c['formCouleur'] = formCouleur
     # --
