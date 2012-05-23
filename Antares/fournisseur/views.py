@@ -27,8 +27,7 @@ def fournisseur(request, fid):
     c = {}
     four = Fournisseur.objects.get(pk=fid)
     c['four'] = four
-    formType = TypeForm()
-    formType.filtre_fournisseur(fid)
+    formType = TypeForm().filtre_fournisseur(fid)
     c['formType'] = formType
     #Form Intitulés
     formTraitement = TraitementForm()

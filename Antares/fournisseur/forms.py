@@ -22,6 +22,8 @@ class TypeForm(ModelForm):
         self.fields['diametres'].queryset = Diametre.objects.filter(fournisseur__id=fid)
         self.fields['couleurs'].queryset = Couleur.objects.filter(fournisseur__id=fid)
 
+        return self
+
 
 class TraitementForm(ModelForm):
     class Meta:
