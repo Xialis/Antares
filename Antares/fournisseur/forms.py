@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.forms import ModelForm
+from django.forms import ModelForm, ModelMultipleChoiceField, CheckboxSelectMultiple
 from fournisseur.models import *
 
 
@@ -9,10 +9,14 @@ class FourForm(ModelForm):
 
 
 class TypeForm(ModelForm):
+    traitements = ModelMultipleChoiceField(queryset=Traitement.objects.all(), widget=CheckboxSelectMultiple(), required=True)
+    diametres = ModelMultipleChoiceField(queryset=Diametre.objects.all(), widget=CheckboxSelectMultiple(), required=True)
+    couleurs = ModelMultipleChoiceField(queryset=Couleur.objects.all(), widget=CheckboxSelectMultiple(), required=True)
+
     class Meta:
         model = Type
         exclude = ('fournisseur',)
-        
+
     def filtre_fournisseur(self, fid):
         self.fields['traitements'].queryset = Traitement.objects.filter(fournisseur__id=fid)
         self.fields['diametres'].queryset = Diametre.objects.filter(fournisseur__id=fid)
