@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 # Create your views here.
 from fournisseur.models import *
 from fournisseur.forms import *
@@ -26,4 +27,28 @@ def fournisseur(request, fid):
     c = {}
     four = Fournisseur.objects.get(pk=fid)
     c['four'] = four
+    formType = TypeForm()
+    c['formType'] = formType
+    
+    #Form Intitulés
+    formTraitement = TraitementForm()
+    formDiametre = DiametreForm()
+    formCouleur = CouleurForm()
+    
+    #--
+    
+    if request.method == "POST":
+        POST = request.POST
+        
+        if 'ajTraitement' in POST:
+            formTraitement = TraitementForm(POST)
+            
+    
+    #Context : Form Intitulé
+    c['formTraitement'] = formTraitement
+    c['formDiametre'] = formDiametre
+    c['formCouleur'] = formCouleur
+    # --
+    
+    c.update(csrf(request))
     return render_to_response('fournisseur/fournisseur.html', c)
