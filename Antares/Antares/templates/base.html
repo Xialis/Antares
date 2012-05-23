@@ -2,14 +2,17 @@
   <head>
     <title></title>
     <meta content="">
-    <style></style>
+    <link type='text/css' rel='stylesheet' href='/media/blueprint/screen.css' />
+    <link type='text/css' rel='stylesheet' href='/media/style.css' />
   </head>
   <body>
-  	<div id="up">
-  		{% block up %}{% endblock %}
-  	</div>
-  	<div id="center">
-  		{% block center %}{% endblock %}
+  	<div class="container showgrid">
+  	  	<div id="up">
+  			{% block up %}{% endblock %}
+  		</div>
+  		<div id="center">
+  			{% block center %}{% endblock %}
+  		</div>
   	</div>
   </body>
 </html>
