@@ -9,7 +9,7 @@ class Fournisseur(models.Model):
     email = models.EmailField(max_length=100)
 
     def __unicode__(self):
-        return "Fournisseur (" + self.nom + ")"
+        return self.nom
 
 
 class Traitement(models.Model):
@@ -18,7 +18,7 @@ class Traitement(models.Model):
     nom = models.CharField(max_length=50)
 
     def __unicode__(self):
-        return "Traitement: " + self.nom + " (f: " + self.fournisseur.nom + ")"
+        return self.nom
 
 
 class Diametre(models.Model):
@@ -27,7 +27,7 @@ class Diametre(models.Model):
     nom = models.CharField(max_length=10)
 
     def __unicode__(self):
-        return "Traitement: " + self.nom + " (f: " + self.fournisseur.nom + ")"
+        return self.nom
 
 
 class Couleur(models.Model):
@@ -36,7 +36,7 @@ class Couleur(models.Model):
     nom = models.CharField(max_length=20)
 
     def __unicode__(self):
-        return "Couleur: " + self.nom + " (f: " + self.fournisseur.nom + ")"
+        return self.nom
 
 
 class Type(models.Model):
@@ -49,4 +49,4 @@ class Type(models.Model):
     couleurs = models.ManyToManyField(Couleur)
 
     def __unicode__(self):
-        return "Type: " + self.nom + " (f: " + self.fournisseur.nom + ")"
+        return self.nom
