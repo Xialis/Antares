@@ -12,6 +12,11 @@ class TypeForm(ModelForm):
     class Meta:
         model = Type
         exclude = ('fournisseur',)
+        
+    def filtre_fournisseur(self, fid):
+        self.fields['traitements'].queryset = Traitement.objects.filter(fournisseur__id=fid)
+        self.fields['diametres'].queryset = Diametre.objects.filter(fournisseur__id=fid)
+        self.fields['couleurs'].queryset = Couleur.objects.filter(fournisseur__id=fid)
 
 
 class TraitementForm(ModelForm):
