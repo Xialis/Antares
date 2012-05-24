@@ -1,0 +1,5 @@
+/*table formAsTable */
+
+table.formAsTable { border-collapse: separate; border-spacing: 2px;}
+table.formAsTable td, table.formAsTable th { border: 1px solid #1c6fcd;  }
+table.formAsTable th { border-color: #0d2d51; }

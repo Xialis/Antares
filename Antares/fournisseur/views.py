@@ -39,18 +39,28 @@ def fournisseur(request, fid):
     if request.method == "POST":
         POST = request.POST
         
-        if 'ajTraitement' in POST:
-            formTraitement = TraitementForm(POST)
-            if formTraitement.is_valid():
-                traitement = formTraitement.save(commit=False)
-                traitement.fournisseur = Fournisseur.objects.get(id=fid)
-                traitement.save()
+        if 'ajType'in POST:
+            formType = TypeForm(POST)
+        else:
+            if 'ajTraitement' in POST:
+                form = TraitementForm(POST)
+            elif 'ajDiametre' in POST:
+                form = DiametreForm(POST)
+            elif 'ajCouleur' in POST:
+                form = CouleurForm(POST)
+                
+            if form and form.is_valid():
+                temp = form.save(commit=False)
+                temp.fournisseur = Fournisseur.objects.get(id=fid)
+                temp.save()
                 
     #Context : Form Intitulé
     c['formTraitement'] = formTraitement
     c['listTraitement'] = Traitement.objects.filter(fournisseur__id=fid)
     c['formDiametre'] = formDiametre
+    c['listDiametre'] = Diametre.objects.filter(fournisseur__id=fid)
     c['formCouleur'] = formCouleur
+    c['listCouleur'] = Couleur.objects.filter(fournisseur__id=fid)
     # --
     
     c.update(csrf(request))
