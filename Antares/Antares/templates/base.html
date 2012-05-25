@@ -7,6 +7,12 @@
   </head>
   <body>
   	<div class="container">
+  		<div id="topmenu" class="span-30">
+  			<ul>
+  				<li><a href="{% url fournisseur.views.index %}">Fournisseurs</a></li>
+  				<li>Stocks</li>
+  			</ul>
+  		</div>
   	  	<div id="up">
   			{% block up %}{% endblock %}
   		</div>
