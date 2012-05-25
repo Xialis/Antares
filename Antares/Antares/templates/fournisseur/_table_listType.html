@@ -1,0 +1,30 @@
+<table class="tableListing">
+	<tr>
+		<th>Nom</th><th>Prog.</th><th>Diametre(s)</th>
+	    <th>Traitement(s)</th><th>Couleur(s)</th><th>Tarifs</th><th>Actions</th>
+	</tr>
+	{% for t in listType %}
+	<tr>
+		<td>{{ t.nom }}</td><td>{{ t.progressif|yesno:"Oui,Non" }}</td>
+		<td><ul>{% for ds in t.diametres.all %}<li>{{ ds.nom }}</li>{% endfor %}
+			</ul>
+		</td>
+		<td><ul>{% for ts in t.traitements.all %}<li>{{ ts.nom }}</li>{% endfor %}
+			</ul>
+		</td>
+		<td><ul>{% for cs in t.couleurs.all %}<li>{{ cs.nom }} ({{ cs.transition|yesno:"T,F" }})</li>{% endfor %}
+			</ul>
+		</td>
+		<td>
+			<ul>
+				<li>Base: {{ t.tarif_blanc }}</li>
+				<li>Couleur: +{{ t.tarif_couleur|default:"<span class='quiet'>non renseigné</span>" }}
+				{% if t.tarif_couleur %}({{ t.tarif_blanc|add:t.tarif_couleur }}){% endif %}</li>
+				<li>Transition: +{{ t.tarif_transition|default:"<span class='quiet'>non renseigné</span>" }}
+				{% if t.tarif_transition %}({{ t.tarif_blanc|add:t.tarif_transition }}){% endif %}</li>
+			</ul>
+		</td>
+		<td><a href="">Modifier</a></td>
+	</tr>
+	{% endfor %}
+</table>

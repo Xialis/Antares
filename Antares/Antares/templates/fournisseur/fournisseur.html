@@ -5,7 +5,7 @@
 {% endblock %}
 
 {% block center %}
-<div class="first span-20">
+<div class="first span-20 border">
 	<h1>Catalogue</h1>
 	<div class="divForm">
 		<form action="" method="POST">{% csrf_token %}
@@ -15,6 +15,8 @@
 			<input type="submit" value="Ajouter" name="ajType">
 		</form>
 	</div>
+	<h3>Liste ({{ listType|length }})</h3>
+	{% include "fournisseur/_table_listType.html" %}
 </div>
 
 <div class="span-10 last">
@@ -28,17 +30,19 @@
 			</table>
 			<input type="submit" value="Ajouter" name="ajTraitement">
 		</form>
-		<h3>Liste</h3>
+		<h3>Liste ({{listTraitement|length}})</h3>
 		<table>
-			<tr><th>Nom:</th><th>Actions</th></tr>
+			<tr><th>Nom:</th><th>Tarif</th><th>Actions</th></tr>
 			{% for v in listTraitement %}
 			<tr>
 			  <td>{{ v.nom }}</td>
+			  <td>{{ v.tarif }}</td>
 			  <td><a href="">Voir</a></td>
 			</tr>
 			{% endfor %}
 		</table>
 	</div>
+	<hr />
 	<div class="divForm">
 		<h2>Diamètre</h2>
 		<h3>Ajouter:</h3>
@@ -48,7 +52,7 @@
 			</table>
 			<input type="submit" value="Ajouter" name="ajDiametre">
 		</form>
-		<h3>Liste</h3>
+		<h3>Liste ({{listDiametre|length}})</h3>
 		<table>
 			<tr><th>Nom:</th><th>Actions</th></tr>
 			{% for v in listDiametre %}
@@ -59,6 +63,7 @@
 			{% endfor %}
 		</table>
 	</div>
+	<hr />
 	<div class="divForm">
 		<h2>Couleur</h2>
 		<h3>Ajouter:</h3>
@@ -68,17 +73,19 @@
 			</table>
 			<input type="submit" value="Ajouter" name="ajCouleur">
 		</form>
-		<h3>Liste</h3>
+		<h3>Liste ({{listCouleur|length}})</h3>
 		<table>
-			<tr><th>Nom:</th><th>Actions</th></tr>
+			<tr><th>Nom:</th><th>Transition</th><th>Actions</th></tr>
 			{% for v in listCouleur %}
 			<tr>
 			  <td>{{ v.nom }}</td>
+			  <td>{{ v.transition|yesno:"Oui,Non" }}</td>
 			  <td><a href="">Voir</a></td>
 			</tr>
 			{% endfor %}
 		</table>
 	</div>
+	<hr />
 	
 </div>
 

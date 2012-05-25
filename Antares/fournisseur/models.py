@@ -21,6 +21,9 @@ class Traitement(models.Model):
     def __unicode__(self):
         return self.nom
 
+    class Meta:
+        ordering = ['nom']
+
 
 class Diametre(models.Model):
     """ Diametre (lié à un fournisseur) """
@@ -29,6 +32,9 @@ class Diametre(models.Model):
 
     def __unicode__(self):
         return self.nom
+
+    class Meta:
+        ordering = ['nom']
 
 
 class Couleur(models.Model):
@@ -40,18 +46,24 @@ class Couleur(models.Model):
     def __unicode__(self):
         return self.nom
 
+    class Meta:
+        ordering = ['nom']
+
 
 class Type(models.Model):
     """ Type de verre (lié à un fournisseur)"""
     fournisseur = models.ForeignKey(Fournisseur)
     nom = models.CharField(max_length=50)
     progressif = models.BooleanField()
-    traitements = models.ManyToManyField(Traitement)
+    traitements = models.ManyToManyField(Traitement, blank=True, null=True)
     diametres = models.ManyToManyField(Diametre)
-    couleurs = models.ManyToManyField(Couleur)
+    couleurs = models.ManyToManyField(Couleur, blank=True, null=True)
     tarif_blanc = models.DecimalField(max_digits=8, decimal_places=0)
-    tarif_couleur = models.DecimalField(max_digits=8, decimal_places=0)
-    tarif_transition = models.DecimalField(max_digits=8, decimal_places=0)
+    tarif_couleur = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
+    tarif_transition = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
 
     def __unicode__(self):
         return self.nom
+    
+    class Meta:
+        ordering = ['nom']

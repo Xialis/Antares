@@ -25,35 +25,58 @@ def index(request):
 
 def fournisseur(request, fid):
     c = {}
-    four = Fournisseur.objects.get(pk=fid)
-    c['four'] = four
+    FOUR = Fournisseur.objects.get(pk=fid)
+    c['four'] = FOUR
     formType = TypeForm().filtre_fournisseur(fid)
-    c['formType'] = formType
+    
     #Form Intitulés
     formTraitement = TraitementForm()
     formDiametre = DiametreForm()
     formCouleur = CouleurForm()
-    
+
     #--
-    
+
     if request.method == "POST":
         POST = request.POST
-        
-        if 'ajType'in POST:
-            formType = TypeForm(POST)
+
+        if 'ajType' in POST:
+            form = TypeForm(POST).filtre_fournisseur(fid)
+            if form.is_valid():
+                newtype = form.save(commit=False)
+                newtype.fournisseur = FOUR
+                newtype.save()
+                form.save_m2m()
+            else:
+                formType = form
+
         else:
             if 'ajTraitement' in POST:
                 form = TraitementForm(POST)
+                if form.is_valid():
+                    temp = form.save(commit=False)
+                    temp.fournisseur = FOUR
+                    temp.save()
+                else:
+                    formTraitement = form
+
             elif 'ajDiametre' in POST:
                 form = DiametreForm(POST)
+                if form.is_valid():
+                    temp = form.save(commit=False)
+                    temp.fournisseur = FOUR
+                    temp.save()
+                else:
+                    formDiametre = form
+
             elif 'ajCouleur' in POST:
                 form = CouleurForm(POST)
-                
-            if form and form.is_valid():
-                temp = form.save(commit=False)
-                temp.fournisseur = Fournisseur.objects.get(id=fid)
-                temp.save()
-                
+                if form.is_valid():
+                    temp = form.save(commit=False)
+                    temp.fournisseur = FOUR
+                    temp.save()
+                else:
+                    formCouleur = form
+
     #Context : Form Intitulé
     c['formTraitement'] = formTraitement
     c['listTraitement'] = Traitement.objects.filter(fournisseur__id=fid)
@@ -62,6 +85,9 @@ def fournisseur(request, fid):
     c['formCouleur'] = formCouleur
     c['listCouleur'] = Couleur.objects.filter(fournisseur__id=fid)
     # --
-    
+    #Context : Type
+    c['formType'] = formType
+    c['listType'] = Type.objects.filter(fournisseur__id=fid)
+    #--
     c.update(csrf(request))
     return render_to_response('fournisseur/fournisseur.html', c)
