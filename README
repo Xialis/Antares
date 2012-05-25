@@ -5,6 +5,11 @@ En cours de dével
 
 --
 Python
+
 Django Framework - https://www.djangoproject.com/
+Django is a high-level Python Web framework that encourages rapid development and clean, pragmatic design.
+
+South - http://south.aeracode.org/
+South, intelligent schema and data migrations for Django projects.
 
 HTML/CSS/Javascript
