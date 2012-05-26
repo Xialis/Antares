@@ -17,6 +17,7 @@ class Traitement(models.Model):
     fournisseur = models.ForeignKey(Fournisseur)
     nom = models.CharField(max_length=50)
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
+    remise_monture = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
 
     def __unicode__(self):
         return self.nom
@@ -44,6 +45,7 @@ class Couleur(models.Model):
     fournisseur = models.ForeignKey(Fournisseur)
     nom = models.CharField(max_length=20)
     transition = models.BooleanField()
+    remise_monture = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
 
     def __unicode__(self):
         return self.nom
@@ -64,10 +66,12 @@ class Type(models.Model):
     tarif_blanc = models.DecimalField(max_digits=8, decimal_places=0)
     tarif_couleur = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
     tarif_transition = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
-
+    remise_monture = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
+    
     def __unicode__(self):
         return self.nom
 
     class Meta:
         ordering = ['nom']
         unique_together = ('fournisseur', 'nom')
+
