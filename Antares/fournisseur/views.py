@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 # Create your views here.
-from fournisseur.models import *
-from fournisseur.forms import *
-from django.shortcuts import render_to_response
+from django.contrib import messages
 from django.core.context_processors import csrf
+from django.db.utils import IntegrityError
+from django.shortcuts import render_to_response, redirect
+from fournisseur.forms import *
+from fournisseur.models import *
 
 
 def index(request):
@@ -44,8 +46,14 @@ def fournisseur(request, fid):
             if form.is_valid():
                 newtype = form.save(commit=False)
                 newtype.fournisseur = FOUR
-                newtype.save()
-                form.save_m2m()
+                try:
+                    newtype.save()
+                except IntegrityError:
+                    formType = form.erreurDuplica()
+                    messages.error(request, "Oups, Erreur dans le formulaire d'ajout d'un nouveau Type")
+                else:
+                    form.save_m2m()
+                    messages.success(request, u"Type ajouté avec succès !")
             else:
                 formType = form
 
@@ -90,4 +98,35 @@ def fournisseur(request, fid):
     c['listType'] = Type.objects.filter(fournisseur__id=fid)
     #--
     c.update(csrf(request))
+    c['messages'] = messages.get_messages(request)
     return render_to_response('fournisseur/fournisseur.html', c)
+
+
+def modType(request, tid):
+    c = {}
+
+    t = Type.objects.get(id=tid)
+    f = t.fournisseur
+
+    formType = TypeForm(instance=t).filtre_fournisseur(f.id)
+
+    if request.method == 'POST':
+        formType = TypeForm(request.POST, instance=t).filtre_fournisseur(f.id)
+        if formType.is_valid():
+            try:
+                formType.save()
+            except IntegrityError:
+                formType.erreurDuplica()
+                messages.error(request, u"Oups, Erreur dans le formulaire")
+            else:
+                messages.success(request, u"Modification du Type: Type modifié avec succès")
+                return redirect('fournisseur', fid=f.id)
+        else:
+            messages.error(request, u"Oups, Erreur dans le formulaire")
+
+    c['four'] = f
+    c['type'] = t
+    c['formType'] = formType
+    c.update(csrf(request))
+    c['messages'] = messages.get_messages(request)
+    return render_to_response('fournisseur/mod_Type.html', c)

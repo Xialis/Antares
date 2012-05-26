@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block up %}
+<h2>Fournisseur ({{ four.id }}) : {{ four.nom }} ::: Type: {{ type.nom }} </h2>
+{% endblock %}
+
+{% block center %}
+<div class="first span-20 border">
+	<h1>Catalogue</h1>
+	<div class="divForm">
+		<form action="" method="POST">{% csrf_token %}
+			<table class="formAsTable">
+			{{ formType.as_table }}
+			</table>
+			{% for hidden in formType.hidden_fields %}
+		    {{ hidden }}
+		    {% endfor %}
+			<input type="submit" value="Ajouter" name="ajType">
+		</form>
+	</div>
+</div>
+{% endblock %}

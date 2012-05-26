@@ -24,7 +24,7 @@
 				{% if t.tarif_transition %}({{ t.tarif_blanc|add:t.tarif_transition }}){% endif %}</li>
 			</ul>
 		</td>
-		<td><a href="">Modifier</a></td>
+		<td><a href="{% url modType t.id %}">Modifier</a></td>
 	</tr>
 	{% endfor %}
 </table>

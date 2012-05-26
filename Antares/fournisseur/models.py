@@ -23,6 +23,7 @@ class Traitement(models.Model):
 
     class Meta:
         ordering = ['nom']
+        unique_together = ('fournisseur', 'nom')
 
 
 class Diametre(models.Model):
@@ -35,6 +36,7 @@ class Diametre(models.Model):
 
     class Meta:
         ordering = ['nom']
+        unique_together = ('fournisseur', 'nom')
 
 
 class Couleur(models.Model):
@@ -48,6 +50,7 @@ class Couleur(models.Model):
 
     class Meta:
         ordering = ['nom']
+        unique_together = ('fournisseur', 'nom')
 
 
 class Type(models.Model):
@@ -64,6 +67,7 @@ class Type(models.Model):
 
     def __unicode__(self):
         return self.nom
-    
+
     class Meta:
         ordering = ['nom']
+        unique_together = ('fournisseur', 'nom')
