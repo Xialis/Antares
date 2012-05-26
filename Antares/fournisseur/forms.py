@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.forms import ModelForm, ModelMultipleChoiceField, CheckboxSelectMultiple, CharField, HiddenInput, ValidationError
-from fournisseur.models import *
-from django.core.exceptions import ObjectDoesNotExist
+from django.forms import ModelForm, ModelMultipleChoiceField, CheckboxSelectMultiple, CharField, HiddenInput
+from fournisseur.models import Fournisseur, Type, Traitement, Diametre, Couleur
 
 
 class FourForm(ModelForm):
@@ -25,7 +24,7 @@ class TypeForm(ModelForm):
         self.fields['couleurs'].queryset = Couleur.objects.filter(fournisseur__id=fid)
         self.fields['fid'].initial = fid
         return self
-    
+
     def erreurDuplica(self):
         msg = u"Ce nom existe déjà pour ce fournisseur"
         self._errors['nom'] = self.error_class([msg])
@@ -63,6 +62,11 @@ class TraitementForm(ModelForm):
     class Meta:
         model = Traitement
         exclude = ('fournisseur',)
+        
+    def erreurDuplica(self):
+        msg = u"Ce nom existe déjà pour ce fournisseur"
+        self._errors['nom'] = self.error_class([msg])
+        return self
 
 
 class DiametreForm(ModelForm):

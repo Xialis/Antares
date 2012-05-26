@@ -21,6 +21,8 @@
 	</div>
 	<h3>Liste ({{ listType|length }})</h3>
 	{% include "fournisseur/_table_listType.html" %}
+	<hr />
+	<h1>Remise</h1>
 </div>
 
 <div class="span-10 last">
@@ -41,7 +43,7 @@
 			<tr>
 			  <td>{{ v.nom }}</td>
 			  <td>{{ v.tarif }}</td>
-			  <td><a href="">Voir</a></td>
+			  <td><a href="{% url modTraitement v.id %}">Modifier</a></td>
 			</tr>
 			{% endfor %}
 		</table>

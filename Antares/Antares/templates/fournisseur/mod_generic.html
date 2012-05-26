@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block up %}
+<h2>Fournisseur ({{ four.id }}) : {{ four.nom }} ::: {{ objclass }} {{ obj.nom }} </h2>
+{% endblock %}
+
+{% block center %}
+<div class="first span-20 border">
+	<h1>{{ objclass }}</h1>
+	<div class="divForm">
+		<form action="" method="POST">{% csrf_token %}
+			<table class="formAsTable">
+			{{ form.as_table }}
+			</table>
+			{% for hidden in form.hidden_fields %}
+		    {{ hidden }}
+		    {% endfor %}
+			<input type="submit" value="Modifier" name="modifier">
+		</form>
+	</div>
+</div>
+{% endblock %}

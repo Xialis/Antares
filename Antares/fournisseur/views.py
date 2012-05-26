@@ -130,3 +130,31 @@ def modType(request, tid):
     c.update(csrf(request))
     c['messages'] = messages.get_messages(request)
     return render_to_response('fournisseur/mod_Type.html', c)
+
+
+def modTraitement(request, tid):
+    obj = Traitement.objects.get(id=tid)
+    c = {'objclass': obj.__class__.__name__, }
+    f = obj.fournisseur
+    
+    form = TraitementForm(instance=obj)
+    
+    if request.method == "POST":
+        form = TraitementForm(request.POST, instance=obj)
+        if form.is_valid():
+            try:
+                form.save()
+            except IntegrityError:
+                form.erreurDuplica()
+                messages.error(request, u"Oups, Erreur dans le formulaire")
+            else:
+                messages.success(request, u"Modification du Traitement: Traitement modifié avec succès")
+                return redirect('fournisseur', fid=f.id)
+        else:
+            messages.error(request, u"Oups, Erreur dans le formulaire")
+    
+    c['four'] = f
+    c['form'] = form
+    c.update(csrf(request))
+    c['messages'] = messages.get_messages(request)
+    return render_to_response('fournisseur/mod_generic.html', c)
