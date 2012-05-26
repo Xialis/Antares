@@ -22,7 +22,6 @@
 	<h3>Liste ({{ listType|length }})</h3>
 	{% include "fournisseur/_table_listType.html" %}
 	<hr />
-	<h1>Remise</h1>
 </div>
 
 <div class="span-10 last">
@@ -38,12 +37,13 @@
 		</form>
 		<h3>Liste ({{listTraitement|length}})</h3>
 		<table>
-			<tr><th>Nom:</th><th>Tarif</th><th>Actions</th></tr>
+			<tr><th>Nom:</th><th>Tarif</th><th>R.Monture</th><th>Actions</th></tr>
 			{% for v in listTraitement %}
 			<tr>
 			  <td>{{ v.nom }}</td>
 			  <td>{{ v.tarif }}</td>
-			  <td><a href="{% url modTraitement v.id %}">Modifier</a></td>
+			  <td>{{ v.remise_monture|default:"n.r" }}</td>
+			  <td><a href="{% url modTraitement v.id %}" class='action'>Modifier</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -64,7 +64,7 @@
 			{% for v in listDiametre %}
 			<tr>
 			  <td>{{ v.nom }}</td>
-			  <td><a href="">Voir</a></td>
+			  <td><a href="" class='action'>Voir</a></td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -81,12 +81,13 @@
 		</form>
 		<h3>Liste ({{listCouleur|length}})</h3>
 		<table>
-			<tr><th>Nom:</th><th>Transition</th><th>Actions</th></tr>
+			<tr><th>Nom:</th><th>Transition</th><th>R.Monture</th><th>Actions</th></tr>
 			{% for v in listCouleur %}
 			<tr>
 			  <td>{{ v.nom }}</td>
 			  <td>{{ v.transition|yesno:"Oui,Non" }}</td>
-			  <td><a href="">Voir</a></td>
+			  <td>{{ v.remise_monture|default:"n.r" }}</td>
+			  <td><a href="" class='action'>Voir</a></td>
 			</tr>
 			{% endfor %}
 		</table>

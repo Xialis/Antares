@@ -10,8 +10,8 @@
 /*table formAsTable */
 
 table.formAsTable { border-collapse: separate; border-spacing: 2px;}
-table.formAsTable td, table.formAsTable th { border: 1px solid #1c6fcd;  }
-table.formAsTable th { border-color: #0d2d51; }
+table.formAsTable td, table.formAsTable th { border: 1px solid #1c6fcd; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+table.formAsTable th { border-color: #0d2d51; border-top-left-radius: 8px; border-bottom-left-radius: 8px; border-top-right-radius: 0px; border-bottom-right-radius: 0px;}
 
 /*table tableListing */
 
@@ -21,3 +21,17 @@ table.tableListing td ul { margin-bottom: 0; }
 /* ul.errorlist */
 ul.errorlist {padding:0.8em;margin-bottom:1em;border:2px solid #ddd;}
 ul.errorlist {background:#fbe3e4;color:#8a1f11;border-color:#fbc2c4;}
+
+/* form */
+
+input[type="submit"], .action { 
+  border: 0px solid black;
+  background-color: #FF7F2A;
+  color: white;
+  font-weight: bold;
+  margin: 5px 5px 5px 5px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 5px;
+  text-decoration: none;
+}
+input[type="submit"]:hover, .action:hover { background-color: #008000; color: white;}

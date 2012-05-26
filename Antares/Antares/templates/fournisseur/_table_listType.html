@@ -22,9 +22,10 @@
 				{% if t.tarif_couleur %}({{ t.tarif_blanc|add:t.tarif_couleur }}){% endif %}</li>
 				<li>Transition: +{{ t.tarif_transition|default:"<span class='quiet'>non renseigné</span>" }}
 				{% if t.tarif_transition %}({{ t.tarif_blanc|add:t.tarif_transition }}){% endif %}</li>
+				<li>Remise monture: {{ t.remise_monture|default:"<span class='quiet'>non renseigné</span>" }}</li>
 			</ul>
 		</td>
-		<td><a href="{% url modType t.id %}">Modifier</a></td>
+		<td><a href="{% url modType t.id %}" class='action'>Modifier</a></td>
 	</tr>
 	{% endfor %}
 </table>
