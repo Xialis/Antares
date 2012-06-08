@@ -64,12 +64,24 @@ function modStock(lid, qte, seuil)
 
 <h2>Stock du fournisseur : {{ fournisseur.nom }}</h2>
 
-<form action="" method="POST">{% csrf_token %}
-	<table class="formAsTable">
-	{{ formAjout.as_table }}
-	</table>
-	<input type="submit" value="Ajouter" name="ajout" />
-</form>
+<div class="first span-15 border">
+	<h2>Ajouter</h2>
+	<form action="" method="POST">{% csrf_token %}
+		<table class="formAsTable">
+		{{ formAjout.as_table }}
+		</table>
+		<input type="submit" value="Ajouter" name="ajout" />
+	</form>
+</div>
+<div class="span-15 last">
+	<h2>Chercher / Filtrer</h2>
+	<form action="" method="POST">{% csrf_token %}
+		<table class="formAsTable">
+		{{ formRecherche.as_table }}
+		</table>
+		<input type="submit" value="Rechercher" name="rechercher" />
+	</form>
+</div>
 
 <h2>Liste</h2>
 <table>

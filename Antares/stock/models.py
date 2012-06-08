@@ -12,7 +12,6 @@ class LigneStock(models.Model):
     couleur = models.ForeignKey('fournisseur.Couleur', null=True, blank=True)
     quantite = models.IntegerField(verbose_name=u"quantité")
     seuil = models.IntegerField()
-    """
-    def __unicode__(self):
-        return self.vtype
-    """
+
+    class Meta:
+        ordering = ["vtype__nom", "traitement__nom", "couleur__nom", "sphere", "cylindre"]
