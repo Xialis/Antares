@@ -1,11 +1,14 @@
 <table class="tableListing">
 	<tr>
-		<th>Nom</th><th>Prog.</th><th>Diametre(s)</th>
+		<th>Nom</th><th>Diametre(s)</th>
 	    <th>Traitement(s)</th><th>Couleur(s)</th><th>Tarifs</th><th>Actions</th>
 	</tr>
 	{% for t in listType %}
 	<tr>
-		<td>{{ t.nom }}</td><td>{{ t.progressif|yesno:"Oui,Non" }}</td>
+		<td>{{ t.nom }}<ul><li>Prog.: {{ t.progressif|yesno:"Oui,Non" }}</li>
+			<li>Stock: {{ t.stock|yesno:"Oui,Non" }}</li>
+			</ul>
+		</td>
 		<td><ul>{% for ds in t.diametres.all %}<li>{{ ds.nom }}</li>{% endfor %}
 			</ul>
 		</td>

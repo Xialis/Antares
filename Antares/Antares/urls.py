@@ -19,4 +19,5 @@ urlpatterns = patterns('',
     # url(r'^admin/', include(admin.site.urls)),
     
     url(r'fournisseur/', include('fournisseur.urls')),
+    url(r'stock/', include('stock.urls')),
 )

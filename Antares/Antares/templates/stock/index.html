@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block center %}
+
+<h2>Stock</h2>
+
+<table>
+	<tr><th>Nom fournisseur</th><th>Actions (stock)</th></tr>
+	{% for f in listeFournisseur %}
+	<tr><td>{{ f.nom }}</td><td><a href="{% url stock.views.gestionStock f.id %}" class="action">Gérer</a></td></tr>
+	{% endfor %}
+</table>
+
+{% endblock %}

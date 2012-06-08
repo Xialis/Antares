@@ -4,13 +4,16 @@
     <meta content="">
     <link type='text/css' rel='stylesheet' href='/media/blueprint/screen.css' />
     <link type='text/css' rel='stylesheet' href='/media/style.css' />
+    <script src='/media/jquery-1.7.2.min.js'>
+    </script>
+    {% block head %}{% endblock %}
   </head>
   <body>
   	<div class="container">
   		<div id="topmenu" class="span-30">
   			<ul>
   				<li><a href="{% url fournisseur.views.index %}">Fournisseurs</a></li>
-  				<li>Stocks</li>
+  				<li><a href="{% url stock.views.index %}">Stocks</a></li>
   			</ul>
   		</div>
   		{% if messages %}

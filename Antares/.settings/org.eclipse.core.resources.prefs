@@ -3,3 +3,6 @@ encoding//fournisseur/forms.py=utf-8
 encoding//fournisseur/helpers.py=utf-8
 encoding//fournisseur/models.py=utf-8
 encoding//fournisseur/views.py=utf-8
+encoding//stock/forms.py=utf-8
+encoding//stock/models.py=utf-8
+encoding//stock/views.py=utf-8

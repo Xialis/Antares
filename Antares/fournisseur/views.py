@@ -3,7 +3,10 @@
 from django.contrib import messages
 from django.core.context_processors import csrf
 from django.db.utils import IntegrityError
+from django.http import HttpResponse
 from django.shortcuts import render_to_response, redirect
+from django.utils import simplejson
+
 from fournisseur.forms import *
 from fournisseur.models import *
 
@@ -158,3 +161,101 @@ def modTraitement(request, tid):
     c.update(csrf(request))
     c['messages'] = messages.get_messages(request)
     return render_to_response('fournisseur/mod_generic.html', c)
+
+
+def modDiametre(request, did):
+    obj = Diametre.objects.get(id=did)
+    c = {'objclass': obj.__class__.__name__, }
+    f = obj.fournisseur
+    
+    form = DiametreForm(instance=obj)
+    
+    if request.method == "POST":
+        form = DiametreForm(request.POST, instance=obj)
+        if form.is_valid():
+            try:
+                form.save()
+            except IntegrityError:
+                form.erreurDuplica()
+                messages.error(request, u"Oups, Erreur dans le formulaire")
+            else:
+                messages.success(request, u"Modification du Diametre: Diametre modifié avec succès")
+                return redirect('fournisseur', fid=f.id)
+        else:
+            messages.error(request, u"Oups, Erreur dans le formulaire")
+    
+    c['four'] = f
+    c['form'] = form
+    c.update(csrf(request))
+    c['messages'] = messages.get_messages(request)
+    return render_to_response('fournisseur/mod_generic.html', c)
+
+
+def modCouleur(request, cid):
+    obj = Couleur.objects.get(id=cid)
+    c = {'objclass': obj.__class__.__name__, }
+    f = obj.fournisseur
+    
+    form = CouleurForm(instance=obj)
+    
+    if request.method == "POST":
+        form = CouleurForm(request.POST, instance=obj)
+        if form.is_valid():
+            try:
+                form.save()
+            except IntegrityError:
+                form.erreurDuplica()
+                messages.error(request, u"Oups, Erreur dans le formulaire")
+            else:
+                messages.success(request, u"Modification d'une Couleur: couleur modifiée avec succès")
+                return redirect('fournisseur', fid=f.id)
+        else:
+            messages.error(request, u"Oups, Erreur dans le formulaire")
+    
+    c['four'] = f
+    c['form'] = form
+    c.update(csrf(request))
+    c['messages'] = messages.get_messages(request)
+    return render_to_response('fournisseur/mod_generic.html', c)
+
+
+def ajax_filtre_traitement(request, qs=None):
+    if qs is None:
+        qs = []
+
+    if request.GET.get('vtype'):
+        qs = Traitement.objects.filter(type__pk=request.GET.get('vtype'))
+
+    results = []
+    for choice in qs:
+        results.append((choice.pk, choice.nom))
+
+    return HttpResponse(simplejson.dumps(results))
+
+
+def ajax_filtre_diametre(request, qs=None):
+    if qs is None:
+        qs = Diametre.objects.all()
+
+    if request.GET.get('vtype'):
+        qs = qs.filter(type__pk=request.GET.get('vtype'))
+
+    results = []
+    for choice in qs:
+        results.append((choice.pk, choice.nom))
+
+    return HttpResponse(simplejson.dumps(results))
+
+
+def ajax_filtre_couleur(request, qs=None):
+    if qs is None:
+        qs = Couleur.objects.all()
+
+    if request.GET.get('vtype'):
+        qs = qs.filter(type__pk=request.GET.get('vtype'))
+
+    results = []
+    for choice in qs:
+        results.append((choice.pk, choice.nom))
+
+    return HttpResponse(simplejson.dumps(results))

@@ -73,9 +73,19 @@ class DiametreForm(ModelForm):
     class Meta:
         model = Diametre
         exclude = ('fournisseur',)
+        
+    def erreurDuplica(self):
+        msg = u"Ce nom existe déjà pour ce fournisseur"
+        self._errors['nom'] = self.error_class([msg])
+        return self
 
 
 class CouleurForm(ModelForm):
     class Meta:
         model = Couleur
         exclude = ('fournisseur',)
+        
+    def erreurDuplica(self):
+        msg = u"Ce nom existe déjà pour ce fournisseur"
+        self._errors['nom'] = self.error_class([msg])
+        return self

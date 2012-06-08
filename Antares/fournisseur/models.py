@@ -59,6 +59,7 @@ class Type(models.Model):
     """ Type de verre (lié à un fournisseur)"""
     fournisseur = models.ForeignKey(Fournisseur)
     nom = models.CharField(max_length=50)
+    stock = models.BooleanField()
     progressif = models.BooleanField()
     traitements = models.ManyToManyField(Traitement, blank=True, null=True)
     diametres = models.ManyToManyField(Diametre)

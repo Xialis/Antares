@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+
+{% block head %}
+<script>
+
+function update_select(select, data) {
+        select.find('option').remove();
+        select.append($('<option value="">-------</option>'));
+        for (var i in data) {
+            select.append($('<option value="'+data[i][0]+'">'+data[i][1]+'</option>'));
+        }
+    }
+
+$(document).ready(function() {
+	
+	$('select[name=vtype]').live('change', function(e) {
+			
+			$.get(
+	            '{% url fournisseur.views.ajax_filtre_diametre %}',
+	            {
+	                'vtype': $(this).val(),
+	            },
+	            function(data, textStatus, jqXHR) {
+	                update_select($('select[name=diametre]'), data);
+	            },
+	            'json'
+	        );
+			
+	        $.get(
+	            '{% url fournisseur.views.ajax_filtre_traitement %}',
+	            {
+	                'vtype': $(this).val(),
+	            },
+	            function(data, textStatus, jqXHR) {
+	                update_select($('select[name=traitement]'), data);
+	            },
+	            'json'
+	        );
+	        
+	        $.get(
+	            '{% url fournisseur.views.ajax_filtre_couleur %}',
+	            {
+	                'vtype': $(this).val(),
+	            },
+	            function(data, textStatus, jqXHR) {
+	                update_select($('select[name=couleur]'), data);
+	            },
+	            'json'
+	        );
+	    });
+});
+
+function modStock(lid, qte, seuil)
+{
+	$('#id_mod-quantite').val(qte);
+	$('#id_mod-seuil').val(seuil);
+	$('#id_mod-lid').val(lid);
+}
+
+</script>
+{% endblock %}
+
+{% block center %}
+
+<h2>Stock du fournisseur : {{ fournisseur.nom }}</h2>
+
+<form action="" method="POST">{% csrf_token %}
+	<table class="formAsTable">
+	{{ formAjout.as_table }}
+	</table>
+	<input type="submit" value="Ajouter" name="ajout" />
+</form>
+
+<h2>Liste</h2>
+<table>
+	<tr>
+		<th>Verre</th><th>Diametre</th>
+		<th>Sph.</th><th>Cyl.</th>
+		<th>Traitement</th><th>Couleur</th>
+		<th>Qte</th><th>Seuil</th>
+		<th>Actions</th>
+	</tr>
+	{% for l in listeStock %}
+	<tr>
+		<td>{{ l.vtype.nom }}</td><td>{{ l.diametre.nom }}</td>
+		<td>{{ l.sphere }}</td><td>{{ l.cylindre }}</td>
+		<td>{{ l.traitement.nom }}</td><td>{{ l.couleur.nom }}</td>
+		<td>{{ l.quantite }}</td><td>{{ l.seuil }}</td>
+		<td><a href="" class="action" onclick="modStock({{ l.id }}, {{ l.quantite }}, {{ l.seuil }})">Modifier</a></td>
+	</tr>
+	{% endfor %}
+</table>
+
+<div id="stockmod">
+<form action="" method="POST">{% csrf_token %}
+{{ formModification.as_table }}
+<input type="submit" value="Modifier" name="stockmod">
+</form>
+</div>
+
+{% endblock %}
