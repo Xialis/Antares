@@ -14,4 +14,4 @@ class LigneStock(models.Model):
     seuil = models.IntegerField()
 
     class Meta:
-        ordering = ["vtype__nom", "traitement__nom", "couleur__nom", "sphere", "cylindre"]
+        ordering = ["vtype__nom", "traitement__nom", "couleur__nom", "diametre__nom", "sphere", "cylindre"]

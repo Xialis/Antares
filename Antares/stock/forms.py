@@ -55,10 +55,10 @@ class ModificationForm(ModelForm):
 
 
 class RechercheForm(Form):
-    vtype = ModelMultipleChoiceField(queryset=Type.objects.filter(stock=True), widget=CheckboxSelectMultiple(), required=False)
+    vtype = ModelMultipleChoiceField(label=u"Type", queryset=Type.objects.filter(stock=True), widget=CheckboxSelectMultiple(), required=False)
     diametre = ModelMultipleChoiceField(queryset=Diametre.objects.all(), widget=CheckboxSelectMultiple(), required=False)
-    sphere = DecimalField(max_digits=4, decimal_places=2)
-    cylindre = DecimalField(max_digits=4, decimal_places=2)
+    sphere = DecimalField(max_digits=4, decimal_places=2, required=False)
+    cylindre = DecimalField(max_digits=4, decimal_places=2, required=False)
     traitement = ModelMultipleChoiceField(queryset=Traitement.objects.all(), widget=CheckboxSelectMultiple(), required=False)
     couleur = ModelMultipleChoiceField(queryset=Couleur.objects.all(), widget=CheckboxSelectMultiple(), required=False)
 

@@ -22,6 +22,7 @@ def gestionStock(request, fid):
     c = {}
     fournisseur = Fournisseur.objects.get(id=fid)
     listeStock = LigneStock.objects.filter(fournisseur=fournisseur)
+    filtre = False
 
     formAjout = AjoutForm().filtre_fournisseur(fid).pasdechoix()
     formModification = ModificationForm(prefix='mod')
@@ -38,6 +39,36 @@ def gestionStock(request, fid):
                 messages.success(request, u"Verre ajouté avec succès !")
                 formAjout = AjoutForm().filtre_fournisseur(fid)
 
+        if 'rechercher' in request.POST:
+            formRecherche = RechercheForm(request.POST).filtre_stock(fid)
+            if formRecherche.is_valid():
+                cd = formRecherche.cleaned_data
+ 
+                if cd['vtype'].__len__() != 0:
+                    listeStock = listeStock.filter(vtype__in=cd['vtype'])
+                    filtre = True
+
+                if cd['diametre'].__len__() != 0:
+                    listeStock = listeStock.filter(diametre__in=cd['diametre'])
+                    filtre = True
+
+                if cd['traitement'].__len__() != 0:
+                    listeStock = listeStock.filter(traitement__in=cd['traitement'])
+                    filtre = True
+
+                if cd['couleur'].__len__() != 0:
+                    listeStock = listeStock.filter(couleur__in=cd['couleur'])
+                    filtre = True
+
+                if cd['sphere'] is not None:
+                    listeStock = listeStock.filter(sphere=cd['sphere'])
+                    filtre = True
+
+                if cd['cylindre'] is not None:
+                    listeStock = listeStock.filter(cylindre=cd['cylindre'])
+                    filtre = True
+
+    c['filtre'] = filtre
     c['formAjout'] = formAjout
     c['formModification'] = formModification
     c['formRecherche'] = formRecherche
