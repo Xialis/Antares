@@ -4,11 +4,16 @@ from fournisseur.models import Fournisseur, Type, Traitement, Diametre, Couleur
 
 
 class FourForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+
     class Meta:
         model = Fournisseur
 
 
 class TypeForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
     fid = CharField(widget=HiddenInput)
     traitements = ModelMultipleChoiceField(queryset=Traitement.objects.all(), widget=CheckboxSelectMultiple(), required=False)
     diametres = ModelMultipleChoiceField(queryset=Diametre.objects.all(), widget=CheckboxSelectMultiple(), required=True)
@@ -59,10 +64,13 @@ class TypeForm(ModelForm):
 
 
 class TraitementForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+
     class Meta:
         model = Traitement
         exclude = ('fournisseur',)
-        
+
     def erreurDuplica(self):
         msg = u"Ce nom existe déjà pour ce fournisseur"
         self._errors['nom'] = self.error_class([msg])
@@ -70,10 +78,13 @@ class TraitementForm(ModelForm):
 
 
 class DiametreForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+
     class Meta:
         model = Diametre
         exclude = ('fournisseur',)
-        
+
     def erreurDuplica(self):
         msg = u"Ce nom existe déjà pour ce fournisseur"
         self._errors['nom'] = self.error_class([msg])
@@ -81,10 +92,13 @@ class DiametreForm(ModelForm):
 
 
 class CouleurForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+
     class Meta:
         model = Couleur
         exclude = ('fournisseur',)
-        
+
     def erreurDuplica(self):
         msg = u"Ce nom existe déjà pour ce fournisseur"
         self._errors['nom'] = self.error_class([msg])
