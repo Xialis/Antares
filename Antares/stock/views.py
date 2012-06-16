@@ -39,11 +39,28 @@ def gestionStock(request, fid):
                 messages.success(request, u"Verre ajouté avec succès !")
                 formAjout = AjoutForm().filtre_fournisseur(fid)
 
+        if 'stockmod' in request.POST:
+            formModification = ModificationForm(request.POST, prefix='mod')
+            if formModification.is_valid():
+                cd = formModification.cleaned_data
+                ls = LigneStock.objects.get(id=cd['lid'])
+
+                if cd['supprimer']:
+                    ls.delete()
+                else:
+                    ls.quantite = cd['quantite']
+                    ls.seuil = cd['seuil']
+                    ls.save()
+
+                listeStock = LigneStock.objects.filter(fournisseur=fournisseur)
+                formModification = ModificationForm(prefix='mod')
+                messages.success(request, u"Modification sauvée")
+
         if 'rechercher' in request.POST:
             formRecherche = RechercheForm(request.POST).filtre_stock(fid)
             if formRecherche.is_valid():
                 cd = formRecherche.cleaned_data
- 
+
                 if cd['vtype'].__len__() != 0:
                     listeStock = listeStock.filter(vtype__in=cd['vtype'])
                     filtre = True
