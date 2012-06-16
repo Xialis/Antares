@@ -6,6 +6,8 @@ from fournisseur.models import Type, Traitement, Diametre, Couleur
 
 
 class AjoutForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
     fid = CharField(widget=HiddenInput)
 
     class Meta:
@@ -46,8 +48,10 @@ class AjoutForm(ModelForm):
 
 
 class ModificationForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
     lid = CharField(widget=HiddenInput)
-    supprimer = BooleanField()
+    supprimer = BooleanField(required=False, help_text=u"Cocher pour supprimer ce verre du stock. Irreversible.")
 
     class Meta:
         model = LigneStock
@@ -55,6 +59,8 @@ class ModificationForm(ModelForm):
 
 
 class RechercheForm(Form):
+    error_css_class = 'error'
+    required_css_class = 'required'
     vtype = ModelMultipleChoiceField(label=u"Type", queryset=Type.objects.filter(stock=True), widget=CheckboxSelectMultiple(), required=False)
     diametre = ModelMultipleChoiceField(queryset=Diametre.objects.all(), widget=CheckboxSelectMultiple(), required=False)
     sphere = DecimalField(max_digits=4, decimal_places=2, required=False)

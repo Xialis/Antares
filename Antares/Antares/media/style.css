@@ -5,21 +5,6 @@
 
 #topmenu, #topmenu a, #topmenu a:visited { color: white; font-weight: bold; }
 
-
-
-/*table formAsTable */
-
-table.formAsTable { border-collapse: separate; border-spacing: 2px;}
-table.formAsTable td, table.formAsTable th { border: 1px solid #1c6fcd; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
-table.formAsTable th { border-color: #0d2d51; border-top-left-radius: 8px; border-bottom-left-radius: 8px; border-top-right-radius: 0px; border-bottom-right-radius: 0px;}
-table.formAsTable td ul { margin-bottom: 0; }
-table.formAsTable td ul li { display: inline; margin-right: 10px;}
-
-/*table tableListing */
-
-table.tableListing td { border-bottom: 1px solid #1c6fcd; vertical-align: middle;}
-table.tableListing td ul { margin-bottom: 0; }
-
 /* ul.errorlist */
 ul.errorlist {padding:0.8em;margin-bottom:1em;border:2px solid #ddd;}
 ul.errorlist {background:#fbe3e4;color:#8a1f11;border-color:#fbc2c4;}
@@ -38,6 +23,47 @@ input[type="submit"], .action {
 }
 input[type="submit"]:hover, .action:hover { background-color: #008000; color: white;}
 
+
+/*table formAsTable */
+
+
+table.formAsTable { border-collapse: separate; border-spacing: 2px;}
+table.formAsTable td, table.formAsTable th { border: 1px solid #1c6fcd; border-top-right-radius: 8px; border-bottom-right-radius: 8px; }
+table.formAsTable th { border-color: #0d2d51; border-top-left-radius: 8px; border-bottom-left-radius: 8px; border-top-right-radius: 0px; border-bottom-right-radius: 0px;}
+table.formAsTable td ul { margin-bottom: 0; }
+table.formAsTable td ul li { display: inline; margin-right: 10px;}
+
+table.formAsTable tr.required label:after { content: "*"; color: red;}
+
+table.formAsTable ul.errorlist {padding:0;margin:0;border:0px solid #ddd;}
+table.formAsTable tr.error { background: none };
+
+
+/*table tableListing */
+
+table.tableListing td { border-bottom: 1px solid #1c6fcd; vertical-align: middle;}
+table.tableListing td ul { margin-bottom: 0; }
+
+
+
 /* popbox */
 
-.popbox { position: absolute; left: 0; right: 0;}
+.popbox { 
+  display: none;
+  position: fixed;
+  top: 40%; left: 25%;
+  border: 0px solid black;
+  border-radius: 5px;
+  background-color: black;
+  
+  width: 50%; height: auto;
+  margin-left: auto; margin-right: auto;
+  
+  color: white;
+  padding: 5px;
+}
+
+.popbox a.action { float: right; }
+
+.popbox table.formAsTable tr th { color: white; }
+.popbox table.formAsTable tr td { background: none;}

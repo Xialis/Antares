@@ -55,6 +55,13 @@ function modStock(lid, qte, seuil)
 	$('#id_mod-quantite').val(qte);
 	$('#id_mod-seuil').val(seuil);
 	$('#id_mod-lid').val(lid);
+	
+	$('#stockmod').fadeIn("fast");
+}
+
+function fermePopbox()
+{
+	$('#stockmod').fadeOut("fast");
 }
 
 </script>
@@ -99,7 +106,9 @@ function modStock(lid, qte, seuil)
 			<td>{{ l.sphere }}</td><td>{{ l.cylindre }}</td>
 			<td>{{ l.traitement.nom }}</td><td>{{ l.couleur.nom }}</td>
 			<td>{{ l.quantite }}</td><td>{{ l.seuil }}</td>
-			<td><a class="action" onclick="modStock({{ l.id }}, {{ l.quantite }}, {{ l.seuil }})">Modifier</a></td>
+			<td>
+				<a class="action" onclick="modStock({{ l.id }}, {{ l.quantite }}, {{ l.seuil }})">Modifier</a>
+			</td>
 		</tr>
 		{% endfor %}
 	</table>
@@ -107,9 +116,12 @@ function modStock(lid, qte, seuil)
 
 <div id="stockmod" class="popbox">
 <form action="" method="POST">{% csrf_token %}
+<table class="formAsTable">
 {{ formModification.as_table }}
-<input type="submit" value="Modifier" name="stockmod">
+</table>
+<input type="submit" value="Modifier" name="stockmod"> <a class="action" onclick="fermePopbox()">Annuler</a>
 </form>
+
 </div>
 
 {% endblock %}
