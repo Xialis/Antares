@@ -129,6 +129,7 @@ INSTALLED_APPS = (
     # 'django.contrib.admindocs',
     'fournisseur',
     'stock',
+    'client',
     'south',
 )
 
