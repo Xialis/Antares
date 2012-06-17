@@ -2,8 +2,7 @@
 # Create your views here.
 from django.contrib import messages
 from django.core.context_processors import csrf
-from django.db.utils import IntegrityError
-from django.shortcuts import render_to_response, redirect
+from django.shortcuts import render_to_response
 
 from fournisseur.models import Fournisseur
 from stock.models import LigneStock
@@ -15,6 +14,7 @@ def index(request):
     listeFournisseur = Fournisseur.objects.all()
 
     c['listeFournisseur'] = listeFournisseur
+    c.update(csrf(request))
     return render_to_response("stock/index.html", c)
 
 
