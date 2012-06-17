@@ -130,6 +130,7 @@ INSTALLED_APPS = (
     'fournisseur',
     'stock',
     'client',
+    'facture',
     'south',
 )
 
