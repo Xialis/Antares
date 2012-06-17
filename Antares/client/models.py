@@ -22,7 +22,6 @@ class Prescripteur(models.Model):
 
 class Client(models.Model):
     code = models.CharField(max_length=12)
-    date_ajout = models.DateField()
     nom = models.CharField(max_length=50)
     prenom = models.CharField(max_length=50)
     telephone = models.CharField(max_length=50)

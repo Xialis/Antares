@@ -43,7 +43,7 @@
 	  <td>{{ client.nom }} {{ client.prenom }}</td>
 	  <td>{{ client.telephone }}</td>
 	  <td>{{ client.email }}</td>
-	  <td><a href="{% url client.views.infoClient client.id %}">Voir</a></td>
+	  <td><a href="{% url client.views.infoClient client.id %}" class='action'>Voir</a></td>
 	</tr>
 	{% endfor %}
 </table>

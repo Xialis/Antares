@@ -11,7 +11,7 @@ class FormAjoutClient(ModelForm):
 
     class Meta:
         model = Client
-        exclude = ('code', )
+        exclude = ('code')
 
 
 class FormAjoutOrganisme(ModelForm):

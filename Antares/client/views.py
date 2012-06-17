@@ -5,6 +5,7 @@ from django.shortcuts import render_to_response, redirect
 
 from client.models import *
 from client.forms import *
+from client.func import ajoutClient
 
 
 def index(request):
@@ -14,6 +15,16 @@ def index(request):
     formAjoutClient = FormAjoutClient()
     formAjoutOrganisme = FormAjoutOrganisme()
     formAjoutPrescripteur = FormAjoutPrescripteur()
+    
+    if request.method == 'POST':
+        
+        if 'ajClient' in request.POST:
+            retour = ajoutClient(FormAjoutClient(request.POST))
+            
+            if retour['b_sauver'] == False:
+                formAjoutClient = retour['form']
+                listeClient = Client.objects.all()
+                
     
     c['listeClient'] = listeClient
     c['formAjoutClient'] = formAjoutClient
