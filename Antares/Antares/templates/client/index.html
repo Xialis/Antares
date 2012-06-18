@@ -2,50 +2,90 @@
 
 {% block center %}
 
-<div class="first span-10 border">
-	<h2>Ajouter un Client</h2>
-	<form method="POST" action="">{% csrf_token %}
-		<table class="formAsTable">
-		{{ formAjoutClient.as_table }}
-		</table>
-		<input type="submit" value="OK" name="ajClient">
-	</form>
+<div class="first span-20 border">
+	<div class="first span-10 border">
+		<h2>Ajouter un Client</h2>
+		<form method="POST" action="">{% csrf_token %}
+			<table class="formAsTable">
+			{{ formAjoutClient.as_table }}
+			</table>
+			<input type="submit" value="OK" name="ajClient">
+		</form>
+	</div>
+	<div class="span-10 last">
+		<h2>Chercher Client</h2>
+		<form method="POST" action="">{% csrf_token %}
+			<table class="formAsTable">
+			{{ formRechercheClient.as_table }}
+			</table>
+			<input type="submit" value="OK" name="reClient">
+		</form>
+	</div>
+	<hr>
+
+	<h2>Liste des clients</h2>
+	<table class='tableListing'>
+		<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
+		{% for client in listeClient %}
+		<tr>
+		  <td>{{ client.code}}</td>
+		  <td>{{ client.nom }} {{ client.prenom }}</td>
+		  <td>{{ client.telephone }}</td>
+		  <td>{{ client.email }}</td>
+		  <td><a href="{% url client.views.infoClient client.id %}" class='action'>Détails</a></td>
+		</tr>
+		{% endfor %}
+	</table>
 </div>
 
-<div class="span-10 border">
-	<h2>Ajouter un Organisme</h2>
-	<form method="POST" action="">{% csrf_token %}
-		<table class="formAsTable">
-		{{ formAjoutOrganisme.as_table }}
+<div class="last span-10">
+	<div class="span-10">
+		<h2>Ajouter un Organisme</h2>
+		<form method="POST" action="">{% csrf_token %}
+			<table class="formAsTable">
+			{{ formAjoutOrganisme.as_table }}
+			</table>
+			<input type="submit" value="OK" name="ajOrganisme">
+		</form>
+		<h3>Liste</h3>
+		<table class='tableListing'>
+			<tr><th>Nom</th><th>Contact</th><th>Actions</th></tr>
+			{% for organisme in listeOrganisme %}
+			<tr>
+				<td>{{ organisme.nom }}</td>
+				<td>
+					<ul>
+						<li>{{ organisme.contact_nom }}</li>
+						<li>{{ organisme.contact_tel }}</li>
+						<li>{{ organisme.contact_mail }}</li>
+					</ul>
+				</td>
+				<td><a href="" class="action">Modifier</a></td>
+			</tr>
+			{% endfor %}
 		</table>
-		<input type="submit" value="OK" name="ajOrganisme">
-	</form>
-</div>
-
-<div class="span-10 last">
-	<h2>Ajouter un Prescripteur</h2>
-	<form method="POST" action="">{% csrf_token %}
-		<table class="formAsTable">
-		{{ formAjoutPrescripteur.as_table }}
+	</div>
+	
+	<div class="span-10 last">
+		<h2>Ajouter un Prescripteur</h2>
+		<form method="POST" action="">{% csrf_token %}
+			<table class="formAsTable">
+			{{ formAjoutPrescripteur.as_table }}
+			</table>
+			<input type="submit" value="OK" name="ajPrescripteur">
+		</form>
+		<h3>Liste</h3>
+		<table class='tableListing'>
+			<tr><th>Nom</th><th>Téléphone</th><th>Actions</th></tr>
+			{% for prescripteur in listePrescripteur %}
+			<tr>
+				<td>{{ prescripteur.nom }}</td>
+				<td>{{ prescripteur.telephone }}</td>
+				<td><a href="" class="action">Modifier</a></td>
+			</tr>
+			{% endfor %}
 		</table>
-		<input type="submit" value="OK" name="ajPrescripteur">
-	</form>
+	</div>
 </div>
-
-<hr>
-
-<h2>Liste des clients</h2>
-<table>
-	<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
-	{% for client in listeClient %}
-	<tr>
-	  <td>{{ client.code}}</td>
-	  <td>{{ client.nom }} {{ client.prenom }}</td>
-	  <td>{{ client.telephone }}</td>
-	  <td>{{ client.email }}</td>
-	  <td><a href="{% url client.views.infoClient client.id %}" class='action'>Voir</a></td>
-	</tr>
-	{% endfor %}
-</table>
 
 {% endblock %}

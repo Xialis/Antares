@@ -19,6 +19,10 @@ class Prescripteur(models.Model):
     def __unicode__(self):
         return self.nom
 
+    class Meta:
+        ordering = ['nom']
+        unique_together = ('nom', 'telephone')
+
 
 class Client(models.Model):
     code = models.CharField(max_length=12)
@@ -30,6 +34,10 @@ class Client(models.Model):
 
     def __unicode__(self):
         return self.nom + " " + self.prenom
+
+    class Meta:
+        unique_together = (('nom', 'prenom', 'telephone'), ('nom', 'prenom', 'email'), )
+        ordering = ['code']
 
 
 class Prescription(models.Model):

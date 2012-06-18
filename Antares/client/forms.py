@@ -28,3 +28,15 @@ class FormAjoutPrescripteur(ModelForm):
 
     class Meta:
         model = Prescripteur
+
+
+class FormRechercheClient(ModelForm):
+
+    class Meta:
+        model = Client
+
+    def __init__(self, *args, **kwargs):
+        super(FormRechercheClient, self).__init__(*args, **kwargs)
+
+        for fieldname in self.base_fields:
+            self.base_fields[fieldname].required = False
