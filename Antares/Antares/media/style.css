@@ -1,5 +1,11 @@
+body { background-color: #000008; color: white; }
+tbody tr:nth-child(even) td, tbody tr.even td {background:#0b2228;}
+h2, h3 { color: #5fbcd3; margin: 5px 0 5px 0; text-shadow:2px 2px 2px #0044AA;}
+.border { border-right-color: #002255; }
+hr {background:#002255;color:#002255; }
+
 /* topmenu */
-#topmenu { background-color: #0d2d51; }
+#topmenu { background-color: #0d2d51; margin-bottom: 5px;}
 #topmenu ul { display: inline; list-style: none; }
 #topmenu ul li { display: inline; margin-left: 5px; }
 
@@ -10,6 +16,15 @@ ul.errorlist {padding:0.8em;margin-bottom:1em;border:2px solid #ddd;}
 ul.errorlist {background:#fbe3e4;color:#8a1f11;border-color:#fbc2c4;}
 
 /* form */
+
+input[type="text"], input[type="checkbox"], select {
+  padding: 1px 3px 1px 3px;
+  border: 1px solid #5fbcd3;
+  border-radius: 5px;
+  box-shadow: none;
+  background-color: #003380;
+  color: #5fbcd3;
+}
 
 input[type="submit"], .action { 
   border: 0px solid black;
