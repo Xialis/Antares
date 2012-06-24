@@ -2,6 +2,9 @@
 from django.contrib import messages
 from django.core.context_processors import csrf
 from django.shortcuts import render_to_response, redirect
+from django.http import HttpResponse
+from django.core.urlresolvers import reverse
+from django.utils import simplejson
 
 from client.models import *
 from client.forms import *
@@ -53,3 +56,31 @@ def infoClient(request, cid):
     c = {}
 
     return render_to_response("client/infoClient.html", c)
+
+
+def ajaxListClient(request):
+    retour = {}
+    debut = 0
+    taille = 10
+
+    if request.GET.get("sEcho"):
+        retour.update({"sEcho": request.GET.get("sEcho")})
+
+    if request.GET.get("iDisplayStart"):
+        debut = request.GET.get("iDisplayStart")
+
+    if request.GET.get("iDisplayLength"):
+        taille = request.GET.get("iDisplayLength")
+        retour.update({"iDisplayLength": taille})
+
+    totalClients = Client.objects.all().count()
+    listeClient = Client.objects.all()[debut:debut + taille]
+    retour.update({"iTotalRecords": totalClients, "iTotalDisplayRecords": totalClients})
+    aaData = []
+
+    for client in listeClient:
+        action = u"<a href='" + reverse(infoClient, args=[client.id]) + u"' class='action'>Détails</a>"
+        aaData.append([client.code, client.nom + " " + client.prenom, client.telephone, client.email, action])
+
+    retour.update({"aaData": aaData})
+    return HttpResponse(simplejson.dumps(retour))

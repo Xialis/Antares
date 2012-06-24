@@ -38,6 +38,26 @@ input[type="submit"], .action {
 }
 input[type="submit"]:hover, .action:hover { background-color: #008000; color: white;}
 
+/* lien */
+div.dataTables_paginate a {
+  border: 0px solid black;
+  background-color: #5fbcd3;
+  color: white;
+  font-weight: bold;
+  margin: 5px 5px 5px 5px;
+  padding: 3px 5px 3px 5px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+div.dataTables_paginate a.paginate_button_disabled {
+  cursor: not-allowed;
+}
+
+div.dataTables_paginate a.paginate_active {
+  background-color: #0044AA;
+}
 
 /*table formAsTable */
 

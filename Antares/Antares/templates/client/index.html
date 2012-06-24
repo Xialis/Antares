@@ -1,5 +1,32 @@
 {% extends "base.html" %}
 
+{% block head %}
+<script src='/media/jquery.dataTables.min.js'>
+</script>
+<script type="text/javascript" charset="utf-8">
+			$(document).ready(function() {
+				$('#listeClient').dataTable( {
+					"bProcessing": true,
+					"bFilter": false,
+					"bServerSide": true,
+					"sPaginationType": "full_numbers",
+					"sAjaxSource": '/client/ajaxClientList/',
+					"oLanguage": {
+						"oPaginate": {
+							"sFirst": "<<",
+							"sLast": ">>",
+							"sNext": ">",
+							"sPrevious": "<",
+						},
+						"sEmptyTable": "Pas de client trouvé",
+						"sInfo": "Affiche les clients de _START_ à _END_ sur un total de _TOTAL_",
+						"sLengthMenu": "Affiche _MENU_ clients",
+					}
+				} );
+			} );
+		</script>
+{% endblock %}
+
 {% block center %}
 
 <div class="first span-20 border">
@@ -22,19 +49,16 @@
 		</form>
 	</div>
 	<hr>
-
-	<h2>Liste des clients</h2>
-	<table class='tableListing'>
-		<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
-		{% for client in listeClient %}
-		<tr>
-		  <td>{{ client.code}}</td>
-		  <td>{{ client.nom }} {{ client.prenom }}</td>
-		  <td>{{ client.telephone }}</td>
-		  <td>{{ client.email }}</td>
-		  <td><a href="{% url client.views.infoClient client.id %}" class='action'>Détails</a></td>
-		</tr>
-		{% endfor %}
+	
+	<h2>Liste</h2>
+	<table id="listeClient" class='tableListing'>
+		<thead>
+			<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
+		</thead>
+		
+		<tbody>
+			
+		</tbody>
 	</table>
 </div>
 
