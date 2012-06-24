@@ -20,11 +20,19 @@
 						},
 						"sEmptyTable": "Pas de client trouvé",
 						"sInfo": "Affiche les clients de _START_ à _END_ sur un total de _TOTAL_",
+						"sInfoFiltered": "(liste filtrée sur un total de _MAX_ clients)",
 						"sLengthMenu": "Affiche _MENU_ clients",
 					}
 				} );
 			} );
-		</script>
+			
+			function clearForm($form) {
+				$form.find('input:text, input:password, input:file, select, textarea').val('');
+    			$form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
+    			$form.find('input[type=submit]').click();
+    		}
+				
+</script>
 {% endblock %}
 
 {% block center %}
@@ -41,16 +49,18 @@
 	</div>
 	<div class="span-10 last">
 		<h2>Chercher Client</h2>
-		<form method="POST" action="">{% csrf_token %}
+		<form id="client_formRechercheClient" method="POST" action="">{% csrf_token %}
 			<table class="formAsTable">
 			{{ formRechercheClient.as_table }}
 			</table>
 			<input type="submit" value="OK" name="reClient">
+			<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>
 		</form>
 	</div>
 	<hr>
 	
-	<h2>Liste</h2>
+	<h2>Liste <span class="h2info">{{ listeFiltree|yesno:"(filtrée)," }}</span></h2>
+	{% if listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
 	<table id="listeClient" class='tableListing'>
 		<thead>
 			<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
