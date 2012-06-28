@@ -134,6 +134,10 @@ INSTALLED_APPS = (
     'south',
 )
 
+TEMPLATE_CONTEXT_PROCESSORS = (
+    'facture.context_processors.app_context',
+)
+
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
 # the site admins on every HTTP 500 error when DEBUG=False.
