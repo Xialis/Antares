@@ -9,6 +9,21 @@
 <h1>Facture / Pro forma</h1>
 
 <div class="first span-30">
+	<div class="navigation">
+		<ul class="ul_right">
+			<li><a href="{% url facture.func.etapePrecedente %}">Précédent</a></li>
+			<li><a href="{% url facture.func.etapeSuivante %}">Suivant</a></li>
+		</ul>
+		<span>Etapes:</span>
+		<ul class="ul_left">
+			{% for etape in appFacture.etapes %}
+			<li>{{ etape }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+
+<div class="first span-30">
 	<div class="first span-10 border">
 		<h2>Chercher Client</h2>
 		<form id="client_formRechercheClient" method="POST" action="">{% csrf_token %}
@@ -31,8 +46,11 @@
 				
 			</tbody>
 		</table>
-	</div>		
+	</div>	
+	<hr>
+	<p style="text-align: center;"><a href="{% url facture.func.creerClient %}" class="action">Créer un nouveau client</a></p>	
 </div>
-<hr>
+
+
 
 {% endblock %}

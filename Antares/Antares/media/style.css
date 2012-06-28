@@ -101,3 +101,11 @@ table.tableListing td ul { margin-bottom: 0; }
 
 .popbox table.formAsTable tr th { color: white; }
 .popbox table.formAsTable tr td { background: none;}
+
+
+/* navigation */
+
+div.navigation { background: none; border: 1px dashed #5fbcd3; border-radius: 5px; }
+div.navigation ul { margin: 3px 3px 3px 3px; display: inline; }
+div.navigation ul li { display: inline; margin-left: 3px;}
+div.navigation ul.ul_right { float: right; }

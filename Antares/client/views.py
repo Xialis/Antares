@@ -10,6 +10,8 @@ from client.models import *
 from client.forms import *
 from client.func import ajoutClient, ajoutPrescripteur, ajoutOrganisme, filtration, initFiltration
 
+from facture.func import utiliserClient
+
 
 def index(request):
     c = {}
@@ -107,6 +109,7 @@ def ajaxListClient(request):
 
     for client in listeClient:
         action = u"<a href='" + reverse(infoClient, args=[client.id]) + u"' class='action'>Détails</a>"
+        action += u"<a href='" + reverse(utiliserClient, args=[client.id]) + u"' class='action'>Utiliser</a>"
         aaData.append([client.code, client.nom + " " + client.prenom, client.telephone, client.email, action])
 
     retour.update({"aaData": aaData})

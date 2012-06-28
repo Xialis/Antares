@@ -7,6 +7,7 @@ from django.core.context_processors import csrf
 from client.forms import FormRechercheClient
 from client.func import initFiltration, filtration
 
+
 def index(request):
     c = {}
     
@@ -33,3 +34,9 @@ def index(request):
     c['formRechercheClient'] = formRechercheClient
     c.update(csrf(request))
     return render_to_response("facture/index.html", c, context_instance=RequestContext(request))
+
+
+def etapeInfo(request):
+    c = {}
+    c.update(csrf(request))
+    return render_to_response("facture/etapeInfo.html", c, context_instance=RequestContext(request))
