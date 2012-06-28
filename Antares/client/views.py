@@ -8,7 +8,7 @@ from django.utils import simplejson
 
 from client.models import *
 from client.forms import *
-from client.func import ajoutClient, ajoutPrescripteur, ajoutOrganisme
+from client.func import ajoutClient, ajoutPrescripteur, ajoutOrganisme, filtration, initFiltration
 
 
 def index(request):
@@ -20,15 +20,12 @@ def index(request):
     formAjoutPrescripteur = FormAjoutPrescripteur()
     formRechercheClient = FormRechercheClient()
 
-    b_listeFiltree = False
-    if "appClient" in request.session:
-        if "filtrage" in request.session["appClient"]:
-            b_listeFiltree = True
-            formRechercheClient = FormRechercheClient(request.session['appClient']['formRechercheClient'])
-        else:
-            request.session["appClient"] = {}
+    riF = initFiltration(request)
+    if riF['b_listeFiltree']:
+        b_listeFiltree = True
+        formRechercheClient = FormRechercheClient(riF['posted'])
     else:
-        request.session["appClient"] = {}
+        b_listeFiltree = False
 
     if request.method == 'POST':
 
@@ -52,53 +49,15 @@ def index(request):
                 formAjoutOrganisme = retour['form']
 
         if 'reClient' in request.POST:
-            #reset
-            if "filtrage" in request.session['appClient']:
+
+            retour = filtration(request)
+            b_listeFiltree = retour['b_listeFiltree']
+            if b_listeFiltree == True:
+                formRechercheClient = FormRechercheClient(request.POST)
+            else:
                 formRechercheClient = FormRechercheClient()
-                del request.session['appClient']['filtrage']
-                del request.session['appClient']['formRechercheClient']
-            b_listeFiltree = False
 
-            filtrage = Client.objects.all()
-            form = FormRechercheClient(request.POST)
-            if form.is_valid():
-                cd = form.cleaned_data
-
-                if cd.get("code"):
-                    filtrage = filtrage.filter(code__contains=cd.get("code"))
-                    b_listeFiltree = True
-
-                if cd.get("nom"):
-                    filtrage = filtrage.filter(nom__contains=cd.get("nom"))
-                    b_listeFiltree = True
-
-                if cd.get("prenom"):
-                    filtrage = filtrage.filter(prenom__contains=cd.get("prenom"))
-                    b_listeFiltree = True
-
-                if cd.get("telephone"):
-                    filtrage = filtrage.filter(telephone__contains=cd.get("telephone"))
-                    b_listeFiltree = True
-
-                if cd.get("email"):
-                    filtrage = filtrage.filter(email__contains=cd.get("email"))
-                    b_listeFiltree = True
-
-                if cd.get("organisme"):
-                    filtrage = filtrage.filter(organisme=cd.get("organisme"))
-                    b_listeFiltree = True
-
-                if b_listeFiltree == True:
-                    formRechercheClient = FormRechercheClient(request.POST)
-                    request.session["appClient"]["filtrage"] = filtrage
-                    request.session['appClient']['formRechercheClient'] = request.POST
-
-                else:
-                    if "filtrage" in request.session['appClient']:
-                        del request.session['appClient']['filtrage']
-                        del request.session['appClient']['formRechercheClient']
-
-    request.session.modified = True
+    
 
     c['listeClient'] = listeClient
     c['listeFiltree'] = b_listeFiltree

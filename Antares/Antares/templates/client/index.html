@@ -1,38 +1,7 @@
 {% extends "base.html" %}
 
 {% block head %}
-<script src='/media/jquery.dataTables.min.js'>
-</script>
-<script type="text/javascript" charset="utf-8">
-			$(document).ready(function() {
-				$('#listeClient').dataTable( {
-					"bProcessing": true,
-					"bFilter": false,
-					"bServerSide": true,
-					"sPaginationType": "full_numbers",
-					"sAjaxSource": '/client/ajaxClientList/',
-					"oLanguage": {
-						"oPaginate": {
-							"sFirst": "<<",
-							"sLast": ">>",
-							"sNext": ">",
-							"sPrevious": "<",
-						},
-						"sEmptyTable": "Pas de client trouvé",
-						"sInfo": "Affiche les clients de _START_ à _END_ sur un total de _TOTAL_",
-						"sInfoFiltered": "(liste filtrée sur un total de _MAX_ clients)",
-						"sLengthMenu": "Affiche _MENU_ clients",
-					}
-				} );
-			} );
-			
-			function clearForm($form) {
-				$form.find('input:text, input:password, input:file, select, textarea').val('');
-    			$form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
-    			$form.find('input[type=submit]').click();
-    		}
-				
-</script>
+{% include "_inc/head_listeClient_dataTable.html" %}
 {% endblock %}
 
 {% block center %}

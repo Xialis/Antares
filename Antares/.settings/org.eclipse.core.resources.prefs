@@ -1,4 +1,5 @@
 eclipse.preferences.version=1
+encoding//client/context_processors.py=utf-8
 encoding//client/forms.py=utf-8
 encoding//client/func.py=utf-8
 encoding//client/models.py=utf-8

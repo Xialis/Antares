@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 from client.models import Client
+from client.forms import FormRechercheClient
 
 
 def ajoutClient(formAjoutClient):
@@ -46,3 +47,70 @@ def ajoutOrganisme(formAjoutOrganisme):
         b_sauver = True
 
     return {"form": formAjoutOrganisme, "b_sauver": b_sauver}
+
+
+def initFiltration(request):
+    b_listeFiltree = False
+    posted = None
+    if "appClient" in request.session:
+        if "filtrage" in request.session["appClient"]:
+            b_listeFiltree = True
+            posted = request.session['appClient']['formRechercheClient']
+        else:
+            request.session["appClient"] = {}
+    else:
+        request.session["appClient"] = {}
+
+    request.session.modified = True
+    return {'posted': posted, 'b_listeFiltree': b_listeFiltree}
+
+
+def filtration(request):
+    #reset
+    if "filtrage" in request.session['appClient']:
+        formRechercheClient = FormRechercheClient()
+        del request.session['appClient']['filtrage']
+        del request.session['appClient']['formRechercheClient']
+    b_listeFiltree = False
+
+    filtrage = Client.objects.all()
+    form = FormRechercheClient(request.POST)
+    if form.is_valid():
+        cd = form.cleaned_data
+
+        if cd.get("code"):
+            filtrage = filtrage.filter(code__contains=cd.get("code"))
+            b_listeFiltree = True
+
+        if cd.get("nom"):
+            filtrage = filtrage.filter(nom__contains=cd.get("nom"))
+            b_listeFiltree = True
+
+        if cd.get("prenom"):
+            filtrage = filtrage.filter(prenom__contains=cd.get("prenom"))
+            b_listeFiltree = True
+
+        if cd.get("telephone"):
+            filtrage = filtrage.filter(telephone__contains=cd.get("telephone"))
+            b_listeFiltree = True
+
+        if cd.get("email"):
+            filtrage = filtrage.filter(email__contains=cd.get("email"))
+            b_listeFiltree = True
+
+        if cd.get("organisme"):
+            filtrage = filtrage.filter(organisme=cd.get("organisme"))
+            b_listeFiltree = True
+
+        if b_listeFiltree == True:
+            formRechercheClient = FormRechercheClient(request.POST)
+            request.session["appClient"]["filtrage"] = filtrage
+            request.session['appClient']['formRechercheClient'] = request.POST
+
+        else:
+            if "filtrage" in request.session['appClient']:
+                del request.session['appClient']['filtrage']
+                del request.session['appClient']['formRechercheClient']
+
+        request.session.modified = True
+        return {'filtrage': filtrage, 'b_listeFiltree': b_listeFiltree}
