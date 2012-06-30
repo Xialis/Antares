@@ -8,9 +8,9 @@ from client.forms import FormRechercheClient
 from client.func import initFiltration, filtration
 
 
-def index(request):
+def etapeRecherche(request):
     c = {}
-    
+
     formRechercheClient = FormRechercheClient()
     
     riF = initFiltration(request)
@@ -33,7 +33,7 @@ def index(request):
     
     c['formRechercheClient'] = formRechercheClient
     c.update(csrf(request))
-    return render_to_response("facture/index.html", c, context_instance=RequestContext(request))
+    return render_to_response("facture/etapeRecherche.html", c, context_instance=RequestContext(request))
 
 
 def etapeInfo(request):

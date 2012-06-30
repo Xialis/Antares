@@ -17,7 +17,7 @@
 		<span>Etapes:</span>
 		<ul class="ul_left">
 			{% for etape in appFacture.etapes %}
-			<li>{{ etape }}</li>
+			<li> | {{ etape }}</li>
 			{% endfor %}
 		</ul>
 	</div>
@@ -50,7 +50,5 @@
 	<hr>
 	<p style="text-align: center;"><a href="{% url facture.func.creerClient %}" class="action">Créer un nouveau client</a></p>	
 </div>
-
-
 
 {% endblock %}

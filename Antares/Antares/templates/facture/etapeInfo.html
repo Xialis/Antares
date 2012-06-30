@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block head %}
+{% include "_inc/head_listeClient_dataTable.html" %}
+{% endblock %}
+
+{% block center %}
+
+<h1>Facture / Pro forma</h1>
+
+<div class="first span-30">
+	<div class="navigation">
+		<ul class="ul_right">
+			<li><a href="{% url facture.func.etapePrecedente %}">Précédent</a></li>
+			<li><a href="{% url facture.func.etapeSuivante %}">Suivant</a></li>
+		</ul>
+		<span>Etapes:</span>
+		<ul class="ul_left">
+			{% for etape in appFacture.etapes %}
+			<li> | {{ etape }}</li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+
+<div class="first span-30">
+	
+</div>
+
+{% endblock %}
