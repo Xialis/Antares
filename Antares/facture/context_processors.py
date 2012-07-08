@@ -12,5 +12,12 @@ def app_context(request):
             for etape in s_appFacture['etapes']:
                 etapes.append(etape[0])
             appFacture.update({'etapes': etapes})
+            appFacture.update({'etape_no': s_appFacture['etape'] + 1})
+
+        if 'b_creation' in s_appFacture:
+            appFacture.update({'b_creation': s_appFacture['b_creation']})
+
+        if 'client_id' in s_appFacture:
+            appFacture.update({'client_id': s_appFacture['client_id']})
 
     return {'appFacture': appFacture}
