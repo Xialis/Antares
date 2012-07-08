@@ -1,30 +1,34 @@
-{% extends "base.html" %}
+{% extends "facture/base.html" %}
 
-{% block head %}
-{% include "_inc/head_listeClient_dataTable.html" %}
-{% endblock %}
+{% block centernext %}
 
-{% block center %}
-
-<h1>Facture / Pro forma</h1>
-
-<div class="first span-30">
-	<div class="navigation">
-		<ul class="ul_right">
-			<li><a href="{% url facture.func.etapePrecedente %}">Précédent</a></li>
-			<li><a href="{% url facture.func.etapeSuivante %}">Suivant</a></li>
-		</ul>
-		<span>Etapes:</span>
-		<ul class="ul_left">
-			{% for etape in appFacture.etapes %}
-			<li> | {{ etape }}</li>
-			{% endfor %}
-		</ul>
-	</div>
+<div class="first span-8 border">
+	<h2>Client <span>(n°: {{ appFacture.client_id }})</span></h2>
+	<form id="client_formClient" method="POST" action="">{% csrf_token %}
+		<table class="formAsTable">
+		{{ formClient.as_table }}
+		</table>
+		<input type="submit" value="OK" name="ajClient">
+	</form>
 </div>
 
-<div class="first span-30">
-	
+<div class="span-14 last">
+	{% if b_modif %}
+	<div class="warning">
+		Les informations du client seront modifiées à la validation de la facture/pro forma<br />
+		Confirmer ? <a href="">Oui</a> | <a href="">Non</a>
+		<br />
+		<h3>Données originales</h3>
+		<ul>
+			<li>Nom: {{ client_orig.nom }}</li>
+			<li>Prénom: {{ client_orig.prenom }}</li>
+			<li>Téléphone: {{ client_orig.telephone }}</li>
+			<li>Email: {{ client_orig.email }}</li>
+			<li>Organisme: {{ client_orig.organisme }}</li>
+		</ul> 
+	</div>
+	<hr />
+	{% endif %}
 </div>
 
 {% endblock %}

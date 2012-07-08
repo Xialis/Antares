@@ -1,54 +1,36 @@
-{% extends "base.html" %}
+{% extends "facture/base.html" %}
 
 {% block head %}
 {% include "_inc/head_listeClient_dataTable.html" %}
 {% endblock %}
 
-{% block center %}
+{% block centernext %}
 
-<h1>Facture / Pro forma</h1>
-
-<div class="first span-30">
-	<div class="navigation">
-		<ul class="ul_right">
-			<li><a href="{% url facture.func.etapePrecedente %}">Précédent</a></li>
-			<li><a href="{% url facture.func.etapeSuivante %}">Suivant</a></li>
-		</ul>
-		<span>Etapes:</span>
-		<ul class="ul_left">
-			{% for etape in appFacture.etapes %}
-			<li> | {{ etape }}</li>
-			{% endfor %}
-		</ul>
-	</div>
-</div>
-
-<div class="first span-30">
-	<div class="first span-10 border">
-		<h2>Chercher Client</h2>
-		<form id="client_formRechercheClient" method="POST" action="">{% csrf_token %}
-			<table class="formAsTable">
-			{{ formRechercheClient.as_table }}
-			</table>
-			<input type="submit" value="OK" name="reClient">
-			<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>
-		</form>
-	</div>
-	<div class="span-20 last">
-		<h2>Liste <span class="h2info">{{ appClient.b_listeFiltree|yesno:"(filtrée)," }}</span></h2>
-		{% if listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
-		<table id="listeClient" class='tableListing'>
-			<thead>
-				<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
-			</thead>
-			
-			<tbody>
-				
-			</tbody>
+<div class="first span-8 border">
+	<h2>Chercher Client</h2>
+	<form id="client_formRechercheClient" method="POST" action="">{% csrf_token %}
+		<table class="formAsTable">
+		{{ formRechercheClient.as_table }}
 		</table>
-	</div>	
+		<input type="submit" value="OK" name="reClient">
+		<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>
+	</form>
+</div>
+<div class="span-14 last">
+	<h2>Liste <span class="h2info">{{ appClient.b_listeFiltree|yesno:"(filtrée)," }}</span></h2>
+	{% if listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
+	<table id="listeClient" class='tableListing'>
+		<thead>
+			<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
+		</thead>
+		
+		<tbody>
+			
+		</tbody>
+	</table>
+</div>	
 	<hr>
 	<p style="text-align: center;"><a href="{% url facture.func.creerClient %}" class="action">Créer un nouveau client</a></p>	
-</div>
+
 
 {% endblock %}

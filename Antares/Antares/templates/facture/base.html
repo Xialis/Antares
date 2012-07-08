@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block center %}
+
+<h1>Facture / Pro forma</h1>
+
+<div class="first span-30">
+	<div class="navigation">
+		<ul class="ul_right">
+			<span>{{ appFacture.etape_no }} / {{ appFacture.etapes|length }}</span> 
+			<li><a href="{% url facture.func.etapePrecedente %}">Précédent</a></li>
+			<li><a href="{% url facture.func.etapeSuivante %}">Suivant</a></li>
+			<li><a href="{% url facture.func.reset %}">[RESET]</a></li>
+		</ul>
+		<span>Etapes:</span>
+		<ul class="ul_left">
+			{% for etape in appFacture.etapes %}
+			<li> | <a href="" class="{% if forloop.counter == appFacture.etape_no %}active{% endif %}">{{ etape }}</a></li>
+			{% endfor %}
+		</ul>
+	</div>
+</div>
+<div class="first span-22 border">
+{% block centernext %}{% endblock %}
+</div>
+<div class="span-8 last">
+	<h2>En cours...</h2>
+</div>
+{% endblock %}
