@@ -1,0 +1,19 @@
+{% extends "facture/base.html" %}
+
+{% block head %}
+{% include "_inc/head_listeClient_dataTable.html" %}
+{% endblock %}
+
+{% block centernext %}
+
+<div class="first span-22 border">
+	<h2>Prescription</h2>
+	<form id="client_formPrescription" method="POST" action="">{% csrf_token %}
+		<table class="formAsTable">
+		{{ formPrescription.as_table }}
+		</table>
+		<input type="submit" value="OK" name="ajPrescription">
+	</form>
+</div>
+
+{% endblock %}

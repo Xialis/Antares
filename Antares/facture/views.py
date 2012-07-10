@@ -49,12 +49,29 @@ def etapeInfo(request):
         formClient = FormAjoutClient(instance=client)
         b_creation = func.creationClient(True, request)
 
+    ''' Traitement POST '''
     if request.method == 'POST':
 
         if 'ajClient' in request.POST:
             formClient = FormAjoutClient(request.POST, instance=client)
             b_modif = formClient.has_changed()
+            if b_modif == True:
+                func.enrClient(request)
+            else:
+                func.etapeSuivante(request)
+                return func.ctrl(request)
             
+        if 'modClient' in request.POST:
+            func.etapeSuivante(request)
+            return func.ctrl(request)
+        
+        if 'pasModClient' in request.POST:
+            func.effClient(request)
+            func.etapeSuivante(request)
+            return func.ctrl(request)
+            
+    ''' Fin POST '''
+    
     if b_modif:
         client_orig = Client.objects.get(id=request.session['appFacture']['client_id'])
         c['client_orig'] = client_orig

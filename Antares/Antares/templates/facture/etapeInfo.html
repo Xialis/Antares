@@ -3,7 +3,7 @@
 {% block centernext %}
 
 <div class="first span-8 border">
-	<h2>Client <span>(n°: {{ appFacture.client_id }})</span></h2>
+	<h2>Client <span>{% if appFacture.client_id %}(n°: {{ appFacture.client_id }}){% else %}(nouveau){% endif %}</span></h2>
 	<form id="client_formClient" method="POST" action="">{% csrf_token %}
 		<table class="formAsTable">
 		{{ formClient.as_table }}
@@ -16,7 +16,10 @@
 	{% if b_modif %}
 	<div class="warning">
 		Les informations du client seront modifiées à la validation de la facture/pro forma<br />
-		Confirmer ? <a href="">Oui</a> | <a href="">Non</a>
+		Confirmer ? 
+		<form action="" method="POST">{% csrf_token %}
+			<input type="submit" value="Oui" name"modClient" /> | <input type="submit" value="Non" name"pasModClient" />
+		</form>
 		<br />
 		<h3>Données originales</h3>
 		<ul>

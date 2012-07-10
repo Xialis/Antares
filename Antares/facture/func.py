@@ -20,12 +20,34 @@ def creerClient(request):
     return redirect(ctrl)
 
 
+def enrClient(request):
+    if request.method == 'POST':
+        request.session['appFacture']['post_infoClient'] = request.POST
+        request.session.modified = True
+        return True
+
+    return False
+
+
+def effClient(request):
+    if 'post_infoClient' in request.session['appFacture']:
+        del request.session['appFacture']['post_infoClient']
+        request.session.modified = True
+        return True
+    
+    return False
+
+
 def etapePrecedente(request):
-    return None
+    request.session['appFacture']['etape'] -= 1
+    request.session.modified = True
+    return redirect(ctrl)
 
 
 def etapeSuivante(request):
-    return None
+    request.session['appFacture']['etape'] += 1
+    request.session.modified = True
+    return redirect(ctrl)
 
 
 def allerEtape(request, etape):
