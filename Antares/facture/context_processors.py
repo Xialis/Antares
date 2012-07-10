@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from client.models import Client
 
 
 def app_context(request):
@@ -19,5 +20,7 @@ def app_context(request):
 
         if 'client_id' in s_appFacture:
             appFacture.update({'client_id': s_appFacture['client_id']})
+            client = Client.objects.get(id=s_appFacture['client_id'])
+            appFacture.update({'client': client})
 
     return {'appFacture': appFacture}

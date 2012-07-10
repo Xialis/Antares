@@ -25,5 +25,24 @@
 </div>
 <div class="span-8 last">
 	<h2>En cours...</h2>
+	<div class="">
+		<h3>Client</h3>
+		<p>Nouveau client ? : {{ b_creation|yesno:"Oui, Non" }}</p>
+		{% if appFacture.client %}
+		<ul>
+			<li>Nom: {{ appFacture.client.nom }}</li>
+			<li>Prénom: {{ appFacture.client.prenom }}</li>
+			<li>Téléphone: {{ appFacture.client.telephone }}</li>
+			<li>Email: {{ appFacture.client.email }}</li>
+			<li>Organisme: {{ appFacture.client.organisme }}</li>
+		</ul>
+		{% endif %}
+	</div>
+	<hr>
+	<div class="">
+		<h3>Prescription</h3>
+		
+	</div>
+	
 </div>
 {% endblock %}
