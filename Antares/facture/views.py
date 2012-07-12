@@ -5,7 +5,7 @@ from django.contrib import messages
 from django.core.context_processors import csrf
 
 from client.models import Client
-from client.forms import FormRechercheClient, FormAjoutClient
+from client.forms import FormRechercheClient, FormAjoutClient, FormAjoutPrescription
 from client.func import initFiltration, filtration
 
 import func
@@ -84,6 +84,11 @@ def etapeInfo(request):
 
 def etapePrescription(request):
     c = {}
+    formPrescription = FormAjoutPrescription()
     
+    if request.method == 'POST':
+        formPrescription = FormAjoutPrescription(request.POST)
+    
+    c['formPrescription'] = formPrescription
     c.update(csrf(request))
     return render_to_response("facture/etapePrescription.html", c, context_instance=RequestContext(request))
