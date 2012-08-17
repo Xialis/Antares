@@ -58,20 +58,17 @@ def etapeInfo(request):
             if b_modif == True:
                 func.enrClient(request)
             else:
-                func.etapeSuivante(request)
-                return func.ctrl(request)
-            
+                return func.etapeSuivante(request)
+
         if 'modClient' in request.POST:
-            func.etapeSuivante(request)
-            return func.ctrl(request)
-        
+            return func.etapeSuivante(request)
+
         if 'pasModClient' in request.POST:
             func.effClient(request)
-            func.etapeSuivante(request)
-            return func.ctrl(request)
-            
+            return func.etapeSuivante(request)
+
     ''' Fin POST '''
-    
+
     if b_modif:
         client_orig = Client.objects.get(id=request.session['appFacture']['client_id'])
         c['client_orig'] = client_orig
