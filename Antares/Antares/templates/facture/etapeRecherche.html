@@ -13,12 +13,15 @@
 		{{ formRechercheClient.as_table }}
 		</table>
 		<input type="submit" value="OK" name="reClient">
-		<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>
+		{% if appClient.b_listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
 	</form>
+	<hr>
+	<h2>Créer un nouveau client</h2>
+	<p style="text-align: center;"><a href="{% url facture.func.creerClient %}" class="action">Créer un nouveau client</a></p>
 </div>
 <div class="span-14 last">
 	<h2>Liste <span class="h2info">{{ appClient.b_listeFiltree|yesno:"(filtrée)," }}</span></h2>
-	{% if listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
+	{% if appClient.b_listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
 	<table id="listeClient" class='tableListing'>
 		<thead>
 			<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
@@ -29,8 +32,7 @@
 		</tbody>
 	</table>
 </div>	
-	<hr>
-	<p style="text-align: center;"><a href="{% url facture.func.creerClient %}" class="action">Créer un nouveau client</a></p>	
+		
 
 
 {% endblock %}

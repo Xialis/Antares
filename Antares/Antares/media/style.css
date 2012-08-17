@@ -24,6 +24,7 @@ input[type="text"], input[type="checkbox"], select {
   box-shadow: none;
   background-color: #003380;
   color: #5fbcd3;
+  margin: 1px 2px 1px 2px;
 }
 
 input[type="submit"], .action { 
