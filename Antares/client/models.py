@@ -46,10 +46,14 @@ class Prescription(models.Model):
     date_realisation = models.DateField()
     erreur = models.BooleanField()
 
-    sphere = models.DecimalField(max_digits=4, decimal_places=2)
-    cylindre = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
-    addition = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
-    axe = models.DecimalField(max_digits=3, decimal_places=0, blank=True, null=True)
+    sphere_od = models.DecimalField(max_digits=4, decimal_places=2)
+    cylindre_od = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    addition_od = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    axe_od = models.DecimalField(max_digits=3, decimal_places=0, blank=True, null=True)
+    sphere_og = models.DecimalField(max_digits=4, decimal_places=2)
+    cylindre_og = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    addition_og = models.DecimalField(max_digits=4, decimal_places=2, blank=True, null=True)
+    axe_og = models.DecimalField(max_digits=3, decimal_places=0, blank=True, null=True)
 
     def __unicode__(self):
         return self.prescripteur + " c: " + self.client.nom
