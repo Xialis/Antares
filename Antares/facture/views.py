@@ -3,12 +3,14 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib import messages
 from django.core.context_processors import csrf
+from django.forms.formsets import formset_factory
 
 from client.models import Client
 from client.forms import FormRechercheClient, FormAjoutClient, FormAjoutPrescription
 from client.func import initFiltration, filtration
 
 import func
+from facture.forms import LigneForm
 
 
 def etapeRecherche(request):
@@ -84,8 +86,24 @@ def etapePrescription(request):
     formPrescription = FormAjoutPrescription()
     
     if request.method == 'POST':
-        formPrescription = FormAjoutPrescription(request.POST)
+        
+        if 'ajPrescription' in request.POST:
+            formPrescription = FormAjoutPrescription(request.POST)
+            if formPrescription.is_valid():
+                func.enrPrescription(request)
+                return func.etapeSuivante(request)
     
     c['formPrescription'] = formPrescription
     c.update(csrf(request))
     return render_to_response("facture/etapePrescription.html", c, context_instance=RequestContext(request))
+
+
+def etapeVerresMontures(request):
+    c = {}
+    LigneFormSet = formset_factory(LigneForm, extra=6)
+    formSetLigne = LigneFormSet()
+    
+    c['formSetLigne'] = formSetLigne
+    c.update(csrf(request))
+    return render_to_response("facture/etapeVerresMontures.html", c, context_instance=RequestContext(request))
+

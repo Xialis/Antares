@@ -34,7 +34,16 @@ def effClient(request):
         del request.session['appFacture']['post_infoClient']
         request.session.modified = True
         return True
-    
+
+    return False
+
+
+def enrPrescription(request):
+    if request.method == 'POST':
+        request.session['appFacture']['post_Prescription'] = request.POST
+        request.session.modified = True
+        return True
+
     return False
 
 
@@ -73,6 +82,7 @@ def initCtrl(request):
         etapes = [[u"Recherche", views.etapeRecherche],
                    [u"Info client", views.etapeInfo],
                    [u"Prescription", views.etapePrescription],
+                   [u"Verres et Montures", views.etapeVerresMontures],
                 ]
         request.session['appFacture'] = {}
         request.session['appFacture']['etape'] = 0

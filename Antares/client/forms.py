@@ -54,24 +54,38 @@ class FormAjoutPrescription(ModelForm):
 
     def clean(self):
         cd = self.cleaned_data
+        
+        champs = ['axe_od', 'axe_og']
+        for champ in champs:
+            valeur = cd.get(champ)
+            if valeur:
+                if valeur < 0 or valeur >= 180:
+                    msg = u"L'axe doit être compris entre 0 (inclus) et 180 (exclus)"
+                    self._errors[champ] = self.error_class([msg])
+                    del cd[champ]
 
-        sphere = cd.get('sphere')
-        cylindre = cd.get('cylindre')
-        addition = cd.get('addition')
+                if not cd.get('cylindre_' + champ[-2:]):
+                    msg = u"Ce champ est obligatoire (axe spécifié)"
+                    self._errors['cylindre_' + champ[-2:]] = self.error_class([msg])
+                    if cd.get('cylindre_' + champ[-2:]):
+                        del cd['cylindre_' + champ[-2:]]
 
-        if sphere and sphere % Decimal('0.25') != 0:
-            msg = u"Il faut un multiple de 0.25"
-            self._errors['sphere'] = self.error_class([msg])
-            del cd['sphere']
+        champs = ['cylindre_od', 'cylindre_og']
+        for champ in champs:
+            valeur = cd.get(champ)
+            if valeur and not cd.get('axe_' + champ[-2:]):
+                msg = u"Ce champ est obligatoire (cylindre spécifié)"
+                self._errors['axe_' + champ[-2:]] = self.error_class([msg])
+                del cd['axe_' + champ[-2:]]
+                
+        champs = ['sphere_od', 'cylindre_od', 'addition_od', 'sphere_og', 'cylindre_og', 'addition_og']
+        for champ in champs:
+            valeur = cd.get(champ)
+            if valeur and valeur % Decimal('0.25') != 0:
+                msg = u"Il faut un multiple de 0.25"
+                self._errors[champ] = self.error_class([msg])
+                del cd[champ]
 
-        if cylindre and cylindre % Decimal('0.25') != 0:
-            msg = u"Il faut un multiple de 0.25"
-            self._errors['cylindre'] = self.error_class([msg])
-            del cd['cylindre']
-            
-        if addition and addition % Decimal('0.25') != 0:
-            msg = u"Il faut un multiple de 0.25"
-            self._errors['addition'] = self.error_class([msg])
-            del cd['addition']
-
+        
         return cd
+
