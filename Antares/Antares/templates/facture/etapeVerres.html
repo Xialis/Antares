@@ -1,0 +1,90 @@
+{% extends "facture/base.html" %}
+
+{% block head %}
+
+<script>
+
+function update_selects(id, data) {
+	// $('select[name=diametre]')
+	champs = ["-diametre", "-couleur", "-traitement"];
+	
+	for(var index in champs) {
+		sname = "form-"+id+champs[index]
+		select = $('select[name='+ sname + ']');
+		select.find('option').remove();
+    	select.append($('<option value="">-------</option>'));
+    	for (var i in data[index]) {
+        	select.append($('<option value="'+data[index][i][0]+'">'+data[index][i][1]+'</option>'));
+    	}
+    	
+    }
+	
+}
+
+$(document).ready(function() {
+	
+	$('select[name$=vtype]').live('change', function(e) {
+			
+			id = $(this).attr("name").substr(5, 1)
+			$.get(
+	            '{% url facture.views.ajax_filtre %}',
+	            {
+	                'vtype': $(this).val(),
+	            },
+	            function(data, textStatus, jqXHR) {
+	                update_selects(id, data);
+	            },
+	            'json'
+	        );
+	        
+			
+	    });
+});
+</script>
+{% endblock %}
+
+{% block centernext %}
+
+<div class="first span-22 border">
+	<h2>Verres</h2>
+	<div class="aide">Selectionner le Type en premier.</div>
+	<form id="facture_formVerres" method="POST" action="">{% csrf_token %}
+	{{ formSetLigne.management_form }}
+		{% for form in formSetLigne %}
+		
+		{% if forloop.counter0|divisibleby:2 %}
+		{% if forloop.counter0 != 0 %}
+		</table>
+		{% endif %}
+		<div class="tableTitle">Monture {{ forloop.counter }}</div>
+		<table class="formAsHorTable">
+			<tr>
+				<th>Oeil</th>
+				<th>{{ form.vtype.label_tag }}</th>
+				<th>{{ form.diametre.label_tag }}</th>
+				<th>{{ form.couleur.label_tag }}</th>
+				<th>{{ form.traitement.label_tag }}</th>
+				<th>{{ form.tarif.label_tag }}</th>
+			</tr>
+		{% endif %}
+			
+			<tr>
+				<td>{% cycle 'OD' 'OG' %}</td>
+				<td>{{ form.vtype.errors }}{{ form.vtype }}</td>
+				<td>{{ form.diametre.errors }}{{ form.diametre }}</td>
+				<td>{{ form.couleur.errors }}{{ form.couleur }}</td>
+				<td>{{ form.traitement.errors }}{{ form.traitement }}</td>
+				<td>{{ form.tarif.errors }}{{ form.tarif }}</td>
+			</tr>
+		
+		{% endfor %}
+		</table>
+		<input type="submit" value="OK" name="ajVerres">
+	</form>
+	<br />
+	<hr />
+	<h2>Recherche</h2>
+	{% include "fournisseur/_RechercheVerres.html" with form=formRechercheVerres %}
+</div>
+
+{% endblock %}
