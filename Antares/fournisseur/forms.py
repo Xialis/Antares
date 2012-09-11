@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.forms import ModelForm, ModelMultipleChoiceField, CheckboxSelectMultiple, CharField, HiddenInput
+from django.forms import Form, ModelForm, ModelMultipleChoiceField, CheckboxSelectMultiple, CharField, HiddenInput, BooleanField
 from fournisseur.models import Fournisseur, Type, Traitement, Diametre, Couleur
 
 
@@ -103,3 +103,14 @@ class CouleurForm(ModelForm):
         msg = u"Ce nom existe déjà pour ce fournisseur"
         self._errors['nom'] = self.error_class([msg])
         return self
+
+
+class RechercheVerresForm(Form):
+    error_css_class = 'error'
+    required_css_class = 'required'
+    vtype = ModelMultipleChoiceField(label=u"Type", queryset=Type.objects.all(), widget=CheckboxSelectMultiple(), required=False)
+    diametre = ModelMultipleChoiceField(queryset=Diametre.objects.all(), widget=CheckboxSelectMultiple(), required=False)
+    traitement = ModelMultipleChoiceField(queryset=Traitement.objects.all(), widget=CheckboxSelectMultiple(), required=False)
+    couleur = ModelMultipleChoiceField(queryset=Couleur.objects.all(), widget=CheckboxSelectMultiple(), required=False)
+    stock = BooleanField(label=u"Stock ?", required=False)
+    fournisseur = ModelMultipleChoiceField(label=u"Limiter fournisseur", queryset=Fournisseur.objects.all(), widget=CheckboxSelectMultiple(), required=False)

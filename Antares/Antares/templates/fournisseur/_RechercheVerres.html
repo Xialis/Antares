@@ -1,0 +1,18 @@
+<form action="" method="POST">{% csrf_token %}
+	<table class='formAsHorTable'>
+		<tr>{% for f in form %}
+			<th>{{ f.label_tag }}</th>
+			{% endfor %}
+		</tr>
+		<tr>{% for f in form %}
+			<td>{{ f }}</td>
+			{% endfor %}
+		</tr>
+	</table>
+	<input type="submit" value="Chercher" name="chVerres" />
+</form>
+
+{% if listeRV %}
+<div class="tableTitle">Résultats ({{ listeRV|length }})</div>
+{% include "fournisseur/_table_listType.html" with listType=listeRV %}
+{% endif %}

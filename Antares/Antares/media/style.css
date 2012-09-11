@@ -4,6 +4,9 @@ h2, h3 { color: #5fbcd3; margin: 5px 0 5px 0; text-shadow:2px 2px 2px #0044AA;}
 .border { border-right-color: #002255; }
 hr {background:#002255;color:#002255; }
 
+div.tableTitle { font-weight: bold; color: #B3D7E3; }
+
+
 /* topmenu */
 #topmenu { background-color: #0d2d51; margin-bottom: 5px;}
 #topmenu ul { display: inline; list-style: none; }
@@ -79,6 +82,15 @@ table.formAsTable tr.error { background: none };
 
 table.tableListing td { border-bottom: 1px solid #1c6fcd; vertical-align: middle;}
 table.tableListing td ul { margin-bottom: 0; }
+
+
+/* table formAsHorTable */
+table.formAsHorTable { border-collapse: separate; border-spacing: 2px;}
+table.formAsHorTable td, table.formAsHorTable th { border: 1px solid #1c6fcd; }
+table.formAsHorTable th { background-color: #0d2d51; }
+table.formAsHorTable td { background-color: none; }
+
+table.formAsHorTable ul.errorlist {padding:0;margin:0;border:0px solid #ddd;}
 
 
 /* popbox */

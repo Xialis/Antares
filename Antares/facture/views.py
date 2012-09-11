@@ -4,10 +4,16 @@ from django.template import RequestContext
 from django.contrib import messages
 from django.core.context_processors import csrf
 from django.forms.formsets import formset_factory
+from django.http import HttpResponse
+from django.utils import simplejson
 
 from client.models import Client
 from client.forms import FormRechercheClient, FormAjoutClient, FormAjoutPrescription
 from client.func import initFiltration, filtration
+
+from fournisseur.forms import RechercheVerresForm
+from fournisseur.func import RechercheVerres
+from fournisseur.models import Type, Diametre, Traitement, Couleur
 
 import func
 from facture.forms import LigneForm
@@ -98,12 +104,73 @@ def etapePrescription(request):
     return render_to_response("facture/etapePrescription.html", c, context_instance=RequestContext(request))
 
 
-def etapeVerresMontures(request):
+def etapeVerres(request):
     c = {}
+
     LigneFormSet = formset_factory(LigneForm, extra=6)
     formSetLigne = LigneFormSet()
+    formSetLigne.forms[0].empty_permitted = False
+    
+    formRechercheVerres = RechercheVerresForm()
+    
+    if request.method == 'POST':
+        
+        if 'ajVerres' in request.POST:
+            formSetLigne = LigneFormSet(request.POST)
+            formSetLigne.forms[0].empty_permitted = False
+            
+            if formSetLigne.is_valid():
+                func.enrVerres(request)
+                return func.etapeSuivante(request)
+            
+            ''' Si le formulaire est rempli ou en partie on filtre les champs '''
+            formSetLigne = LigneFormSet(request.POST)  # Si on ne refait pas un formset, le is_valid casse tout...
+            formSetLigne.forms[0].empty_permitted = False
+            for form in formSetLigne:
+                chdata = form._get_changed_data()
+                if 'vtype' in chdata:
+                    form.filtre_vtype(form._raw_value('vtype'))
+                
+        if 'chVerres' in request.POST:
+            formRechercheVerres = RechercheVerresForm(request.POST)
+            c['listeRV'] = RechercheVerres(formRechercheVerres)
     
     c['formSetLigne'] = formSetLigne
+    c['formRechercheVerres'] = formRechercheVerres
     c.update(csrf(request))
-    return render_to_response("facture/etapeVerresMontures.html", c, context_instance=RequestContext(request))
+    return render_to_response("facture/etapeVerres.html", c, context_instance=RequestContext(request))
 
+
+def ajax_filtre(request, qs=None):
+    if qs is None:
+        qs = []
+
+    if request.GET.get('vtype'):
+        diametres = Diametre.objects.filter(type__pk=request.GET.get('vtype'))
+        couleurs = Couleur.objects.filter(type__pk=request.GET.get('vtype'))
+        traitements = Traitement.objects.filter(type__pk=request.GET.get('vtype'))
+
+    data = []
+    results = []
+    for choice in diametres:
+        results.append((choice.pk, choice.nom))
+    data.append(results)
+
+    results = []
+    for choice in couleurs:
+        results.append((choice.pk, choice.nom))
+    data.append(results)
+
+    results = []
+    for choice in traitements:
+        results.append((choice.pk, choice.nom))
+    data.append(results)
+
+    return HttpResponse(simplejson.dumps(data))
+
+
+def etapeMontures(request):
+    c = {}
+    
+    c.update(csrf(request))
+    return render_to_response("facture/etapeMontures.html", c, context_instance=RequestContext(request))

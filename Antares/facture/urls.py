@@ -7,5 +7,6 @@ urlpatterns = patterns('facture',
         url(r'^etapeSuivante/', 'func.etapeSuivante'),
         url(r'^etapePrecedente/', 'func.etapePrecedente'),
         url(r'^etape/(?P<etape>\d+)/', 'func.allerEtape'),
+        url(r'ajax_filtre/$', 'views.ajax_filtre', {}, 'ajax_filtre'),
         url(r'^reset', 'func.reset'),
         )

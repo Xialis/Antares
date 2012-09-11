@@ -11,6 +11,7 @@ encoding//facture/func.py=utf-8
 encoding//facture/models.py=utf-8
 encoding//facture/views.py=utf-8
 encoding//fournisseur/forms.py=utf-8
+encoding//fournisseur/func.py=utf-8
 encoding//fournisseur/helpers.py=utf-8
 encoding//fournisseur/models.py=utf-8
 encoding//fournisseur/views.py=utf-8

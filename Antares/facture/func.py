@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import redirect
-from facture import views
+from facture.views import *
 
 
 def utiliserClient(request, cid):
@@ -47,6 +47,15 @@ def enrPrescription(request):
     return False
 
 
+def enrVerres(request):
+    if request.method == 'POST':
+        request.session['appFacture']['post_Verres'] = request.POST
+        request.session.modified = True
+        return True
+
+    return False
+
+
 def etapePrecedente(request):
     request.session['appFacture']['etape'] -= 1
     request.session.modified = True
@@ -79,10 +88,11 @@ def creationClient(b_creation, request):
 def initCtrl(request):
 
     if not 'appFacture' in request.session:
-        etapes = [[u"Recherche", views.etapeRecherche],
-                   [u"Info client", views.etapeInfo],
-                   [u"Prescription", views.etapePrescription],
-                   [u"Verres et Montures", views.etapeVerresMontures],
+        etapes = [[u"Recherche", etapeRecherche],
+                   [u"Info client", etapeInfo],
+                   [u"Prescription", etapePrescription],
+                   [u"Verres", etapeVerres],
+                   [u"Montures", etapeMontures]
                 ]
         request.session['appFacture'] = {}
         request.session['appFacture']['etape'] = 0
