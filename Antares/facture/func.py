@@ -10,6 +10,18 @@ def utiliserClient(request, cid):
     return redirect(ctrl)
 
 
+def creationClient(b_creation, request):
+    request.session['appFacture']['b_creation'] = b_creation
+    request.session.modified = True
+    return b_creation
+
+
+def modificationClient(b_modification, request):
+    request.session['appFacture']['b_modification'] = b_modification
+    request.session.modified = True
+    return b_modification
+
+
 def creerClient(request):
     if 'appFacture' in request.session:
         del request.session['appFacture']
@@ -20,9 +32,9 @@ def creerClient(request):
     return redirect(ctrl)
 
 
-def enrClient(request):
+def enrClient(client, request):
     if request.method == 'POST':
-        request.session['appFacture']['post_infoClient'] = request.POST
+        request.session['appFacture']['client'] = client
         request.session.modified = True
         return True
 
@@ -31,7 +43,7 @@ def enrClient(request):
 
 def effClient(request):
     if 'post_infoClient' in request.session['appFacture']:
-        del request.session['appFacture']['post_infoClient']
+        del request.session['appFacture']['client']
         request.session.modified = True
         return True
 
@@ -77,12 +89,6 @@ def reset(request):
         del request.session['appFacture']
 
     return redirect(ctrl)
-
-
-def creationClient(b_creation, request):
-    request.session['appFacture']['b_creation'] = b_creation
-    request.session.modified = True
-    return b_creation
 
 
 def initCtrl(request):

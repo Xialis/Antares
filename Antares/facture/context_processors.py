@@ -18,9 +18,16 @@ def app_context(request):
         if 'b_creation' in s_appFacture:
             appFacture.update({'b_creation': s_appFacture['b_creation']})
 
+        if 'b_modification' in s_appFacture:
+            appFacture.update({'b_modification': s_appFacture['b_modification']})
+
         if 'client_id' in s_appFacture:
             appFacture.update({'client_id': s_appFacture['client_id']})
             client = Client.objects.get(id=s_appFacture['client_id'])
+            appFacture.update({'client': client})
+
+        if 'client' in s_appFacture:
+            client = s_appFacture['client']
             appFacture.update({'client': client})
 
     return {'appFacture': appFacture}

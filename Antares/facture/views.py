@@ -52,32 +52,60 @@ def etapeInfo(request):
     formClient = FormAjoutClient()
     b_modif = False
 
+    # Client existant ou non ?
     if 'client_id' in request.session['appFacture']:
+        # Client existant selectionné
         client = Client.objects.get(id=request.session['appFacture']['client_id'])
         formClient = FormAjoutClient(instance=client)
+        b_creation = func.creationClient(False, request)
+    else:
+        # Nouveau Client
         b_creation = func.creationClient(True, request)
 
-    ''' Traitement POST '''
+    # =============================
+    # Traitement POST
     if request.method == 'POST':
 
         if 'ajClient' in request.POST:
-            formClient = FormAjoutClient(request.POST, instance=client)
-            b_modif = formClient.has_changed()
-            if b_modif == True:
-                func.enrClient(request)
-            else:
-                return func.etapeSuivante(request)
+            if b_creation:
+                # Création d'un nouveau client
+                formClient = FormAjoutClient(request.POST)
+                if formClient.is_valid():
+                    client = formClient.save(commit=False)
+                    func.enrClient(client, request)
+                    return func.etapeSuivante(request)
 
-        if 'modClient' in request.POST:
+            else:
+                # Le client existe déjà
+                formClient = FormAjoutClient(request.POST, instance=client)
+                if formClient.is_valid():
+                    b_modif = formClient.has_changed()
+                    if b_modif == True:
+                        client = formClient.save(commit=False)
+                        func.enrClient(client, request)
+                        # On réaffiche la page pour validation modification
+                        # (post modClient, pasModClient)
+                    else:
+                        # Le client_id est enregistré (étape précédente).
+                        return func.etapeSuivante(request)
+
+        elif 'modClient' in request.POST:
+            # id du client à modifier et objet Client enregistré
+            func.modificationClient(True, request)
             return func.etapeSuivante(request)
 
-        if 'pasModClient' in request.POST:
+        elif 'pasModClient' in request.POST:
+            # Suppresion de l'objet Client modifié
+            # Utilisation du client_id
+            func.modificationClient(False, request)
             func.effClient(request)
             return func.etapeSuivante(request)
 
-    ''' Fin POST '''
+    # Fin POST
+    # =============================
 
     if b_modif:
+        # Demande de confirmation, réaffichage de la page
         client_orig = Client.objects.get(id=request.session['appFacture']['client_id'])
         c['client_orig'] = client_orig
 
