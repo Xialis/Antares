@@ -10,12 +10,12 @@ class LigneForm(ModelForm):
     required_css_class = 'required'
     
     diametre = ModelChoiceField(queryset=Diametre.objects.none())
-    couleur = ModelChoiceField(queryset=Couleur.objects.none())
-    traitement = ModelChoiceField(queryset=Traitement.objects.none())
+    couleur = ModelChoiceField(queryset=Couleur.objects.none(), required=False)
+    traitement = ModelChoiceField(queryset=Traitement.objects.none(), required=False)
     
     class Meta:
         model = LigneFacture
-        exclude = ('facture', 'monture', 'oeil')
+        exclude = ('facture', 'monture', 'oeil', 'tarif')
 
     def filtre_vtype(self, vtype):
         self.fields['diametre'].queryset = Diametre.objects.filter(type=vtype)

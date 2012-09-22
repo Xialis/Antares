@@ -26,8 +26,8 @@ class LigneFacture(models.Model):
     oeil = models.CharField(max_length=1, choices=OEIL)
     vtype = models.ForeignKey('fournisseur.Type', verbose_name="type")
     diametre = models.ForeignKey('fournisseur.Diametre')
-    couleur = models.ForeignKey('fournisseur.Couleur')
-    traitement = models.ForeignKey('fournisseur.Traitement')
+    couleur = models.ForeignKey('fournisseur.Couleur', blank=True, null=True)
+    traitement = models.ForeignKey('fournisseur.Traitement', blank=True, null=True)
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
 
 
