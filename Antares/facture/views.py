@@ -118,15 +118,16 @@ def etapeInfo(request):
 def etapePrescription(request):
     c = {}
     formPrescription = FormAjoutPrescription()
-    
+
     if request.method == 'POST':
-        
+
         if 'ajPrescription' in request.POST:
             formPrescription = FormAjoutPrescription(request.POST)
             if formPrescription.is_valid():
-                func.enrPrescription(request)
+                prescription = formPrescription.save(commit=False)
+                func.enrPrescription(prescription, request)
                 return func.etapeSuivante(request)
-    
+
     c['formPrescription'] = formPrescription
     c.update(csrf(request))
     return render_to_response("facture/etapePrescription.html", c, context_instance=RequestContext(request))

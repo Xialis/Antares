@@ -50,9 +50,9 @@ def effClient(request):
     return False
 
 
-def enrPrescription(request):
+def enrPrescription(prescription, request):
     if request.method == 'POST':
-        request.session['appFacture']['post_Prescription'] = request.POST
+        request.session['appFacture']['prescription'] = prescription
         request.session.modified = True
         return True
 
