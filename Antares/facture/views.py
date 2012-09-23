@@ -7,8 +7,8 @@ from django.forms.formsets import formset_factory
 from django.http import HttpResponse
 from django.utils import simplejson
 
-from client.models import Client
-from client.forms import FormRechercheClient, FormAjoutClient, FormAjoutPrescription
+from client.models import Client, Prescription
+from client.forms import FormRechercheClient, FormAjoutClient, FormAjoutPrescription, FormAjoutPrescripteur
 from client.func import initFiltration, filtration
 
 from fournisseur.forms import RechercheVerresForm
@@ -118,6 +118,9 @@ def etapeInfo(request):
 def etapePrescription(request):
     c = {}
     formPrescription = FormAjoutPrescription()
+    formAjoutPrescripteur = FormAjoutPrescripteur(prefix="ajPrescripteur")
+    if request.session['appFacture']['client_id']:
+        c['listePrescriptions'] = Prescription.objects.filter(client=request.session['appFacture']['client_id'])
 
     if request.method == 'POST':
 
@@ -128,7 +131,16 @@ def etapePrescription(request):
                 func.enrPrescription(prescription, request)
                 return func.etapeSuivante(request)
 
+        elif 'ajPrescripteur-nom' in request.POST:
+            formAjoutPrescripteur = FormAjoutPrescripteur(request.POST, prefix="ajPrescripteur")
+            if formAjoutPrescripteur.is_valid():
+                formAjoutPrescripteur.save()
+                #On recharge le formulaire de prescription
+                formPrescription = FormAjoutPrescription()
+                formAjoutPrescripteur = FormAjoutPrescripteur(prefix="ajPrescripteur")
+
     c['formPrescription'] = formPrescription
+    c['formAjoutPrescripteur'] = formAjoutPrescripteur
     c.update(csrf(request))
     return render_to_response("facture/etapePrescription.html", c, context_instance=RequestContext(request))
 
