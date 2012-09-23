@@ -63,6 +63,7 @@ div.dataTables_paginate a.paginate_active {
   background-color: #0044AA;
 }
 
+
 /*table formAsTable */
 
 
@@ -75,7 +76,7 @@ table.formAsTable td ul li { display: inline; margin-right: 10px;}
 table.formAsTable tr.required label:after { content: "*"; color: red;}
 
 table.formAsTable ul.errorlist {padding:0;margin:0;border:0px solid #ddd;}
-table.formAsTable tr.error { background: none };
+table.formAsTable tr.error { background: none; }
 
 
 /*table tableListing */
@@ -123,3 +124,15 @@ div.navigation ul { margin: 3px 3px 3px 3px; display: inline; }
 div.navigation ul li { display: inline; margin-left: 3px;}
 div.navigation ul.ul_right { float: right; }
 div.navigation a.active { color: yellow; font-weight: bold; }
+
+
+/* hack-support jquery-ui */
+
+.ui-widget { font-size: inherit; }
+.ui-widget p { position: relative; margin: 2px 2px 2px 2px; padding-left: 25px;}
+.ui-widget p span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+.ui-widget thead th { background: none; }
+
+.l-button {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
+.l-button span.ui-icon { float: left; margin: 0 .3em 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+.l-button, .l-button:hover { color: white; }

@@ -2,18 +2,107 @@
 
 {% block head %}
 {% include "_inc/head_datepicker.html" %}
+
+<script>
+
+$(document).ready(function(e){
+
+	$("#dialog-form").dialog({
+		modal: true,
+		autoOpen: false,
+		title: "Ajouter un prescripteur",
+		width:'auto',
+	});
+	
+	$("a#btAjPrescripteur").click(function(e) {
+	    e.preventDefault();
+	    var id = $(this).attr('id');
+	    $("#dialog-form").dialog('option', 'buttons', {
+	        "Ajouter": function() {
+	            //post du form
+	            $("#facture_ajPrescripteur").submit();
+	            $(this).dialog("close");
+	        },
+	        "Annuler": function() {
+	            $(this).dialog("close");
+	        }
+	    });
+	    $("#dialog-form").dialog("open");
+	    return false;
+	});
+	
+
+});
+
+</script>
+
 {% endblock %}
 
 {% block centernext %}
 
+<div id="dialog-form">
+	<form id="facture_ajPrescripteur" action="" method="POST">
+		<table class="formAsTable">{% csrf_token %}
+		{{ formAjoutPrescripteur.as_table }}
+		</table>
+	</form>
+	<div class="ui-widget">
+		<div class="ui-state-error ui-corner-all">
+			<p><span class="ui-icon ui-icon-alert"></span>
+			Attention, l'ajout est immédiat.</p>
+		</div>
+	</div>
+</div>
+
 <div class="first span-22 border">
 	<h2>Prescription</h2>
+	<p>
+		<a href="" class="l-button ui-state-default ui-corner-all" id="btAjPrescripteur"><span class="ui-icon ui-icon-circle-plus" ></span>Ajouter un prescripteur</a>
+	</p>
 	<form id="client_formPrescription" method="POST" action="">{% csrf_token %}
 		<table class="formAsTable">
 		{{ formPrescription.as_table }}
 		</table>
-		<input type="submit" value="OK" name="ajPrescription">
+		<p>
+			<a href="#" onclick="submitForm('#client_formPrescription', 'ajPrescription')" class="l-button ui-state-default ui-corner-all" id="btAjPrescription"><span class="ui-icon ui-icon-circle-check" ></span>Continuer</a>
+		</p>
 	</form>
+	<br>
+	<h2>Liste de Prescriptions</h2>
+	{% if listePrescriptions %}
+	<table>
+		<tr>
+			<th>Prescripteur</th>
+			<th>Date de réalisation</th>
+			<th>Erreur ?</th>
+			<th>Sphere OD</th>
+			<th>Cylindre OD</th>
+			<th>Addition OD</th>
+			<th>Axe OD</th>
+			<th>Sphere OG</th>
+			<th>Cylindre OG</th>
+			<th>Addition OG</th>
+			<th>Axe OG</th>
+			<th>Action</th>
+		</tr>
+		{% for p in listePrescriptions %}
+		<tr>
+			<td>{{ p.prescripteur }}</td>
+			<td>{{ p.date_realisation }}</td>
+			<td>{{ p.erreur }}</td>
+			<td>{{ p.sphere_od }}</td>
+			<td>{{ p.cylindre_od }}</td>
+			<td>{{ p.addition_od }}</td>
+			<td>{{ p.axe_od }}</td>
+			<td>{{ p.sphere_og }}</td>
+			<td>{{ p.cylindre_og }}</td>
+			<td>{{ p.addition_og }}</td>
+			<td>{{ p.axe_og }}</td>
+			<td>Charger</td>
+		</tr>
+		{% endfor %}
+	</table>
+	{% endif %}
 </div>
 
 {% endblock %}
