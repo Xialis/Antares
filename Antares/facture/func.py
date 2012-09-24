@@ -42,7 +42,7 @@ def enrClient(client, request):
 
 
 def effClient(request):
-    if 'post_infoClient' in request.session['appFacture']:
+    if 'client' in request.session['appFacture']:
         del request.session['appFacture']['client']
         request.session.modified = True
         return True
