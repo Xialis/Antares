@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load antares_tags %}
 {% block center %}
 
 <h1>Facture / Pro forma</h1>
@@ -10,7 +10,7 @@
 			<span>{{ appFacture.etape_no }} / {{ appFacture.etapes|length }}</span> 
 			<li><a href="{% url facture.func.etapePrecedente %}">Précédent</a></li>
 			<li><a href="{% url facture.func.etapeSuivante %}">Suivant</a></li>
-			<li><a href="{% url facture.func.reset %}">[RESET]</a></li>
+			<li>{% bt "facture.func.reset" "a_reset" "ui-icon-trash" "RESET" %}</li>
 		</ul>
 		<span>Etapes:</span>
 		<ul class="ul_left">

@@ -1,4 +1,5 @@
 {% extends "facture/base.html" %}
+{% load antares_tags %}
 
 {% block head %}
 {% include "_inc/head_datepicker.html" %}
@@ -57,14 +58,14 @@ $(document).ready(function(e){
 <div class="first span-22 border">
 	<h2>Prescription</h2>
 	<p>
-		<a href="" class="l-button ui-state-default ui-corner-all" id="btAjPrescripteur"><span class="ui-icon ui-icon-circle-plus" ></span>Ajouter un prescripteur</a>
+		{% bt "" "btAjPrescripteur" "ui-icon-circle-plus" "Ajouter un prescripteur" %}
 	</p>
 	<form id="client_formPrescription" method="POST" action="">{% csrf_token %}
 		<table class="formAsTable">
 		{{ formPrescription.as_table }}
 		</table>
 		<p>
-			<a href="#" onclick="submitForm('#client_formPrescription', 'ajPrescription')" class="l-button ui-state-default ui-corner-all" id="btAjPrescription"><span class="ui-icon ui-icon-circle-check" ></span>Continuer</a>
+			{% sbt "#client_formPrescription" "ajPrescription" "ajPrescription" "ui-icon-circle-check" "Continuer" %}
 		</p>
 	</form>
 	<br>
