@@ -49,17 +49,35 @@ def etapeRecherche(request):
 
 def etapeInfo(request):
     c = {}
-    formClient = FormAjoutClient()
+    formClient = None
     b_modif = False
 
+    # =============================
+    # Restauration sur GET
+    if request.method == 'GET' and 'appFacture' in request.session:
+        saf = request.session['appFacture']
+
+        if 'client' in saf:
+            # On a déjà les infos du client (nouveau ou modif sur existant)
+            b_creation = saf['b_creation']
+            formClient = FormAjoutClient(instance=saf['client'])
+            if b_creation:
+                b_modif = False
+            else:
+                b_modif = True
+
+    # Fin restauration
+    # =============================
+
     # Client existant ou non ?
-    if 'client_id' in request.session['appFacture']:
+    if 'client_id' in request.session['appFacture'] and formClient is None:
         # Client existant selectionné
         client = Client.objects.get(id=request.session['appFacture']['client_id'])
         formClient = FormAjoutClient(instance=client)
         b_creation = func.creationClient(False, request)
-    else:
+    elif formClient is None:
         # Nouveau Client
+        formClient = FormAjoutClient()
         b_creation = func.creationClient(True, request)
 
     # =============================
