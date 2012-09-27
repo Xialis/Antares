@@ -1,4 +1,5 @@
 {% extends "facture/base.html" %}
+{% load antares_tags %}
 
 {% block centernext %}
 
@@ -8,7 +9,9 @@
 		<table class="formAsTable">
 		{{ formClient.as_table }}
 		</table>
-		<input type="submit" value="OK" name="ajClient">
+		<p>
+			{% sbt "#client_formClient" "ajClient" "ajClient" "ui-icon-circle-check" "Continuer" %}
+		</p>
 	</form>
 </div>
 
@@ -17,8 +20,8 @@
 	<div class="warning">
 		Les informations du client seront modifiées à la validation de la facture/pro forma<br />
 		Confirmer ? 
-		<form action="" method="POST">{% csrf_token %}
-			<input type="submit" value="Oui" name="modClient"> | <input type="submit" value="Non" name="pasModClient">
+		<form id="facture_formValidation" action="" method="POST">{% csrf_token %}
+			{% sbt "#facture_formValidation" "modClient" "modClient" "ui-icon-circle-check" "Oui" %} | {% sbt "#facture_formValidation" "pasModClient" "pasModClient" "ui-icon-circle-close" "Non" %}
 		</form>
 		<br />
 		<h3>Données originales</h3>

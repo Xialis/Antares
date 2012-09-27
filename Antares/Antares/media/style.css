@@ -42,6 +42,13 @@ input[type="submit"], .action {
 }
 input[type="submit"]:hover, .action:hover { background-color: #008000; color: white;}
 
+fieldset {
+  border-radius: 5px;
+  border: 1px solid #1c6fcd;
+}
+
+fieldset legend { padding-left: 5px; padding-right: 5px; } 
+
 /* lien */
 div.dataTables_paginate a {
   border: 0px solid black;
@@ -73,7 +80,8 @@ table.formAsTable th { border-color: #0d2d51; border-top-left-radius: 8px; borde
 table.formAsTable td ul { margin-bottom: 0; }
 table.formAsTable td ul li { display: inline; margin-right: 10px;}
 
-table.formAsTable tr.required label:after { content: "*"; color: red;}
+table.formAsTable tr.required label:after,
+table.formAsTable th.required label:after { content: "*"; color: red;}
 
 table.formAsTable ul.errorlist {padding:0;margin:0;border:0px solid #ddd;}
 table.formAsTable tr.error { background: none; }
@@ -89,10 +97,12 @@ table.tableListing td ul { margin-bottom: 0; }
 table.formAsHorTable { border-collapse: separate; border-spacing: 2px;}
 table.formAsHorTable td, table.formAsHorTable th { border: 1px solid #1c6fcd; }
 table.formAsHorTable th { background-color: #0d2d51; }
+table.formAsHorTable th.required:after { content: "*"; color: red;}
 table.formAsHorTable td { background-color: none; }
 
 table.formAsHorTable ul.errorlist {padding:0;margin:0;border:0px solid #ddd;}
 
+table.prescriptionForm input { width: 6em; }
 
 /* popbox */
 

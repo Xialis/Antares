@@ -8,8 +8,8 @@
 	<div class="navigation">
 		<ul class="ul_right">
 			<span>{{ appFacture.etape_no }} / {{ appFacture.etapes|length }}</span> 
-			<li><a href="{% url facture.func.etapePrecedente %}">Précédent</a></li>
-			<li><a href="{% url facture.func.etapeSuivante %}">Suivant</a></li>
+			<li>{% bt "facture.func.etapePrecedente" "a_prec" "ui-icon-seek-prev" "Précédent" %}</a></li>
+			<li>{% bt "facture.func.etapeSuivante" "a_suiv" "ui-icon-seek-next" "Suivant" %}</a></li>
 			<li>{% bt "facture.func.reset" "a_reset" "ui-icon-trash" "RESET" %}</li>
 		</ul>
 		<span>Etapes:</span>

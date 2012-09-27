@@ -13,6 +13,8 @@ $(document).ready(function(e){
 		autoOpen: false,
 		title: "Ajouter un prescripteur",
 		width:'auto',
+		show: 'fold',
+		hide: 'explode',
 	});
 	
 	$("a#btAjPrescripteur").click(function(e) {
@@ -32,6 +34,7 @@ $(document).ready(function(e){
 	    return false;
 	});
 	
+	$("#id_prescripteur").chosen({no_results_text: "Aucun résultat..."});
 
 });
 
@@ -57,13 +60,37 @@ $(document).ready(function(e){
 
 <div class="first span-22 border">
 	<h2>Prescription</h2>
-	<p>
-		{% bt "" "btAjPrescripteur" "ui-icon-circle-plus" "Ajouter un prescripteur" %}
-	</p>
 	<form id="client_formPrescription" method="POST" action="">{% csrf_token %}
-		<table class="formAsTable">
-		{{ formPrescription.as_table }}
-		</table>
+		<fieldset>
+			<legend>Infos prescription</legend>
+			<table class="formAsTable">
+				<tr>
+					<th {% if formPrescription.prescripteur.field.required %}class="required"{% endif %}>{{ formPrescription.prescripteur.label_tag }}</th><td>{{ formPrescription.prescripteur }}</td>
+					<th {% if formPrescription.date_realisation.field.required %}class="required"{% endif %}>{{ formPrescription.date_realisation.label_tag }}</th><td>{{ formPrescription.date_realisation }}</td>
+				</tr>
+			</table>
+			<p>
+				{% bt "" "btAjPrescripteur" "ui-icon-circle-plus" "Ajouter un prescripteur" %}
+			</p>
+		</fieldset>
+		<fieldset>
+			<legend>Prescription</legend>
+			<table class="formAsHorTable prescriptionForm">
+				<tr>
+					<th>Oeil</th><th class="required">Sphère</th><th>Cylindre</th><th>Addition</th><th>Axe</th>
+				</tr>
+				<tr>
+					<th>OD</th>
+					<td>{{ formPrescription.sphere_od.errors }}{{ formPrescription.sphere_od }}</td><td>{{ formPrescription.cylindre_od.errors }}{{ formPrescription.cylindre_od }}</td>
+					<td>{{ formPrescription.addition_od.errors }}{{ formPrescription.addition_od }}</td><td>{{ formPrescription.axe_od.errors }}{{ formPrescription.axe_od }}</td>
+				</tr>
+				<tr>
+					<th>OG</th>
+					<td>{{ formPrescription.sphere_og.errors }}{{ formPrescription.sphere_og }}</td><td>{{ formPrescription.cylindre_og.errors }}{{ formPrescription.cylindre_og }}</td>
+					<td>{{ formPrescription.addition_og.errors }}{{ formPrescription.addition_og }}</td><td>{{ formPrescription.axe_og.errors }}{{ formPrescription.axe_og }}</td>
+				</tr>
+			</table>
+		</fieldset>
 		<p>
 			{% sbt "#client_formPrescription" "ajPrescription" "ajPrescription" "ui-icon-circle-check" "Continuer" %}
 		</p>
