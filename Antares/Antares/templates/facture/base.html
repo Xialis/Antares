@@ -44,6 +44,12 @@
 	<hr>
 	<div class="">
 		<h3>Prescription</h3>
+		<p>Possibilités:
+			<ul>
+				<li>OD: {% if appFacture.progressif_od == True %}VL, VP, Progressif{% elif appFacture.progressif_od != None %}VL, VP{% else %}Pas encore définies{% endif %}</li>
+				<li>OG: {% if appFacture.progressif_og == True %}VL, VP, Progressif{% elif appFacture.progressif_og != None %}VL, VP{% else %}Pas encore définies{% endif %}</li>
+			</ul>
+		</p>
 		
 	</div>
 	

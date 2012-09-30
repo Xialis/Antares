@@ -1,4 +1,5 @@
 {% extends "facture/base.html" %}
+{% load antares_tags %}
 
 {% block head %}
 
@@ -18,6 +19,8 @@ function update_selects(id, data) {
     	}
     	
     }
+    
+    
 	
 }
 
@@ -37,9 +40,88 @@ $(document).ready(function() {
 	            'json'
 	        );
 	        
+	        
 			
 	    });
+	    
+    $("select[id$=vtype]").chosen({no_results_text: "Aucun résultat..."});
 });
+
+
+function update_info(id, data) {
+	$('#info_' + id).find('div.divinfo').remove();
+	
+	retour = "<div class=\"ui-widget divinfo\">";
+	
+	entete_info = "<div class=\"ui-state-highlight ui-corner-all\">" +
+				"<p><span class=\"ui-icon ui-icon-info\"></span>";
+				
+	entete_err = "<div class=\"ui-state-error ui-corner-all\">" +
+				"<p><span class=\"ui-icon ui-icon-alert\"></span>";
+	
+	if ( data.length == 2 ) {
+		
+		if( data[0] == 'stock') {
+		
+			if( data[1] > 1 ) {
+				retour+= entete_info;
+				retour+= "En stock: " + data[1];
+			}
+			else if( data[1] == 1 ) {
+				retour+= entete_info;
+				retour+= "Attention, un seul en stock !";
+			}
+			else if( data[1] == 0 ) {
+				retour+= entete_err;
+				retour+= "Verre epuisé (à commander)";
+			}
+			else if( data[1] == -1 ) {
+				retour+= entete_err;
+				retour+= "Verre de stock, non stocké (à commander)";
+			}
+			
+		}
+		else if( data[0] == 'prescription' ) {
+			retour+= entete_info;
+			retour+= "Verre de prescription (à commander)";
+		
+		}
+	}
+	else {
+		retour+= entete_err;
+		retour+= "Selectionner au moins le type et le diamètre";
+	} 
+	
+	retour+= "</p>" +
+		"</div><br>" +
+	"</div>";
+	$('#info_' + id).prepend(retour);
+}
+
+
+function getInfo(id, oeil) {
+	
+	vtype = $('#id_form-' + id + '-vtype').val();
+	diametre = $('#id_form-' + id + '-diametre').val();
+	couleur = $('#id_form-' + id + '-couleur').val();
+	traitement = $('#id_form-' + id + '-traitement').val();
+	
+	$.get(
+        '{% url facture.views.ajax_info %}',
+        {
+        	'oeil': oeil,
+            'vtype': vtype,
+            'diametre': diametre,
+            'couleur': couleur,
+            'traitement': traitement,
+        },
+        function(data, textStatus, jqXHR) {
+            update_info(id, data);
+        },
+        'json'
+    );
+}
+
 </script>
 {% endblock %}
 
@@ -56,7 +138,11 @@ $(document).ready(function() {
 		{% if forloop.counter0 != 0 %}
 		</table>
 		{% endif %}
-		<div class="tableTitle">Monture {{ forloop.counter }}</div>
+		{% comment %}
+		Faire des math avec django... technique du widthratio
+		 http://slacy.com/blog/2010/07/using-djangos-widthratio-template-tag-for-multiplication-division/
+		{% endcomment %}
+		<div class="tableTitle">Monture {% widthratio forloop.counter 2 1 %}</div>
 		<table class="formAsHorTable">
 			<tr>
 				<th>Oeil</th>
@@ -64,27 +150,25 @@ $(document).ready(function() {
 				<th>{{ form.diametre.label_tag }}</th>
 				<th>{{ form.couleur.label_tag }}</th>
 				<th>{{ form.traitement.label_tag }}</th>
-				<th>{{ form.tarif.label_tag }}</th>
+				<th>Info</th>
 			</tr>
 		{% endif %}
 			
 			<tr>
-				<td>{% cycle 'OD' 'OG' %}</td>
-				<td>{{ form.vtype.errors }}{{ form.vtype }}</td>
-				<td>{{ form.diametre.errors }}{{ form.diametre }}</td>
-				<td>{{ form.couleur.errors }}{{ form.couleur }}</td>
-				<td>{{ form.traitement.errors }}{{ form.traitement }}</td>
-				<td>{{ form.tarif.errors }}{{ form.tarif }}</td>
+				<td>{% cycle 'OD' 'OG' as oeil %}</td>
+				<td>{% ffe form.vtype.errors %}{{ form.vtype }}</td>
+				<td>{% ffe form.diametre.errors %}{{ form.diametre }}</td>
+				<td>{% ffe form.couleur.errors %}{{ form.couleur }}</td>
+				<td>{% ffe form.traitement.errors %}{{ form.traitement }}</td>
+				<td id="info_{{ forloop.counter0 }}">{% jbt "getInfo" "" "ui-icon-search" "Voir" forloop.counter0 oeil  %}</td>
 			</tr>
 		
 		{% endfor %}
 		</table>
-		<input type="submit" value="OK" name="ajVerres">
+		{% sbt "#facture_formVerres" "ajVerres" "ajVerres" "ui-icon-circle-check" "Continuer" %}
 	</form>
 	<br />
 	<hr />
-	<h2>Recherche</h2>
-	{% include "fournisseur/_RechercheVerres.html" with form=formRechercheVerres %}
 </div>
 
 {% endblock %}

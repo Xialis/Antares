@@ -53,10 +53,28 @@ def effClient(request):
 def enrPrescription(prescription, request):
     if request.method == 'POST':
         request.session['appFacture']['prescription'] = prescription
+
+        if prescription.addition_od != 0 or prescription.addition_od != None:
+            request.session['appFacture']['progressif_od'] = True
+        else:
+            request.session['appFacture']['progressif_od'] = False
+
+        if prescription.addition_og != 0:
+            request.session['appFacture']['progressif_og'] = True
+        else:
+            request.session['appFacture']['progressif_og'] = False
+
         request.session.modified = True
         return True
 
     return False
+
+
+def getPrescription(request):
+    if 'prescription' in request.session['appFacture']:
+        return request.session['appFacture']['prescription']
+
+    return None
 
 
 def enrVerres(request):

@@ -65,12 +65,12 @@ $(document).ready(function(e){
 			<legend>Infos prescription</legend>
 			<table class="formAsTable">
 				<tr>
-					<th {% if formPrescription.prescripteur.field.required %}class="required"{% endif %}>{{ formPrescription.prescripteur.label_tag }}</th><td>{{ formPrescription.prescripteur }}</td>
-					<th {% if formPrescription.date_realisation.field.required %}class="required"{% endif %}>{{ formPrescription.date_realisation.label_tag }}</th><td>{{ formPrescription.date_realisation }}</td>
+					<th {% if formPrescription.prescripteur.field.required %}class="required"{% endif %}>{{ formPrescription.prescripteur.label_tag }}</th><td>{{ formPrescription.prescripteur.errors }}{{ formPrescription.prescripteur }}</td>
+					<th {% if formPrescription.date_realisation.field.required %}class="required"{% endif %}>{{ formPrescription.date_realisation.label_tag }}</th><td>{{ formPrescription.date_realisation.errors }}{{ formPrescription.date_realisation }}</td>
 				</tr>
 			</table>
 			<p>
-				{% bt "" "btAjPrescripteur" "ui-icon-circle-plus" "Ajouter un prescripteur" %}
+				{% bt "" "btAjPrescripteur" "ui-icon-circle-plus" "Ajouter un prescripteur..." %}
 			</p>
 		</fieldset>
 		<fieldset>

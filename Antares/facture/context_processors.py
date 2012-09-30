@@ -30,4 +30,10 @@ def app_context(request):
             client = s_appFacture['client']
             appFacture.update({'client': client})
 
+        if 'progressif_od' in s_appFacture:
+            appFacture.update({'progressif_od': s_appFacture['progressif_od']})
+
+        if 'progressif_og' in s_appFacture:
+            appFacture.update({'progressif_og': s_appFacture['progressif_og']})
+
     return {'appFacture': appFacture}
