@@ -1,0 +1,11 @@
+{% if errors %}
+<div class="ui-widget formfield_errors">
+	<div class="ui-state-error ui-corner-all">
+		<p><span class="ui-icon ui-icon-alert"></span>
+		{% for err in errors %}
+		 {{ err }};
+		{% endfor %}
+		</p>
+	</div><br>
+</div>
+{% endif %}
