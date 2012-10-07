@@ -130,6 +130,7 @@ function getInfo(id, oeil) {
 <div class="first span-22 border">
 	<h2>Verres</h2>
 	<div class="aide">Selectionner le Type en premier.</div>
+	
 	<form id="facture_formVerres" method="POST" action="">{% csrf_token %}
 	{{ formSetLigne.management_form }}
 		{% for form in formSetLigne %}
@@ -146,8 +147,8 @@ function getInfo(id, oeil) {
 		<table class="formAsHorTable">
 			<tr>
 				<th>Oeil</th>
-				<th>{{ form.vtype.label_tag }}</th>
-				<th>{{ form.diametre.label_tag }}</th>
+				<th class="required">{{ form.vtype.label_tag }}</th>
+				<th class="required">{{ form.diametre.label_tag }}</th>
 				<th>{{ form.couleur.label_tag }}</th>
 				<th>{{ form.traitement.label_tag }}</th>
 				<th>Info</th>

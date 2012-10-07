@@ -187,7 +187,7 @@ def etapeVerres(request):
     # ============================
     # Restauration
     if request.method == 'GET' and 'appFacture' in request.session:
-        pass
+        pass  # TODO: Restauration su GET
     # Fin restauration
     # ============================
 
@@ -197,9 +197,14 @@ def etapeVerres(request):
             formSetLigne = LigneFormSet(request.POST)
             formSetLigne.forms[0].empty_permitted = False
 
+            # On charge les choix disponibles pour validation...
+            for form in formSetLigne:
+                chdata = form._get_changed_data()
+                if 'vtype' in chdata:
+                    form.filtre_vtype(form._raw_value('vtype'))
+
             if formSetLigne.is_valid():
-                func.enrVerres(request)  # TODO: remplacer par objet(s)
-                return func.etapeSuivante(request)
+                return func.etapeSuivante(func.enrVerres(formSetLigne.cleaned_data, request))
 
             # Si le formulaire est rempli ou en partie on filtre les champs
             formSetLigne = LigneFormSet(request.POST)  # Si on ne refait pas un formset, le is_valid casse tout...

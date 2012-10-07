@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import redirect
 from facture.views import *
+from facture.models import LigneFacture
 
 
 def utiliserClient(request, cid):
@@ -77,13 +78,29 @@ def getPrescription(request):
     return None
 
 
-def enrVerres(request):
-    if request.method == 'POST':
-        request.session['appFacture']['post_Verres'] = request.POST
-        request.session.modified = True
-        return True
+def enrVerres(cds, request):
+    t = []
+    nbre = len(cds)
+    for x in (0, nbre / 2):
+        start = x * 2
+        if len(cds[start]) != 0:
+            lfd = LigneFacture(cds[start])
+            lfd.oeil = 'D'
+            lfd.monture = x
 
-    return False
+            if len(cds[start + 1]) != 0:
+                lfg = LigneFacture(cds[start + 1])
+                lfg.oeil = 'G'
+                lfg.monture = x
+                t.append(lfd)
+                t.append(lfg)
+            else:
+                lfd.oeil = 'T'
+                t.append(lfd)
+
+    request.session['appFacture']['LigneFacture'] = t
+    request.session.modified = True
+    return request
 
 
 def etapePrecedente(request):
