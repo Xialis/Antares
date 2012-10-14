@@ -1,0 +1,157 @@
+{% extends "facture/base.html" %}
+{% load antares_tags %}
+
+{% block head %}
+
+<script>
+$(document).ready(function(e){
+
+	$("#dialog-form").dialog({
+		modal: true,
+		autoOpen: false,
+		title: "Validation de la saisie",
+		width:'auto',
+		show: 'fold',
+		hide: 'explode',
+	});
+});
+
+function validation_fac() {
+	$("#dialog-form").dialog('option', 'buttons', {
+        "Ajouter": function() {
+            //post du form
+            $("#facture_choix").submit();
+            $(this).dialog("close");
+        },
+        "Annuler": function() {
+            $(this).dialog("close");
+        }
+    });
+    $("#dialog-form").dialog("open");
+    return false;
+}
+
+</script>
+
+{% endblock %}
+
+{% block centernext %}
+<div id="dialog-form">
+	<div class="ui-widget">
+		<div class="ui-state-error ui-corner-all">
+			<p><span class="ui-icon ui-icon-alert"></span>
+			Attention, dernière étape !</p>
+		</div>
+		<p>Validation de toutes les données ?</p>
+	</div>
+</div>
+
+<div class="first span-11">
+	<div class="divbox">
+		<h2>Client</h2>
+		<p>Verifier les infos</p>
+		<h3>Client en cours:</h3>
+		{% if client_orig %}<p>Modification du client</p>{% endif %}
+		<ul>
+			{% if client.code %}<li>Code: {{ client.code }}</li>{% endif %}
+			<li>Nom: {{ client.nom }}</li>
+			<li>Prénom: {{ client.prenom }}</li>
+			<li>Téléphone: {{ client.telephone }}</li>
+			<li>Email: {{ client.email }}</li>
+		</ul>
+		{% if client_orig %}
+		<h3>Infos originales</h3>
+		<ul>
+			<li>Nom: {{ client_orig.nom }}</li>
+			<li>Prénom: {{ client_orig.prenom }}</li>
+			<li>Téléphone: {{ client_orig.telephone }}</li>
+			<li>Email: {{ client_orig.email }}</li>
+		</ul>
+		{% endif %}
+	</div>
+	
+	<div class="divbox">
+		<h2>Verres</h2>
+		<p>Verifier les infos</p>
+		<table>
+			<tr><th>M</th><th>Type</th><th>Diamètre</th><th>Couleur</th><th>Traitement</th></tr>
+			{% for v in t_verres %}
+			<tr>
+				<td>{{ v.monture|add:1 }}</td>
+				<td>{{ v.vtype }}</td><td>{{ v.diametre }}</td>
+				<td>{{ v.couleur }}</td><td>{{ v.traitement }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+	
+	<div class="divbox">
+		<h2>Options</h2>
+		<p>Verifier les infos</p>
+		<table>
+			<tr><th>Option</th><th>Tarif</th></tr>
+			{% for o in t_options %}
+			<tr>
+				<td>{{ o.nom }}</td><td>{{ o.tarif }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+</div>
+
+<div class="span-11 last">
+	<div class="divbox">
+		<h2>Prescription</h2>
+		<p>Verifier les infos</p>
+		<div class="tableTitle">Prescription:</div>
+		<table>
+			<tr><th>Oeil</th><th>Sphère</th><th>Cylindre</th><th>Add</th><th>Axe</th></tr>
+			<tr>
+				<td>OD</td><td>{{ prescription.sphere_od }}</td><td>{{ prescription.cylindre_od }}</td>
+				<td>{{ prescription.addition_od }}</td><td>{{ prescription.axe_od }}</td>
+			</tr>
+			<tr>
+				<td>OG</td><td>{{ prescription.sphere_og }}</td><td>{{ prescription.cylindre_og }}</td>
+				<td>{{ prescription.addition_og }}</td><td>{{ prescription.axe_og }}</td>
+			</tr>
+		</table>
+		<div class="tableTitle">Transposition:</div>
+		<table>
+			<tr><th>Oeil</th><th>Sphère</th><th>Cylindre</th><th>Add</th><th>Axe</th></tr>
+			<tr>
+				<td>OD</td><td>{{ prescription_t.sphere_od }}</td><td>{{ prescription_t.cylindre_od }}</td>
+				<td>{{ prescription_t.addition_od }}</td><td>{{ prescription_t.axe_od }}</td>
+			</tr>
+			<tr>
+				<td>OG</td><td>{{ prescription_t.sphere_og }}</td><td>{{ prescription_t.cylindre_og }}</td>
+				<td>{{ prescription_t.addition_og }}</td><td>{{ prescription_t.axe_og }}</td>
+			</tr>
+		</table>
+	</div>
+	<div class="divbox">
+		<h2>Montures</h2>
+		<p>Verifier les infos</p>
+		<table>
+			<tr><th>Monture</th><th>Tarif</th></tr>
+			{% for m in t_montures %}
+			<tr>
+				<td>{{ m.nom }}</td><td>{{ m.tarif }}</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+	<div class="divbox">
+		<h2>Validation</h2>
+		<p>Pro forma / Facture...</p>
+		<form action="" method="POST" id="facture_choix">{% csrf_token %}
+		<table class="formAsTable">
+			{{ formFacture.as_table }}
+		</table>
+		<p>
+			{% jbt "validation_fac" "btValidation" "ui-icon-circle-check" "valider" %}
+		</p>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

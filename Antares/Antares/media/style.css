@@ -1,7 +1,52 @@
-body { background-color: #FFF; color: #292929; }
-h2, h3 { color: #5fbcd3; margin: 5px 0 5px 0; text-shadow:5px 7px 3px #cccccc; font-weight: bold;}
+body { 
+  background-color: #FFF; 
+  background: url('442.png');
+  color: #292929;
+  
+}
+
+h1 { font-weight: 900; }
+
+h2, h3 { 
+  color: #5fbcd3;
+  margin: 0px 0 10px 0px;
+  text-shadow:4px 4px 3px #1F4D9C;
+  font-weight: bold;
+  
+}
+
+h2 { font-size: 1.7em; }
+
+h2.titrepage { 
+  margin-top: 5px;
+  background: -moz-linear-gradient(100% 51% 318deg, #1F4D9C, rgba(255,255,255,0) 38%);
+  
+}
+
 .border { border-right-color: #002255; }
 hr {background:#002255;color:#002255; }
+
+/* divbox */
+
+div.divbox { 
+  background-color: rgba(17,41,92,0.86);
+  margin: 5px 0px 5px 0px;
+  border-radius: 8px;
+  padding: 0 5px 5px 5px;
+  color: white;
+}
+
+div.divbox h2 {
+  margin: 0 -5px 5px -5px; 
+  padding-left: 15px;
+  border-radius: 8px;
+  /*background: -moz-linear-gradient(top, rgba(30,87,153,0.72) 0%, rgba(41,137,216,0.86) 50%, rgba(32,124,202,0.86) 51%, rgba(125,185,232,1) 100%);
+  background: linear-gradient(to bottom, rgba(30,87,153,0.72) 0%,rgba(41,137,216,0.86) 50%,rgba(32,124,202,0.86) 51%,rgba(125,185,232,1) 100%);
+  */
+  background-color: rgba(17,41,92,0.86);
+  
+}
+
 
 
 /* topmenu */
@@ -44,7 +89,7 @@ fieldset {
   border: 1px solid #1c6fcd;
 }
 
-fieldset legend { padding-left: 5px; padding-right: 5px; } 
+fieldset legend { padding-left: 5px; padding-right: 5px; color: #1c6fcd; } 
 
 /* lien */
 div.dataTables_paginate a {
@@ -70,19 +115,25 @@ div.dataTables_paginate a.paginate_active {
 
 /* table */
 
-table { border-radius: 0; }
-
-tbody tr:nth-child(even) td, tbody tr.even td {background: #D9FDFF;}
-div.tableTitle { font-weight: bold; color: #003CA3; }
-
-table th { color: #FFF; background-color: #1F4D9C;
-  border: 1px solid #FFFFFF;
-  background: -moz-linear-gradient(100% 51% 318deg, #1F4D9C, #FFFFFF 38%);
+table { border-radius: 0; border-collapse: separate; border-spacing: 2px;
+  width: 100%;
 }
 
-table td { border: 1px solid #1c6fcd; }
+/*table tr { background-color: white; }*/
 
-table { width: 97%; box-shadow:10px 10px 5px #424242; }
+div.tableTitle { 
+  font-weight: bold; 
+  color: #FFFFFF;
+}
+
+table th { color: #FFF; background-color: #1F4D9C;
+  border: 0px solid #FFFFFF;
+  background: -moz-linear-gradient(100% 51% 318deg, #1F4D9C, rgba(255,255,255,0) 38%);
+}
+
+table td { background-color: white; border: 1px solid #1c6fcd; }
+tbody tr:nth-child(even) td, tbody tr.even td {background: #D9FDFF;}
+
 
 /*table formAsTable */
 
@@ -140,11 +191,17 @@ table.prescriptionForm input { width: 6em; }
 
 /* navigation */
 
-div.navigation { background: none; border: 1px dashed #5fbcd3; border-radius: 5px; }
+div.navigation { 
+  background-color: rgba(17,41,92,0.86); 
+  border: 1px dashed #5fbcd3; border-radius: 5px; 
+  height: 33px;
+  color: #5fbcd3;
+}
 div.navigation ul { margin: 3px 3px 3px 3px; display: inline; }
 div.navigation ul li { display: inline; margin-left: 3px;}
-div.navigation ul.ul_right { float: right; }
-div.navigation a.active { color: yellow; font-weight: bold; }
+div.navigation div.side_right { float: right; }
+
+div.navigation ul li.active { color: yellow; font-weight: bold; }
 
 
 /* hack-support jquery-ui */
@@ -154,6 +211,14 @@ div.navigation a.active { color: yellow; font-weight: bold; }
 .ui-widget p span.ui-icon {margin: 0 5px 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
 /*.ui-widget thead th { background: none; } */
 
-.l-button {padding: .4em 1em .4em 20px;text-decoration: none;position: relative;}
-.l-button span.ui-icon { float: left; margin: 0 .3em 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
-.l-button, .l-button:hover { color: white; }
+a.l-button {padding: .2em 1em .6em 20px;text-decoration: none; position: relative; box-shadow:5px 5px 5px #75c8ff; }
+a.l-button span.ui-icon { float: left; margin: 0 .3em 0 0;position: absolute;left: .2em;top: 50%;margin-top: -8px;}
+
+a.l-button { margin-bottom: 7px; margin-right: 5px; display: inline-block;}
+a.l-button:hover { 
+  position: relative;
+  top: 5px; left: 5px;
+  box-shadow:0px 0px 5px #75c8ff;
+  
+}
+a.l-button, a.l-button:hover { color: white; height: 1em;}

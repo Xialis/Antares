@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 from django.shortcuts import redirect
 from facture.views import *
-from facture.models import LigneFacture
+from facture.models import LigneFacture, Monture, Option
+from facture.forms import LigneForm
 
 
 def utiliserClient(request, cid):
@@ -51,6 +52,17 @@ def effClient(request):
     return False
 
 
+def getClient(request):
+    retour = {'client_id': None, 'client': None}
+    if 'client' in request.session['appFacture']:
+        retour['client'] = request.session['appFacture']['client']
+
+    if 'client_id' in request.session['appFacture']:
+        retour['client_id'] = request.session['appFacture']['client_id']
+
+    return retour
+
+
 def enrPrescription(prescription, request):
     if request.method == 'POST':
         request.session['appFacture']['prescription'] = prescription
@@ -65,6 +77,13 @@ def enrPrescription(prescription, request):
         else:
             request.session['appFacture']['progressif_og'] = False
 
+        # Transposition
+        request.session['appFacture']['prescription_t'] = transposition(prescription)
+
+        # Sphere en cylindre moins (test vision)
+        request.session['appFacture']['prescription_sphod'] = getSphereCylNeg(prescription.sphere_od, prescription.cylindre_od)
+        request.session['appFacture']['prescription_sphog'] = getSphereCylNeg(prescription.sphere_og, prescription.cylindre_og)
+
         request.session.modified = True
         return True
 
@@ -78,18 +97,67 @@ def getPrescription(request):
     return None
 
 
-def enrVerres(cds, request):
+def getPrescription_T(request):
+    if 'prescription_t' in request.session['appFacture']:
+        return request.session['appFacture']['prescription_t']
+
+    return None
+
+
+def transposition(prescription):
+    ptrans = Prescription()
+
+    # nouvelle sphere = sphere + cylindre-negatif
+    # nouveau cylindre = cylindre-negatif * -1
+    # nouvel axe = (axe + 90) % 180 (0<=axe<=179)
+    if prescription.cylindre_od and prescription.cylindre_od < 0:
+        ptrans.sphere_od = prescription.sphere_od + prescription.cylindre_od
+        ptrans.cylindre_od = abs(prescription.cylindre_od)
+        ptrans.axe_od = (prescription.axe_od + 90) % 180
+    else:
+        ptrans.sphere_od = prescription.sphere_od
+        ptrans.cylindre_od = prescription.cylindre_od
+        ptrans.axe_od = prescription.axe_od
+
+    if prescription.cylindre_og and prescription.cylindre_og < 0:
+        ptrans.sphere_og = prescription.sphere_og + prescription.cylindre_og
+        ptrans.cylindre_og = abs(prescription.cylindre_og)
+        ptrans.axe_og = (prescription.axe_og + 90) % 180
+    else:
+        ptrans.sphere_og = prescription.sphere_og
+        ptrans.cylindre_og = prescription.cylindre_og
+        ptrans.axe_og = prescription.axe_og
+
+    ptrans.addition_od = prescription.addition_od
+    ptrans.addition_og = prescription.addition_og
+
+    return ptrans
+
+
+def getSphereCylNeg(sphere, cylindre):
+    ns = sphere
+
+    if cylindre > 0:
+        # x = sph + cyl
+        # -cyl + x = sph
+        ns = sphere - cylindre
+
+    return ns
+
+
+def enrVerres(formSetLigne, request):
     t = []
-    nbre = len(cds)
-    for x in (0, nbre / 2):
+    nbre = len(formSetLigne.cleaned_data)
+    nloop = nbre / 2
+    for x in range(0, nloop):
         start = x * 2
-        if len(cds[start]) != 0:
-            lfd = LigneFacture(cds[start])
+        if len(formSetLigne[start].cleaned_data) != 0:
+            lfd = formSetLigne[start].save(commit=False)
             lfd.oeil = 'D'
             lfd.monture = x
 
-            if len(cds[start + 1]) != 0:
-                lfg = LigneFacture(cds[start + 1])
+            if len(formSetLigne[start + 1].cleaned_data) != 0:
+                lfg = formSetLigne[start + 1].save(commit=False)
                 lfg.oeil = 'G'
                 lfg.monture = x
                 t.append(lfd)
@@ -99,8 +167,61 @@ def enrVerres(cds, request):
                 t.append(lfd)
 
     request.session['appFacture']['LigneFacture'] = t
+    request.session['appFacture']['etapeVerres_post'] = request.POST
     request.session.modified = True
     return request
+
+
+def getVerres(request):
+    if 'LigneFacture' in request.session['appFacture']:
+        return request.session['appFacture']['LigneFacture']
+
+    return []
+
+
+def getNbreMontures(request):
+    t = request.session['appFacture']['LigneFacture']
+    taille = len(t)
+    nbre = t[taille - 1].monture + 1
+    return nbre
+
+
+def enrMontures(formSetMonture, request):
+    t = []
+    x = 1
+    for f in formSetMonture:
+        monture = f.save(commit=False)
+        monture.numero = x
+        x += 1
+        t.append(monture)
+
+    request.session['appFacture']['Montures'] = t
+    request.session['appFacture']['etapeMontures_post'] = request.POST
+    request.session.modified = True
+    return True
+
+
+def getMontures(request):
+    if 'Montures' in request.session['appFacture']:
+        return request.session['appFacture']['Montures']
+
+
+def enrOptions(formSetOption, request):
+    t = []
+
+    for f in formSetOption:
+        option = f.save(commit=False)
+        t.append(option)
+
+    request.session['appFacture']['Options'] = t
+    request.session['appFacture']['etapeOptions_post'] = request.POST
+    request.session.modified = True
+    return True
+
+
+def getOptions(request):
+    if 'Options' in request.session['appFacture']:
+        return request.session['appFacture']['Options']
 
 
 def etapePrecedente(request):
@@ -122,7 +243,7 @@ def allerEtape(request, etape):
 def reset(request):
     if 'appFacture' in request.session:
         del request.session['appFacture']
-
+        request.session.modified = True
     return redirect(ctrl)
 
 
@@ -133,7 +254,9 @@ def initCtrl(request):
                    [u"Info client", etapeInfo],
                    [u"Prescription", etapePrescription],
                    [u"Verres", etapeVerres],
-                   [u"Montures", etapeMontures]
+                   [u"Montures", etapeMontures],
+                   [u"Options", etapeOptions],
+                   [u"Recapitulatif", etapeRecapitulatif]
                 ]
         request.session['appFacture'] = {}
         request.session['appFacture']['etape'] = 0

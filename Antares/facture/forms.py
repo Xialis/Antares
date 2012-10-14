@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.forms import ModelForm
 from django.forms import HiddenInput, IntegerField, CharField, ModelChoiceField
-from facture.models import LigneFacture
+from facture.models import LigneFacture, Monture, Option, Facture
 from fournisseur.models import Type, Diametre, Couleur, Traitement
 
 
@@ -10,7 +10,7 @@ class LigneForm(ModelForm):
     required_css_class = 'required'
 
     diametre = ModelChoiceField(queryset=Diametre.objects.none())
-    couleur = ModelChoiceField(queryset=Couleur.objects.none(), required=False)
+    couleur = ModelChoiceField(queryset=Couleur.objects.none())
     traitement = ModelChoiceField(queryset=Traitement.objects.none(), required=False)
 
     class Meta:
@@ -43,3 +43,30 @@ def categorie_vtype():
     liste.append([u"Unifocaux", unifocaux])
     liste.append([u"Progressifs", progressifs])
     return liste
+
+
+class MontureForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+
+    class Meta:
+        model = Monture
+        exclude = ('facture', 'numero',)
+
+
+class OptionForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+
+    class Meta:
+        model = Option
+        exclude = ('facture', )
+
+
+class ChoixFactureForm(ModelForm):
+    error_css_class = 'error'
+    required_css_class = 'required'
+
+    class Meta:
+        model = Facture
+        fields = ('bproforma', 'organisme', )

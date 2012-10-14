@@ -1,36 +1,53 @@
 {% extends "facture/base.html" %}
-
+{% load antares_tags %}
 {% block head %}
 {% include "_inc/head_listeClient_dataTable.html" %}
 {% endblock %}
 
 {% block centernext %}
 
-<div class="first span-8 border">
-	<h2>Chercher Client</h2>
-	<form id="client_formRechercheClient" method="POST" action="">{% csrf_token %}
-		<table class="formAsTable">
-		{{ formRechercheClient.as_table }}
-		</table>
-		<input type="submit" value="OK" name="reClient">
-		{% if appClient.b_listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
-	</form>
+<div class="first span-22 border">
+	<div class="first span-11">
+		<div class="divbox">
+			<h2>Chercher Client</h2>
+			<form id="client_formRechercheClient" method="POST" action="">{% csrf_token %}
+				<table class="formAsTable">
+				{{ formRechercheClient.as_table }}
+				</table>
+				{% sbt "#client_formRecherche" "reClient" "reClient" "ui-icon-search" "Chercher" %}
+				
+				{% if appClient.b_listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
+			</form>
+		</div>
+	</div>
+	
+	<div class="span-11 last">
+		<div class="divbox">
+			<h2>Créer un nouveau client</h2>
+			<p style="text-align: center;">
+				{% bt "btNouvClient" "ui-icon-document" "Créer un nouveau Client" "facture.func.creerClient" %}
+			</p>
+		</div>
+	</div>
+	
+	
 	<hr>
-	<h2>Créer un nouveau client</h2>
-	<p style="text-align: center;"><a href="{% url facture.func.creerClient %}" class="action">Créer un nouveau client</a></p>
+	
 </div>
-<div class="span-14 last">
-	<h2>Liste <span class="h2info">{{ appClient.b_listeFiltree|yesno:"(filtrée)," }}</span></h2>
-	{% if appClient.b_listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
-	<table id="listeClient" class='tableListing'>
-		<thead>
-			<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
-		</thead>
-		
-		<tbody>
+<div class="first span-22 last">
+	<div class="divbox">
+		<h2>Liste <span class="h2info">{{ appClient.b_listeFiltree|yesno:"(filtrée)," }}</span></h2>
+		{% if appClient.b_listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
+		<table id="listeClient" class='tableListing'>
+			<thead>
+				<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
+			</thead>
 			
-		</tbody>
-	</table>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
 </div>	
 		
 

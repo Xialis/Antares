@@ -30,7 +30,6 @@ class Client(models.Model):
     prenom = models.CharField(max_length=50)
     telephone = models.CharField(max_length=50)
     email = models.EmailField(blank=True, null=True)
-    organisme = models.ForeignKey('client.OrganismePayeur', blank=True, null=True)
 
     def __unicode__(self):
         return self.nom + " " + self.prenom

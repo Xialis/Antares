@@ -32,7 +32,7 @@
   </head>
   <body>
   	<div class="container">
-  		<div id="topmenu" class="span-30">
+  		<div id="topmenu" class="first span-30 last">
   			<ul>
   				<li><a href="{% url facture.func.ctrl %}">Facture</a></li>
   				<li><a href="{% url fournisseur.views.index %}">Fournisseurs</a></li>
@@ -42,17 +42,17 @@
   		</div>
   		{% if messages %}
 		<div id="messages" class="first span-30">
-		<ul class="messages">
-		    {% for message in messages %}
-		    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-		    {% endfor %}
-		</ul>	
+			<ul class="messages">
+			    {% for message in messages %}
+			    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
+			    {% endfor %}
+			</ul>	
 		</div>
 		{% endif %}
   	  	<div id="up">
   			{% block up %}{% endblock %}
   		</div>
-  		<div id="center">
+  		<div id="center" class="first span-30 last">
   			{% block center %}{% endblock %}
   		</div>
   	</div>

@@ -11,7 +11,7 @@ class Facture(models.Model):
     bproforma = models.BooleanField(verbose_name=u"PRO FORMA ?")
     proforma = models.ForeignKey('self', blank=True, null=True)
     interloculteur = models.ForeignKey('facture.Interlocuteur')
-
+    organisme = models.ForeignKey('client.OrganismePayeur', blank=True, null=True)
 
 OEIL = (
         ('D', 'OD'),
@@ -21,12 +21,12 @@ OEIL = (
 
 
 class LigneFacture(models.Model):
-    facture = models.ForeignKey('facture.Facture')
+    facture = models.ForeignKey('Facture')
     monture = models.PositiveIntegerField()
     oeil = models.CharField(max_length=1, choices=OEIL)
     vtype = models.ForeignKey('fournisseur.Type', verbose_name="type")
     diametre = models.ForeignKey('fournisseur.Diametre')
-    couleur = models.ForeignKey('fournisseur.Couleur', blank=True, null=True)
+    couleur = models.ForeignKey('fournisseur.Couleur')
     traitement = models.ForeignKey('fournisseur.Traitement', blank=True, null=True)
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
 
@@ -39,3 +39,10 @@ class Option(models.Model):
 
 class Interlocuteur(models.Model):
     nom = models.CharField(max_length=25, unique=True)
+
+
+class Monture(models.Model):
+    facture = models.ForeignKey('facture.Facture')
+    numero = models.PositiveIntegerField()  # Correspondance verres -> monture
+    nom = models.CharField(max_length=50)
+    tarif = models.DecimalField(max_digits=8, decimal_places=0)

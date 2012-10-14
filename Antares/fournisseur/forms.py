@@ -38,28 +38,6 @@ class TypeForm(ModelForm):
     def clean(self):
         cd = self.cleaned_data
 
-        #Test transition
-        tt = cd.get("tarif_transition")
-        couleurs = cd.get("couleurs")
-        transition = False
-
-        if couleurs:
-            for c in couleurs:
-                if c.transition:
-                    transition = True
-                    break
-
-        if tt and (not couleurs or not transition):
-            msg = u"Vous devez choisir au moins une couleur Transition (tarif spécifié)"
-            self._errors['couleurs'] = self.error_class([msg])
-            del cd['couleurs']
-
-        if transition and not tt:
-            msg = u"Montant nécéssaire (Couleur(s) Transition selectionnée(s)"
-            self._errors['tarif_transition'] = self.error_class([msg])
-            del cd['tarif_transition']
-        #-- Fin test Transition
-
         return cd
 
 

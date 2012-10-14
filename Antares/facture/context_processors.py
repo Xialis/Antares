@@ -36,4 +36,47 @@ def app_context(request):
         if 'progressif_og' in s_appFacture:
             appFacture.update({'progressif_og': s_appFacture['progressif_og']})
 
+        if 'prescription' in s_appFacture:
+            p = s_appFacture['prescription']
+            if abs(p.sphere_od) > 4 or abs(p.sphere_og) > 4:
+                appFacture.update({'attention_sphere': True})
+
+        if 'prescription_sphod' in s_appFacture:
+            sod = s_appFacture['prescription_sphod']
+            sog = s_appFacture['prescription_sphog']
+
+            appFacture.update({'sphod': sod})
+            appFacture.update({'sphog': sog})
+
+        if 'prescription_t' in s_appFacture:
+            axe_od = s_appFacture['prescription_t'].axe_od
+            if  axe_od is None:
+                axe_od = 0
+
+            axe_og = s_appFacture['prescription_t'].axe_og
+            if  axe_og is None:
+                axe_og = 0
+
+            if abs(axe_od - axe_og) > 90:
+                contraxe = True
+            else:
+                contraxe = False
+
+            cyl_od = s_appFacture['prescription_t'].cylindre_od
+            cyl_og = s_appFacture['prescription_t'].cylindre_og
+
+            if cyl_od is not None and cyl_od != 0:
+                bod = True
+            else:
+                bod = False
+
+            if cyl_og is not None and cyl_og != 0:
+                bog = True
+            else:
+                bog = False
+
+            appFacture.update({'astig_od': bod})
+            appFacture.update({'astig_og': bog})
+            appFacture.update({'contraxe': contraxe})
+
     return {'appFacture': appFacture}

@@ -1,3 +1,4 @@
+{% load antares_tags %}
 <table class="tableListing">
 	<tr>
 		<th>Nom</th><th>Diametre(s)</th>
@@ -15,20 +16,16 @@
 		<td><ul>{% for ts in t.traitements.all %}<li>{{ ts.nom }}</li>{% endfor %}
 			</ul>
 		</td>
-		<td><ul>{% for cs in t.couleurs.all %}<li>{{ cs.nom }} ({{ cs.transition|yesno:"T,F" }})</li>{% endfor %}
+		<td><ul>{% for cs in t.couleurs.all %}<li>{{ cs.nom }}</li>{% endfor %}
 			</ul>
 		</td>
 		<td>
 			<ul>
-				<li>Base: {{ t.tarif_blanc }}</li>
-				<li>Couleur: +{{ t.tarif_couleur|default:"<span class='quiet'>non renseigné</span>" }}
-				{% if t.tarif_couleur %}({{ t.tarif_blanc|add:t.tarif_couleur }}){% endif %}</li>
-				<li>Transition: +{{ t.tarif_transition|default:"<span class='quiet'>non renseigné</span>" }}
-				{% if t.tarif_transition %}({{ t.tarif_blanc|add:t.tarif_transition }}){% endif %}</li>
+				<li>Base: {{ t.tarif }}</li>
 				<li>Remise monture: {{ t.remise_monture|default:"<span class='quiet'>non renseigné</span>" }}</li>
 			</ul>
 		</td>
-		<td><a href="{% url modType t.id %}" class='action'>Modifier</a></td>
+		<td>{% bt "btModType" "ui-icon-pencil" "Modifier..." "modType" t.id %}</td>
 	</tr>
 	{% endfor %}
 </table>

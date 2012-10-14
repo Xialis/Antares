@@ -108,8 +108,8 @@ def ajaxListClient(request):
     aaData = []
 
     for client in listeClient:
-        action = u"<a href='" + reverse(infoClient, args=[client.id]) + u"' class='action'>Détails</a>"
-        action += u"<a href='" + reverse(utiliserClient, args=[client.id]) + u"' class='action'>Utiliser</a>"
+        action = u"<a href='" + reverse(infoClient, args=[client.id]) + u"' class='l-button ui-state-default ui-corner-all'><span class='ui-icon ui-icon-folder-open'></span>Détails</a>"
+        action += u" <a href='" + reverse(utiliserClient, args=[client.id]) + u"' class='l-button ui-state-default ui-corner-all'><span class='ui-icon ui-icon-person'></span>Utiliser</a>"
         aaData.append([client.code, client.nom + " " + client.prenom, client.telephone, client.email, action])
 
     retour.update({"aaData": aaData})

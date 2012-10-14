@@ -6,16 +6,16 @@
 
 <div class="first span-30">
 	<div class="navigation">
-		<ul class="ul_right">
-			<span>{{ appFacture.etape_no }} / {{ appFacture.etapes|length }}</span> 
-			<li>{% bt "facture.func.etapePrecedente" "a_prec" "ui-icon-seek-prev" "Précédent" %}</a></li>
-			<li>{% bt "facture.func.etapeSuivante" "a_suiv" "ui-icon-seek-next" "Suivant" %}</a></li>
-			<li>{% bt "facture.func.reset" "a_reset" "ui-icon-trash" "RESET" %}</li>
-		</ul>
+		<div class="side_right">
+			<span><b>{{ appFacture.etape_no }} / {{ appFacture.etapes|length }}</b></span> 
+			{% bt "a_prec" "ui-icon-seek-prev" "Précédent" "facture.func.etapePrecedente" %} 
+			{% bt "a_suiv" "ui-icon-seek-next" "Suivant" "facture.func.etapeSuivante" %} 
+			{% bt "a_reset" "ui-icon-trash" "RESET" "facture.func.reset" %} 
+		</div>
 		<span>Etapes:</span>
 		<ul class="ul_left">
 			{% for etape in appFacture.etapes %}
-			<li> | <a href="" class="{% if forloop.counter == appFacture.etape_no %}active{% endif %}">{{ etape }}</a></li>
+			<li class="{% if forloop.counter == appFacture.etape_no %}active{% endif %}"> | {{ etape }}</li>
 			{% endfor %}
 		</ul>
 	</div>
@@ -23,34 +23,56 @@
 <div class="first span-22 border">
 {% block centernext %}{% endblock %}
 </div>
+
 <div class="span-8 last">
-	<h2>En cours...</h2>
-	<div class="">
-		<h3>Client</h3>
-		<p>
-			Nouveau client ? : {{ appFacture.b_creation|yesno:"Oui, Non" }}
-			{% if appFacture.b_modification %}<br>Infos client modifiées.{% endif %}
-		</p>
-		{% if appFacture.client %}
-		<ul>
-			<li>Nom: {{ appFacture.client.nom }}</li>
-			<li>Prénom: {{ appFacture.client.prenom }}</li>
-			<li>Téléphone: {{ appFacture.client.telephone }}</li>
-			<li>Email: {{ appFacture.client.email }}</li>
-			<li>Organisme: {{ appFacture.client.organisme }}</li>
-		</ul>
-		{% endif %}
-	</div>
-	<hr>
-	<div class="">
-		<h3>Prescription</h3>
-		<p>Possibilités:
+	<div class="divbox">
+		<h2>En cours...</h2>
+		<div class="">
+			<h3>Client</h3>
+			<p>
+				Nouveau client ? : {{ appFacture.b_creation|yesno:"Oui, Non" }}
+				{% if appFacture.b_modification %}<br>Infos client modifiées.{% endif %}
+			</p>
+			{% if appFacture.client %}
 			<ul>
-				<li>OD: {% if appFacture.progressif_od == True %}VL, VP, Progressif{% elif appFacture.progressif_od != None %}VL, VP{% else %}Pas encore définies{% endif %}</li>
-				<li>OG: {% if appFacture.progressif_og == True %}VL, VP, Progressif{% elif appFacture.progressif_og != None %}VL, VP{% else %}Pas encore définies{% endif %}</li>
+				<li>Nom: {{ appFacture.client.nom }}</li>
+				<li>Prénom: {{ appFacture.client.prenom }}</li>
+				<li>Téléphone: {{ appFacture.client.telephone }}</li>
+				<li>Email: {{ appFacture.client.email }}</li>
 			</ul>
-		</p>
-		
+			{% endif %}
+		</div>
+		<hr>
+		<div>
+			<h3>Prescription</h3>
+			<ul>
+				<li>OD: {% if appFacture.sphod < 0 %}Myope{% elif appFacture.sphod > 0 %}Hypermetrope{% else %}Plan{% endif %} , {% if not appFacture.astig_od == None and appFacture.astig_od %}Astigmate{% endif %}</li>
+				<li>OG: {% if appFacture.sphog < 0 %}Myope{% elif appFacture.sphog > 0 %}Hypermetrope{% else %}Plan{% endif %} , {% if not appFacture.astig_og == None and appFacture.astig_og %}Astigmate{% endif %}</li>
+			</ul>
+			{% if appFacture.attention_sphere %}
+			<div class="ui-widget">
+				<div class="ui-state-error ui-corner-all">
+					<p><span class="ui-icon ui-icon-alert"></span>
+						Forte(s) sphère(s) detectée(s). <br><b>Attention à l'indice.</b></p>
+				</div>
+			</div>
+			{% endif %}
+			{% if appFacture.contraxe %}
+			<br>
+			<div class="ui-widget">
+				<div class="ui-state-error ui-corner-all">
+					<p><span class="ui-icon ui-icon-alert"></span>
+						Contraxe !</p>
+				</div>
+			</div>
+			{% endif %}
+			<p>Possibilités:
+				<ul>
+					<li>OD: {% if not appFacture.progressif_od == None and appFacture.progressif_od %}VL, VP, Progressif{% elif appFacture.progressif_od != None %}VL ou VP{% else %}Pas encore définies{% endif %}</li>
+					<li>OG: {% if not appFacture.progressif_og == None and appFacture.progressif_og %}VL, VP, Progressif{% elif appFacture.progressif_og != None %}VL ou VP{% else %}Pas encore définies{% endif %}</li>
+				</ul>
+			</p>
+		</div>
 	</div>
 	
 </div>

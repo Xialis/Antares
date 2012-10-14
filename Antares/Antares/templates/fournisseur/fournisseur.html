@@ -1,97 +1,108 @@
 {% extends "base.html" %}
+{% load antares_tags %}
 
 {% block up %}
-<h2>Fournisseur ({{ four.id }}) : {{ four.nom }}</h2>
+<h2 class="titrepage">Fournisseur ({{ four.id }}) : {{ four.nom }}</h2>
 {% endblock %}
 
 {% block center %}
 
 <div class="first span-20 border">
 	<h1>Catalogue</h1>
-	<h2>Ajouter un Verre</h2>
-	<div class="divForm">
-		<form action="" method="POST">{% csrf_token %}
-			<table class="formAsTable">
-			{{ formType.as_table }}
-			</table>
-			{% for hidden in formType.hidden_fields %}
-		    {{ hidden }}
-		    {% endfor %}
-			<input type="submit" value="Ajouter" name="ajType">
-		</form>
+	<div class="divbox">
+		<h2>Ajouter un Verre</h2>
+		<div class="divForm">
+			<form action="" method="POST" id="fournisseur_formAjType">{% csrf_token %}
+				<table class="formAsTable">
+				{{ formType.as_table }}
+				</table>
+				{% for hidden in formType.hidden_fields %}
+			    {{ hidden }}
+			    {% endfor %}
+				{% sbt "#fournisseur_formAjType" "ajType" "ajType" "ui-icon-circle-plus" "Ajouter" %}
+			</form>
+		</div>
 	</div>
-	<h3>Liste ({{ listType|length }})</h3>
-	{% include "fournisseur/_table_listType.html" %}
+	<div class="divbox">
+		<h2>Liste ({{ listType|length }})</h2>
+		{% include "fournisseur/_table_listType.html" %}
+	</div>
 	<hr />
 </div>
 
 <div class="span-10 last">
 	<h1>Intitulés</h1>
 	<div class="divForm">
-		<h2>Traitement</h2>
-		<h3>Ajouter:</h3>
-		<form action="" method="POST">{% csrf_token %}
-			<table class="formAsTable">
-			{{ formTraitement.as_table }}
+		<div class="divbox">
+			<h2>Traitement</h2>
+			<h3>Ajouter:</h3>
+			<form action="" method="POST">{% csrf_token %}
+				<table class="formAsTable" id="fournisseur_AjTraitement">
+				{{ formTraitement.as_table }}
+				</table>
+				{% sbt "#fournisseur_formAjTraitement" "ajTraitement" "ajTraitement" "ui-icon-circle-plus" "Ajouter" %}
+			</form>
+			<h3>Liste ({{listTraitement|length}})</h3>
+			<table>
+				<tr><th>Nom:</th><th>Tarif</th><th>R.Monture</th><th>Actions</th></tr>
+				{% for v in listTraitement %}
+				<tr>
+				  <td>{{ v.nom }}</td>
+				  <td>{{ v.tarif }}</td>
+				  <td>{{ v.remise_monture|default:"n.r" }}</td>
+				  <td>{% bt "btModTraitement" "ui-icon-pencil" "Modifier..." "modTraitement" v.id %}</td>
+				</tr>
+				{% endfor %}
 			</table>
-			<input type="submit" value="Ajouter" name="ajTraitement">
-		</form>
-		<h3>Liste ({{listTraitement|length}})</h3>
-		<table>
-			<tr><th>Nom:</th><th>Tarif</th><th>R.Monture</th><th>Actions</th></tr>
-			{% for v in listTraitement %}
-			<tr>
-			  <td>{{ v.nom }}</td>
-			  <td>{{ v.tarif }}</td>
-			  <td>{{ v.remise_monture|default:"n.r" }}</td>
-			  <td><a href="{% url modTraitement v.id %}" class='action'>Modifier</a></td>
-			</tr>
-			{% endfor %}
-		</table>
+		</div>
 	</div>
 	<hr />
 	<div class="divForm">
-		<h2>Diamètre</h2>
-		<h3>Ajouter:</h3>
-		<form action="" method="POST">{% csrf_token %}
-			<table class="formAsTable">
-			{{ formDiametre.as_table }}
+		<div class="divbox">
+			<h2>Diamètre</h2>
+			<h3>Ajouter:</h3>
+			<form action="" method="POST" id"fournisseur_formAjDiametre">{% csrf_token %}
+				<table class="formAsTable">
+				{{ formDiametre.as_table }}
+				</table>
+				{% sbt "#fournisseur_formAjDiametre" "ajDiametre" "ajDiametre" "ui-icon-circle-plus" "Ajouter" %}
+			</form>
+			<h3>Liste ({{listDiametre|length}})</h3>
+			<table>
+				<tr><th>Nom:</th><th>Actions</th></tr>
+				{% for v in listDiametre %}
+				<tr>
+				  <td>{{ v.nom }}</td>
+				  <td>{% bt "btModDiametre" "ui-icon-pencil" "Modifier..." "modDiametre" v.id %}</td>
+				</tr>
+				{% endfor %}
 			</table>
-			<input type="submit" value="Ajouter" name="ajDiametre">
-		</form>
-		<h3>Liste ({{listDiametre|length}})</h3>
-		<table>
-			<tr><th>Nom:</th><th>Actions</th></tr>
-			{% for v in listDiametre %}
-			<tr>
-			  <td>{{ v.nom }}</td>
-			  <td><a href="{% url modDiametre v.id %}" class='action'>Modifier</a></td>
-			</tr>
-			{% endfor %}
-		</table>
+		</div>
 	</div>
 	<hr />
 	<div class="divForm">
-		<h2>Couleur</h2>
-		<h3>Ajouter:</h3>
-		<form action="" method="POST">{% csrf_token %}
-			<table class="formAsTable">
-			{{ formCouleur.as_table }}
+		<div class="divbox">
+			<h2>Couleur</h2>
+			<h3>Ajouter:</h3>
+			<form action="" method="POST">{% csrf_token %}
+				<table class="formAsTable" id="fournisseur_formAjCouleur">
+				{{ formCouleur.as_table }}
+				</table>
+				{% sbt "#fournisseur_formAjCouleur" "ajCouleur" "ajCouleur" "ui-icon-circle-plus" "Ajouter" %}
+			</form>
+			<h3>Liste ({{listCouleur|length}})</h3>
+			<table>
+				<tr><th>Nom:</th><th>Tarif</th><th>R.Monture</th><th>Actions</th></tr>
+				{% for v in listCouleur %}
+				<tr>
+				  <td>{{ v.nom }}</td>
+				  <td>{{ v.tarif }}</td>
+				  <td>{{ v.remise_monture|default:"n.r" }}</td>
+				  <td>{% bt "btModCouleur" "ui-icon-pencil" "Modifier..." "modCouleur" v.id %}</td>
+				</tr>
+				{% endfor %}
 			</table>
-			<input type="submit" value="Ajouter" name="ajCouleur">
-		</form>
-		<h3>Liste ({{listCouleur|length}})</h3>
-		<table>
-			<tr><th>Nom:</th><th>Transition</th><th>R.Monture</th><th>Actions</th></tr>
-			{% for v in listCouleur %}
-			<tr>
-			  <td>{{ v.nom }}</td>
-			  <td>{{ v.transition|yesno:"Oui,Non" }}</td>
-			  <td>{{ v.remise_monture|default:"n.r" }}</td>
-			  <td><a href="{% url modCouleur v.id %}" class='action'>Modifier</a></td>
-			</tr>
-			{% endfor %}
-		</table>
+		</div>
 	</div>
 	<hr />
 	

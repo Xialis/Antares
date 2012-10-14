@@ -89,7 +89,7 @@ function update_info(id, data) {
 	}
 	else {
 		retour+= entete_err;
-		retour+= "Selectionner au moins le type et le diamètre";
+		retour+= "Selectionner au moins le type, diamètre et couleur";
 	} 
 	
 	retour+= "</p>" +
@@ -128,46 +128,48 @@ function getInfo(id, oeil) {
 {% block centernext %}
 
 <div class="first span-22 border">
-	<h2>Verres</h2>
-	<div class="aide">Selectionner le Type en premier.</div>
-	
-	<form id="facture_formVerres" method="POST" action="">{% csrf_token %}
-	{{ formSetLigne.management_form }}
-		{% for form in formSetLigne %}
+	<div class="divbox">
+		<h2>Verres</h2>
+		<div class="aide">Selectionner le Type en premier.</div>
 		
-		{% if forloop.counter0|divisibleby:2 %}
-		{% if forloop.counter0 != 0 %}
-		</table>
-		{% endif %}
-		{% comment %}
-		Faire des math avec django... technique du widthratio
-		 http://slacy.com/blog/2010/07/using-djangos-widthratio-template-tag-for-multiplication-division/
-		{% endcomment %}
-		<div class="tableTitle">Monture {% widthratio forloop.counter 2 1 %}</div>
-		<table class="formAsHorTable">
-			<tr>
-				<th>Oeil</th>
-				<th class="required">{{ form.vtype.label_tag }}</th>
-				<th class="required">{{ form.diametre.label_tag }}</th>
-				<th>{{ form.couleur.label_tag }}</th>
-				<th>{{ form.traitement.label_tag }}</th>
-				<th>Info</th>
-			</tr>
-		{% endif %}
+		<form id="facture_formVerres" method="POST" action="">{% csrf_token %}
+		{{ formSetLigne.management_form }}
+			{% for form in formSetLigne %}
 			
-			<tr>
-				<td>{% cycle 'OD' 'OG' as oeil %}</td>
-				<td>{% ffe form.vtype.errors %}{{ form.vtype }}</td>
-				<td>{% ffe form.diametre.errors %}{{ form.diametre }}</td>
-				<td>{% ffe form.couleur.errors %}{{ form.couleur }}</td>
-				<td>{% ffe form.traitement.errors %}{{ form.traitement }}</td>
-				<td id="info_{{ forloop.counter0 }}">{% jbt "getInfo" "" "ui-icon-search" "Voir" forloop.counter0 oeil  %}</td>
-			</tr>
-		
-		{% endfor %}
-		</table>
-		{% sbt "#facture_formVerres" "ajVerres" "ajVerres" "ui-icon-circle-check" "Continuer" %}
-	</form>
+			{% if forloop.counter0|divisibleby:2 %}
+			{% if forloop.counter0 != 0 %}
+			</table>
+			{% endif %}
+			{% comment %}
+			Faire des math avec django... technique du widthratio
+			 http://slacy.com/blog/2010/07/using-djangos-widthratio-template-tag-for-multiplication-division/
+			{% endcomment %}
+			<div class="tableTitle">Monture {% widthratio forloop.counter 2 1 %}</div>
+			<table class="formAsHorTable">
+				<tr>
+					<th>Oeil</th>
+					<th class="required">{{ form.vtype.label_tag }}</th>
+					<th class="required">{{ form.diametre.label_tag }}</th>
+					<th class="required">{{ form.couleur.label_tag }}</th>
+					<th>{{ form.traitement.label_tag }}</th>
+					<th>Info</th>
+				</tr>
+			{% endif %}
+				
+				<tr>
+					<td>{% cycle 'OD' 'OG' as oeil %}</td>
+					<td>{% ffe form.vtype.errors %}{{ form.vtype }}</td>
+					<td>{% ffe form.diametre.errors %}{{ form.diametre }}</td>
+					<td>{% ffe form.couleur.errors %}{{ form.couleur }}</td>
+					<td>{% ffe form.traitement.errors %}{{ form.traitement }}</td>
+					<td id="info_{{ forloop.counter0 }}">{% jbt "getInfo" "" "ui-icon-search" "Voir info..." forloop.counter0 oeil  %}</td>
+				</tr>
+			
+			{% endfor %}
+			</table>
+			{% sbt "#facture_formVerres" "ajVerres" "ajVerres" "ui-icon-circle-check" "Continuer" %}
+		</form>
+	</div>
 	<br />
 	<hr />
 </div>

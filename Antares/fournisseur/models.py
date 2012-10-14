@@ -44,7 +44,7 @@ class Couleur(models.Model):
     """ Couleur du verre """
     fournisseur = models.ForeignKey(Fournisseur)
     nom = models.CharField(max_length=20)
-    transition = models.BooleanField()
+    tarif = models.DecimalField(max_digits=8, decimal_places=0)
     remise_monture = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
 
     def __unicode__(self):
@@ -64,9 +64,7 @@ class Type(models.Model):
     traitements = models.ManyToManyField(Traitement, blank=True, null=True)
     diametres = models.ManyToManyField(Diametre)
     couleurs = models.ManyToManyField(Couleur, blank=True, null=True)
-    tarif_blanc = models.DecimalField(max_digits=8, decimal_places=0)
-    tarif_couleur = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
-    tarif_transition = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
+    tarif = models.DecimalField(max_digits=8, decimal_places=0)
     remise_monture = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
     
     def __unicode__(self):

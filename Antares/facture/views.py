@@ -17,7 +17,7 @@ from fournisseur.models import Type, Diametre, Traitement, Couleur
 from stock.models import LigneStock
 
 import func
-from facture.forms import LigneForm
+from facture.forms import LigneForm, MontureForm, OptionForm, ChoixFactureForm
 
 
 def etapeRecherche(request):
@@ -187,7 +187,13 @@ def etapeVerres(request):
     # ============================
     # Restauration
     if request.method == 'GET' and 'appFacture' in request.session:
-        pass  # TODO: Restauration su GET
+        if 'etapeVerres_post' in request.session['appFacture']:
+            formSetLigne = LigneFormSet(request.session['appFacture']['etapeVerres_post'])
+            formSetLigne.forms[0].empty_permitted = False
+            for form in formSetLigne:
+                chdata = form._get_changed_data()
+                if 'vtype' in chdata:
+                    form.filtre_vtype(form._raw_value('vtype'))
     # Fin restauration
     # ============================
 
@@ -204,7 +210,8 @@ def etapeVerres(request):
                     form.filtre_vtype(form._raw_value('vtype'))
 
             if formSetLigne.is_valid():
-                return func.etapeSuivante(func.enrVerres(formSetLigne.cleaned_data, request))
+                func.enrVerres(formSetLigne, request)
+                return func.etapeSuivante(request)
 
             # Si le formulaire est rempli ou en partie on filtre les champs
             formSetLigne = LigneFormSet(request.POST)  # Si on ne refait pas un formset, le is_valid casse tout...
@@ -309,6 +316,95 @@ def ajax_info(request, qs=None):
 #
 def etapeMontures(request):
     c = {}
+    nbreMonture = func.getNbreMontures(request)
+    MontureFormSet = formset_factory(MontureForm, extra=nbreMonture)
+    formSetMonture = MontureFormSet()
+    for f in formSetMonture:
+        f.empty_permitted = False
 
+    # ============================
+    # Restauration
+    if request.method == 'GET' and 'appFacture' in request.session:
+        if 'etapeMontures_post' in request.session['appFacture']:
+            formSetMonture = MontureFormSet(request.session['appFacture']['etapeMontures_post'])
+            for f in formSetMonture:
+                f.empty_permitted = False
+    # Fin restauration
+    # ============================
+
+    if request.method == 'POST':
+
+        if 'ajMontures' in request.POST:
+            formSetMonture = MontureFormSet(request.POST)
+            for f in formSetMonture:
+                f.empty_permitted = False
+
+            if formSetMonture.is_valid():
+                func.enrMontures(formSetMonture, request)
+                return func.etapeSuivante(request)
+
+    c['formSetMonture'] = formSetMonture
     c.update(csrf(request))
     return render_to_response("facture/etapeMontures.html", c, context_instance=RequestContext(request))
+
+
+# ==
+# Etape Options
+#
+def etapeOptions(request):
+    c = {}
+
+    OptionFormSet = formset_factory(OptionForm)
+    formSetOption = OptionFormSet()
+    # ============================
+    # Restauration
+    if request.method == 'GET' and 'appFacture' in request.session:
+        if 'etapeOptions_post' in request.session['appFacture']:
+            formSetOption = OptionFormSet(request.session['appFacture']['etapeOptions_post'])
+    # Fin restauration
+    # ============================
+    if request.method == 'POST':
+
+        if 'ajOption' in request.POST:
+            formSetOption = OptionFormSet(request.POST)
+            if formSetOption.is_valid():
+                func.enrOptions(formSetOption, request)
+                return func.etapeSuivante(request)
+
+    c['formSetOption'] = formSetOption
+    c.update(csrf(request))
+    return render_to_response("facture/etapeOptions.html", c, context_instance=RequestContext(request))
+
+
+# ==
+# Etape Recapitulatif
+#
+def etapeRecapitulatif(request):
+    c = {}
+    formFacture = ChoixFactureForm()
+    dico_client = func.getClient(request)
+    client_orig = None
+
+    if dico_client['client'] == None:
+        client = Client.objects.get(id=dico_client['client_id'])
+    else:
+        client = dico_client['client']
+        if dico_client['client_id']:
+            client_orig = Client.clean(id=dico_client['client_id'])
+
+    t_verres = func.getVerres(request)
+    t_options = func.getOptions(request)
+    t_montures = func.getMontures(request)
+    prescription = func.getPrescription(request)
+    prescription_t = func.getPrescription_T(request)
+
+    c['client'] = client
+    c['client_orig'] = client_orig
+    c['t_verres'] = t_verres
+    c['t_options'] = t_options
+    c['t_montures'] = t_montures
+    c['prescription'] = prescription
+    c['prescription_t'] = prescription_t
+    c['formFacture'] = formFacture
+    c.update(csrf(request))
+    return render_to_response("facture/etapeRecapitulatif.html", c, context_instance=RequestContext(request))

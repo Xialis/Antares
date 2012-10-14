@@ -1,0 +1,46 @@
+{% extends "facture/base.html" %}
+{% load antares_tags %}
+{% block head %}
+<script src='/media/jquery.formset.min.js'></script>
+
+<script type="text/javascript">
+       $(function() {
+           $('.form-container').formset({
+           	addText: 'Ajouter une option',
+           	deleteText: 'Retirer une option',
+           
+           });
+       })
+</script>
+{% endblock %}
+
+{% block centernext %}
+
+<div class="first span-22 border">
+	<div class="divbox">
+		<h2>Options</h2>
+		<form action="" method="POST" id="facture_OptionsForm">{% csrf_token %}
+			{{ formSetOption.management_form }}
+			<table class="formAsHorTable">
+				<thead>
+					<tr>
+						<th class="required">Nom</th><th class="required">Tarif</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for f in formSetOption %}
+					<tr class="form-container">
+						<td>{{ f.nom }}</td>
+						<td>{{ f.tarif }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			<p>
+				{% sbt "#facture_OptionsForm" "ajOption" "ajOption" "ui-icon-circle-check" "Continuer" %}
+			</p>
+		</form>
+	</div>
+</div>
+
+{% endblock %}

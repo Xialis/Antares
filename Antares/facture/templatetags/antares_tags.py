@@ -5,11 +5,11 @@ register = template.Library()
 
 
 @register.inclusion_tag("_inc/l-button.html")
-def bt(href, aid, uiiconstyle, text):
-    if href == "":
+def bt(aid, uiiconstyle, text, view, *args):
+    if view == "":
         urltext = ""
     else:
-        urltext = reverse(href)
+        urltext = reverse(view, args=args)
 
     return {'href': urltext, 'aid': aid, 'uiiconstyle': uiiconstyle, 'text': text}
 

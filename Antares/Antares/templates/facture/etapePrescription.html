@@ -59,78 +59,82 @@ $(document).ready(function(e){
 </div>
 
 <div class="first span-22 border">
-	<h2>Prescription</h2>
-	<form id="client_formPrescription" method="POST" action="">{% csrf_token %}
-		<fieldset>
-			<legend>Infos prescription</legend>
-			<table class="formAsTable">
-				<tr>
-					<th {% if formPrescription.prescripteur.field.required %}class="required"{% endif %}>{{ formPrescription.prescripteur.label_tag }}</th><td>{{ formPrescription.prescripteur.errors }}{{ formPrescription.prescripteur }}</td>
-					<th {% if formPrescription.date_realisation.field.required %}class="required"{% endif %}>{{ formPrescription.date_realisation.label_tag }}</th><td>{{ formPrescription.date_realisation.errors }}{{ formPrescription.date_realisation }}</td>
-				</tr>
-			</table>
+	<div class="divbox">
+		<h2>Prescription</h2>
+		<form id="client_formPrescription" method="POST" action="">{% csrf_token %}
+			<fieldset>
+				<legend>Infos prescription</legend>
+				<table class="formAsTable">
+					<tr>
+						<th {% if formPrescription.prescripteur.field.required %}class="required"{% endif %}>{{ formPrescription.prescripteur.label_tag }}</th><td>{{ formPrescription.prescripteur.errors }}{{ formPrescription.prescripteur }}</td>
+						<th {% if formPrescription.date_realisation.field.required %}class="required"{% endif %}>{{ formPrescription.date_realisation.label_tag }}</th><td>{{ formPrescription.date_realisation.errors }}{{ formPrescription.date_realisation }}</td>
+					</tr>
+				</table>
+				<p>
+					{% bt "btAjPrescripteur" "ui-icon-circle-plus" "Ajouter un prescripteur..." "" %}
+				</p>
+			</fieldset>
+			<fieldset>
+				<legend>Prescription</legend>
+				<table class="formAsHorTable prescriptionForm">
+					<tr>
+						<th>Oeil</th><th class="required">Sphère</th><th>Cylindre</th><th>Addition</th><th>Axe</th>
+					</tr>
+					<tr>
+						<th>OD</th>
+						<td>{{ formPrescription.sphere_od.errors }}{{ formPrescription.sphere_od }}</td><td>{{ formPrescription.cylindre_od.errors }}{{ formPrescription.cylindre_od }}</td>
+						<td>{{ formPrescription.addition_od.errors }}{{ formPrescription.addition_od }}</td><td>{{ formPrescription.axe_od.errors }}{{ formPrescription.axe_od }}</td>
+					</tr>
+					<tr>
+						<th>OG</th>
+						<td>{{ formPrescription.sphere_og.errors }}{{ formPrescription.sphere_og }}</td><td>{{ formPrescription.cylindre_og.errors }}{{ formPrescription.cylindre_og }}</td>
+						<td>{{ formPrescription.addition_og.errors }}{{ formPrescription.addition_og }}</td><td>{{ formPrescription.axe_og.errors }}{{ formPrescription.axe_og }}</td>
+					</tr>
+				</table>
+			</fieldset>
 			<p>
-				{% bt "" "btAjPrescripteur" "ui-icon-circle-plus" "Ajouter un prescripteur..." %}
+				{% sbt "#client_formPrescription" "ajPrescription" "ajPrescription" "ui-icon-circle-check" "Continuer" %}
 			</p>
-		</fieldset>
-		<fieldset>
-			<legend>Prescription</legend>
-			<table class="formAsHorTable prescriptionForm">
-				<tr>
-					<th>Oeil</th><th class="required">Sphère</th><th>Cylindre</th><th>Addition</th><th>Axe</th>
-				</tr>
-				<tr>
-					<th>OD</th>
-					<td>{{ formPrescription.sphere_od.errors }}{{ formPrescription.sphere_od }}</td><td>{{ formPrescription.cylindre_od.errors }}{{ formPrescription.cylindre_od }}</td>
-					<td>{{ formPrescription.addition_od.errors }}{{ formPrescription.addition_od }}</td><td>{{ formPrescription.axe_od.errors }}{{ formPrescription.axe_od }}</td>
-				</tr>
-				<tr>
-					<th>OG</th>
-					<td>{{ formPrescription.sphere_og.errors }}{{ formPrescription.sphere_og }}</td><td>{{ formPrescription.cylindre_og.errors }}{{ formPrescription.cylindre_og }}</td>
-					<td>{{ formPrescription.addition_og.errors }}{{ formPrescription.addition_og }}</td><td>{{ formPrescription.axe_og.errors }}{{ formPrescription.axe_og }}</td>
-				</tr>
-			</table>
-		</fieldset>
-		<p>
-			{% sbt "#client_formPrescription" "ajPrescription" "ajPrescription" "ui-icon-circle-check" "Continuer" %}
-		</p>
-	</form>
+		</form>
+	</div>
 	<br>
-	<h2>Liste de Prescriptions</h2>
-	{% if listePrescriptions %}
-	<table>
-		<tr>
-			<th>Prescripteur</th>
-			<th>Date de réalisation</th>
-			<th>Erreur ?</th>
-			<th>Sphere OD</th>
-			<th>Cylindre OD</th>
-			<th>Addition OD</th>
-			<th>Axe OD</th>
-			<th>Sphere OG</th>
-			<th>Cylindre OG</th>
-			<th>Addition OG</th>
-			<th>Axe OG</th>
-			<th>Action</th>
-		</tr>
-		{% for p in listePrescriptions %}
-		<tr>
-			<td>{{ p.prescripteur }}</td>
-			<td>{{ p.date_realisation }}</td>
-			<td>{{ p.erreur }}</td>
-			<td>{{ p.sphere_od }}</td>
-			<td>{{ p.cylindre_od }}</td>
-			<td>{{ p.addition_od }}</td>
-			<td>{{ p.axe_od }}</td>
-			<td>{{ p.sphere_og }}</td>
-			<td>{{ p.cylindre_og }}</td>
-			<td>{{ p.addition_og }}</td>
-			<td>{{ p.axe_og }}</td>
-			<td>Charger</td>
-		</tr>
-		{% endfor %}
-	</table>
-	{% endif %}
+	<div class="divbox">
+		<h2>Liste de Prescriptions</h2>
+		{% if listePrescriptions %}
+		<table>
+			<tr>
+				<th>Prescripteur</th>
+				<th>Date de réalisation</th>
+				<th>Erreur ?</th>
+				<th>Sphere OD</th>
+				<th>Cylindre OD</th>
+				<th>Addition OD</th>
+				<th>Axe OD</th>
+				<th>Sphere OG</th>
+				<th>Cylindre OG</th>
+				<th>Addition OG</th>
+				<th>Axe OG</th>
+				<th>Action</th>
+			</tr>
+			{% for p in listePrescriptions %}
+			<tr>
+				<td>{{ p.prescripteur }}</td>
+				<td>{{ p.date_realisation }}</td>
+				<td>{{ p.erreur }}</td>
+				<td>{{ p.sphere_od }}</td>
+				<td>{{ p.cylindre_od }}</td>
+				<td>{{ p.addition_od }}</td>
+				<td>{{ p.axe_od }}</td>
+				<td>{{ p.sphere_og }}</td>
+				<td>{{ p.cylindre_og }}</td>
+				<td>{{ p.addition_og }}</td>
+				<td>{{ p.axe_og }}</td>
+				<td>Charger</td>
+			</tr>
+			{% endfor %}
+		</table>
+		{% endif %}
+	</div>
 </div>
 
 {% endblock %}

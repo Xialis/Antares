@@ -4,20 +4,22 @@
 {% block centernext %}
 
 <div class="first span-8 border">
-	<h2>Client <span>{% if appFacture.client_id %}(n°: {{ appFacture.client_id }}){% else %}(nouveau){% endif %}</span></h2>
-	<form id="client_formClient" method="POST" action="">{% csrf_token %}
-		<table class="formAsTable">
-		{{ formClient.as_table }}
-		</table>
-		<p>
-			{% sbt "#client_formClient" "ajClient" "ajClient" "ui-icon-circle-check" "Continuer" %}
-		</p>
-	</form>
+	<div class="divbox">
+		<h2>Client <span>{% if appFacture.client_id %}(n°: {{ appFacture.client_id }}){% else %}(nouveau){% endif %}</span></h2>
+		<form id="client_formClient" method="POST" action="">{% csrf_token %}
+			<table class="formAsTable">
+			{{ formClient.as_table }}
+			</table>
+			<p>
+				{% sbt "#client_formClient" "ajClient" "ajClient" "ui-icon-circle-check" "Continuer" %}
+			</p>
+		</form>
+	</div>
 </div>
 
 <div class="span-14 last">
 	{% if b_modif %}
-	<div class="warning">
+	<div class="divbox">
 		Les informations du client seront modifiées à la validation de la facture/pro forma<br />
 		Confirmer ? 
 		<form id="facture_formValidation" action="" method="POST">{% csrf_token %}
