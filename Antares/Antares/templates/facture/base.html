@@ -46,8 +46,8 @@
 		<div>
 			<h3>Prescription</h3>
 			<ul>
-				<li>OD: {% if appFacture.sphod < 0 %}Myope{% elif appFacture.sphod > 0 %}Hypermetrope{% else %}Plan{% endif %} , {% if not appFacture.astig_od == None and appFacture.astig_od %}Astigmate{% endif %}</li>
-				<li>OG: {% if appFacture.sphog < 0 %}Myope{% elif appFacture.sphog > 0 %}Hypermetrope{% else %}Plan{% endif %} , {% if not appFacture.astig_og == None and appFacture.astig_og %}Astigmate{% endif %}</li>
+				<li>OD: {% if appFacture.sphod %}{% if appFacture.sphod < 0 %}Myope{% elif appFacture.sphod > 0 %}Hypermetrope{% else %}Plan{% endif %} , {% if not appFacture.astig_od == None and appFacture.astig_od %}Astigmate{% endif %}{% else %}pas encore renseigné{% endif %}</li>
+				<li>OG: {% if appFacture.sphog %}{% if appFacture.sphog < 0 %}Myope{% elif appFacture.sphog > 0 %}Hypermetrope{% else %}Plan{% endif %} , {% if not appFacture.astig_og == None and appFacture.astig_og %}Astigmate{% endif %}{% else %}pas encore renseigné{% endif %}</li>
 			</ul>
 			{% if appFacture.attention_sphere %}
 			<div class="ui-widget">
@@ -68,8 +68,8 @@
 			{% endif %}
 			<p>Possibilités:
 				<ul>
-					<li>OD: {% if not appFacture.progressif_od == None and appFacture.progressif_od %}VL, VP, Progressif{% elif appFacture.progressif_od != None %}VL ou VP{% else %}Pas encore définies{% endif %}</li>
-					<li>OG: {% if not appFacture.progressif_og == None and appFacture.progressif_og %}VL, VP, Progressif{% elif appFacture.progressif_og != None %}VL ou VP{% else %}Pas encore définies{% endif %}</li>
+					<li>OD: {% if appFacture.progressif_od == 'p' %}VL, VP, Progressif{% elif appFacture.progressif_od == 'u' %}VL ou VP{% else %}Pas encore définies{% endif %}</li>
+					<li>OG: {% if appFacture.progressif_og == 'p' %}VL, VP, Progressif{% elif appFacture.progressif_og == 'u' %}VL ou VP{% else %}Pas encore définies{% endif %}</li>
 				</ul>
 			</p>
 		</div>

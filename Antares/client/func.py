@@ -3,6 +3,8 @@ from datetime import date
 from client.models import Client
 from client.forms import FormRechercheClient
 
+from Antares.Verrou import Verrou
+
 
 def ajoutClient(formAjoutClient):
 
@@ -25,6 +27,28 @@ def ajoutClient(formAjoutClient):
         b_sauver = True
 
     return {"form": formAjoutClient, "b_sauver": b_sauver}
+
+
+def sauvClient(client):
+    verrou = Verrou('codeClient.lock')
+    while verrou.ferme() == 0:
+        pass
+
+    dj = date.today()
+    debut_code = dj.strftime("%Y") + dj.strftime("%m") + dj.strftime("%d")
+    compteur = Client.objects.filter(code__startswith=debut_code).count()
+    if compteur < 10:
+        s_compteur = '00' + str(compteur + 1)
+    elif compteur < 100:
+        s_compteur = '0' + str(compteur + 1)
+
+    code = debut_code + s_compteur
+    client.code = code
+    client.save()
+
+    verrou.ouvre()
+
+    return client
 
 
 def ajoutPrescripteur(formAjoutPrescripteur):

@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
+from datetime import date
 from django.shortcuts import redirect
 from facture.views import *
-from facture.models import LigneFacture, Monture, Option
+from facture.models import LigneFacture, Monture, Option, Facture
 from facture.forms import LigneForm
+from Antares.Verrou import Verrou
 
 
 def utiliserClient(request, cid):
@@ -67,12 +69,12 @@ def enrPrescription(prescription, request):
     if request.method == 'POST':
         request.session['appFacture']['prescription'] = prescription
 
-        if prescription.addition_od != 0 or prescription.addition_od != None:
+        if prescription.addition_od != 0 and prescription.addition_od is not None:
             request.session['appFacture']['progressif_od'] = True
         else:
             request.session['appFacture']['progressif_od'] = False
 
-        if prescription.addition_og != 0:
+        if prescription.addition_og != 0 and prescription.addition_og is not None:
             request.session['appFacture']['progressif_og'] = True
         else:
             request.session['appFacture']['progressif_og'] = False
@@ -156,14 +158,25 @@ def enrVerres(formSetLigne, request):
             lfd.oeil = 'D'
             lfd.monture = x
 
+            # tarif: tarif_type + tarif_couleur + tarif_traitement
+            tarif_type = lfd.vtype.tarif
+            tarif_couleur = lfd.couleur.tarif
+            tarif_traitement = lfd.traitement.tarif
+            lfd.tarif = tarif_type + tarif_couleur + tarif_traitement
+
             if len(formSetLigne[start + 1].cleaned_data) != 0:
                 lfg = formSetLigne[start + 1].save(commit=False)
                 lfg.oeil = 'G'
                 lfg.monture = x
+                tarif_type = lfg.vtype.tarif
+                tarif_couleur = lfg.couleur.tarif
+                tarif_traitement = lfg.traitement.tarif
+                lfg.tarif = tarif_type + tarif_couleur + tarif_traitement
                 t.append(lfd)
                 t.append(lfg)
             else:
                 lfd.oeil = 'T'
+                lfd.tarif = lfd.tarif * 2
                 t.append(lfd)
 
     request.session['appFacture']['LigneFacture'] = t
@@ -210,8 +223,10 @@ def enrOptions(formSetOption, request):
     t = []
 
     for f in formSetOption:
-        option = f.save(commit=False)
-        t.append(option)
+        if f.is_valid():
+            if f.cleaned_data.get('nom') and f.cleaned_data['nom'] != '':
+                option = f.save(commit=False)
+                t.append(option)
 
     request.session['appFacture']['Options'] = t
     request.session['appFacture']['etapeOptions_post'] = request.POST
@@ -274,3 +289,32 @@ def ctrl(request):
     etape = request.session['appFacture']['etape']
 
     return etapes[etape][1](request)
+
+
+def sauvFacture(facture):
+
+    verrou = Verrou('codeFacture.lock')
+
+    if facture.bproforma == True:
+        lettre = 'P'
+    else:
+        lettre = 'F'
+
+    while verrou.ferme() == 0:
+        pass
+
+    dj = date.today()
+    debut_code = dj.strftime("%Y") + dj.strftime("%m") + dj.strftime("%d")
+    compteur = Facture.objects.filter(numero__startswith=debut_code).count()
+    if compteur < 10:
+        s_compteur = '00' + str(compteur + 1)
+    elif compteur < 100:
+        s_compteur = '0' + str(compteur + 1)
+
+    code = debut_code + s_compteur + lettre
+    facture.numero = code
+    facture.save()
+
+    verrou.ouvre()
+
+    return facture

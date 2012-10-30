@@ -31,10 +31,20 @@ def app_context(request):
             appFacture.update({'client': client})
 
         if 'progressif_od' in s_appFacture:
-            appFacture.update({'progressif_od': s_appFacture['progressif_od']})
+            if s_appFacture['progressif_od'] == True:
+                appFacture.update({'progressif_od': 'p'})
+            else:
+                appFacture.update({'progressif_od': 'u'})
+        else:
+            appFacture.update({'progressif_od': None})
 
         if 'progressif_og' in s_appFacture:
-            appFacture.update({'progressif_og': s_appFacture['progressif_og']})
+            if s_appFacture['progressif_og'] == True:
+                appFacture.update({'progressif_og': 'p'})
+            else:
+                appFacture.update({'progressif_og': 'u'})
+        else:
+            appFacture.update({'progressif_og': None})
 
         if 'prescription' in s_appFacture:
             p = s_appFacture['prescription']

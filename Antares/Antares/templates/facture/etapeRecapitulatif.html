@@ -74,12 +74,13 @@ function validation_fac() {
 		<h2>Verres</h2>
 		<p>Verifier les infos</p>
 		<table>
-			<tr><th>M</th><th>Type</th><th>Diamètre</th><th>Couleur</th><th>Traitement</th></tr>
+			<tr><th>M</th><th>Type</th><th>Diamètre</th><th>Couleur</th><th>Traitement</th><th>Tarif</th></tr>
 			{% for v in t_verres %}
 			<tr>
 				<td>{{ v.monture|add:1 }}</td>
 				<td>{{ v.vtype }}</td><td>{{ v.diametre }}</td>
 				<td>{{ v.couleur }}</td><td>{{ v.traitement }}</td>
+				<td>{{ v.tarif }}</td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -107,24 +108,24 @@ function validation_fac() {
 		<table>
 			<tr><th>Oeil</th><th>Sphère</th><th>Cylindre</th><th>Add</th><th>Axe</th></tr>
 			<tr>
-				<td>OD</td><td>{{ prescription.sphere_od }}</td><td>{{ prescription.cylindre_od }}</td>
-				<td>{{ prescription.addition_od }}</td><td>{{ prescription.axe_od }}</td>
+				<td>OD</td><td>{{ prescription.sphere_od }}</td><td>{{ prescription.cylindre_od|default:'n.r' }}</td>
+				<td>{{ prescription.addition_od|default:'n.r' }}</td><td>{{ prescription.axe_od|default:'n.r' }}</td>
 			</tr>
 			<tr>
-				<td>OG</td><td>{{ prescription.sphere_og }}</td><td>{{ prescription.cylindre_og }}</td>
-				<td>{{ prescription.addition_og }}</td><td>{{ prescription.axe_og }}</td>
+				<td>OG</td><td>{{ prescription.sphere_og }}</td><td>{{ prescription.cylindre_og|default:'n.r'}}</td>
+				<td>{{ prescription.addition_og|default:'n.r' }}</td><td>{{ prescription.axe_og|default:'n.r' }}</td>
 			</tr>
 		</table>
 		<div class="tableTitle">Transposition:</div>
 		<table>
 			<tr><th>Oeil</th><th>Sphère</th><th>Cylindre</th><th>Add</th><th>Axe</th></tr>
 			<tr>
-				<td>OD</td><td>{{ prescription_t.sphere_od }}</td><td>{{ prescription_t.cylindre_od }}</td>
-				<td>{{ prescription_t.addition_od }}</td><td>{{ prescription_t.axe_od }}</td>
+				<td>OD</td><td>{{ prescription_t.sphere_od }}</td><td>{{ prescription_t.cylindre_od|default:'n.r' }}</td>
+				<td>{{ prescription_t.addition_od|default:'n.r' }}</td><td>{{ prescription_t.axe_od|default:'n.r' }}</td>
 			</tr>
 			<tr>
-				<td>OG</td><td>{{ prescription_t.sphere_og }}</td><td>{{ prescription_t.cylindre_og }}</td>
-				<td>{{ prescription_t.addition_og }}</td><td>{{ prescription_t.axe_og }}</td>
+				<td>OG</td><td>{{ prescription_t.sphere_og }}</td><td>{{ prescription_t.cylindre_og|default:'n.r' }}</td>
+				<td>{{ prescription_t.addition_og|default:'n.r' }}</td><td>{{ prescription_t.axe_og|default:'n.r' }}</td>
 			</tr>
 		</table>
 	</div>
@@ -148,7 +149,7 @@ function validation_fac() {
 			{{ formFacture.as_table }}
 		</table>
 		<p>
-			{% jbt "validation_fac" "btValidation" "ui-icon-circle-check" "valider" %}
+			{% jbt "validation_fac" "btValidation" "ui-icon-circle-check" "valider..." %}
 		</p>
 		</form>
 	</div>

@@ -10,7 +10,9 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from client.models import Client, Prescription
 from client.forms import FormRechercheClient, FormAjoutClient, FormAjoutPrescription, FormAjoutPrescripteur
-from client.func import initFiltration, filtration
+
+#from client.func import initFiltration, filtration, sauvClient
+import client.func as cfunc
 
 from fournisseur.models import Type, Diametre, Traitement, Couleur
 
@@ -18,6 +20,7 @@ from stock.models import LigneStock
 
 import func
 from facture.forms import LigneForm, MontureForm, OptionForm, ChoixFactureForm
+from facture.models import Interlocuteur
 
 
 def etapeRecherche(request):
@@ -25,7 +28,7 @@ def etapeRecherche(request):
 
     formRechercheClient = FormRechercheClient()
 
-    riF = initFiltration(request)
+    riF = cfunc.initFiltration(request)
     if riF['b_listeFiltree']:
         b_listeFiltree = True
         formRechercheClient = FormRechercheClient(riF['posted'])
@@ -36,7 +39,7 @@ def etapeRecherche(request):
 
         if 'reClient' in request.POST:
 
-            retour = filtration(request)
+            retour = cfunc.filtration(request)
             b_listeFiltree = retour['b_listeFiltree']
             if b_listeFiltree == True:
                 formRechercheClient = FormRechercheClient(request.POST)
@@ -381,6 +384,7 @@ def etapeOptions(request):
 #
 def etapeRecapitulatif(request):
     c = {}
+    s_aF = request.session['appFacture']
     formFacture = ChoixFactureForm()
     dico_client = func.getClient(request)
     client_orig = None
@@ -390,13 +394,78 @@ def etapeRecapitulatif(request):
     else:
         client = dico_client['client']
         if dico_client['client_id']:
-            client_orig = Client.clean(id=dico_client['client_id'])
+            client_orig = Client.objects.get(id=dico_client['client_id'])
 
     t_verres = func.getVerres(request)
     t_options = func.getOptions(request)
     t_montures = func.getMontures(request)
     prescription = func.getPrescription(request)
     prescription_t = func.getPrescription_T(request)
+
+    if request.method == 'POST':
+        '''
+        Enregistrement du client (s'il n'existe pas)
+        ou Enregistrement des modifications (s'il y en a)
+        Enregistrement de la prescrition
+        Enregistrement de la Facture (génération ID)
+        Enregistrement LigneFacture (verres)
+        Enregistrement Monture(s)
+        Enregistrement Options
+        Si stock : traitement / Si "à commander" traitement.
+        Reset assistant
+        '''
+
+        # Traitement client (-> client.id)
+        if s_aF['b_creation'] == True:
+            client = func.getClient(request)
+            client = cfunc.sauvClient(client)
+        elif 'b_modification' in s_aF and s_aF['b_modification'] == True:
+            client = func.getClient(request)
+            client_orig = Client.objects.get(id=dico_client['client_id'])
+
+            client_orig.nom = client.nom
+            client_orig.prenom = client.prenom
+            client_orig.telephone = client.telephone
+            client_orig.email = client.email
+            client = client_orig.save()
+        else:
+            client = Client.objects.get(id=dico_client['client_id'])
+
+        # Traitement de la prescription
+        prescription = func.getPrescription(request)
+        prescription.client = client
+        prescription.save()
+
+        # Traitement Facture (-> facture.id)
+        formFacture = ChoixFactureForm(request.POST)
+        formFacture.is_valid()
+        facture = formFacture.save(commit=False)
+        facture.client = client
+        facture.prescription = prescription
+        facture.interlocuteur = Interlocuteur.objects.get(id=1)  # TODO: gerer l'interlocuteur
+        func.sauvFacture(facture)
+
+        # Traitement LigneFacture
+        t_lignes = func.getVerres(request)
+        for ligne in t_lignes:
+            ligne.facture = facture
+            ligne.save()
+
+        # Traitement monture(s)
+        t_montures = func.getMontures(request)
+        for monture in t_montures:
+            monture.facture = facture
+            monture.save()
+
+        # Traitement option(s)
+        t_options = func.getOptions(request)
+        for option in t_options:
+            option.facture = facture
+            option.save()
+
+        # Traitement stock/commande
+        
+        return func.reset(request)
 
     c['client'] = client
     c['client_orig'] = client_orig

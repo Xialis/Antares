@@ -15,13 +15,13 @@ def index(request):
     c = {}
     formFour = FourForm()
     listFour = Fournisseur.objects.all()
-    
+
     if request.method == 'POST':
         if 'nouvFour' in request.POST:
             formFour = FourForm(request.POST)
             if formFour.is_valid():
                 formFour.save()
-    
+
     c['formFour'] = formFour
     c['listFour'] = listFour
     c.update(csrf(request))
@@ -33,7 +33,7 @@ def fournisseur(request, fid):
     FOUR = Fournisseur.objects.get(pk=fid)
     c['four'] = FOUR
     formType = TypeForm().filtre_fournisseur(fid)
-    
+
     #Form Intitulés
     formTraitement = TraitementForm()
     formDiametre = DiametreForm()

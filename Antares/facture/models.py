@@ -8,9 +8,9 @@ class Facture(models.Model):
     date_modification = models.DateTimeField(auto_now=True)
     client = models.ForeignKey('client.Client')
     prescription = models.ForeignKey('client.Prescription')
-    bproforma = models.BooleanField(verbose_name=u"PRO FORMA ?")
+    bproforma = models.BooleanField(verbose_name=u"PRO FORMA ?", default=True)
     proforma = models.ForeignKey('self', blank=True, null=True)
-    interloculteur = models.ForeignKey('facture.Interlocuteur')
+    interlocuteur = models.ForeignKey('facture.Interlocuteur')
     organisme = models.ForeignKey('client.OrganismePayeur', blank=True, null=True)
 
 OEIL = (
