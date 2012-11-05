@@ -22,4 +22,5 @@ urlpatterns = patterns('',
     url(r'stock/', include('stock.urls')),
     url(r'client/', include('client.urls')),
     url(r'facture/', include('facture.urls')),
+    url(r'commande/', include('commande.urls')),
 )

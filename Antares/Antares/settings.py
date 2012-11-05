@@ -132,12 +132,14 @@ INSTALLED_APPS = (
     'stock',
     'client',
     'facture',
+    'commande',
     'south',
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
     'facture.context_processors.app_context',
     'client.context_processors.app_context',
+    'commande.context_processors.app_context',
 )
 
 # A sample logging configuration. The only tangible logging

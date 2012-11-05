@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+{% load antares_tags %}
+
+{% block head %}
+<script>
+	$(function() {
+		$('#tabs-commandes').tabs();
+		
+		$("#dialog-validation").dialog({
+			modal: true,
+			autoOpen: false,
+			title: "Validation de la commande ?",
+			width:'auto',
+			show: 'fold',
+			hide: 'explode',
+		});
+	});
+	
+	function validation_commande() {
+		$("#dialog-validation").dialog('option', 'buttons', {
+	        "Valider": function() {
+	            window.location.href = "{% url commande.views.validationCommande cid %}";
+	            $(this).dialog("close");
+	        },
+	        "Annuler": function() {
+	            $(this).dialog("close");
+	        }
+	    });
+	    $("#dialog-validation").dialog("open");
+	    return false;
+	}
+</script>
+{% endblock %}
+
+{% block center %}
+<div id="dialog-validation">
+	<div class="ui-widget">
+		<div class="ui-state-error ui-corner-all">
+			<p><span class="ui-icon ui-icon-alert"></span>
+			Attention, pas d'annulation !</p>
+		</div>
+		<p>Validation de la commande ?</p>
+	</div>
+</div>
+
+<h1>Commandes</h1>
+<div class="divbox">
+	<h2>Liste des commandes</h2>
+	<div id="tabs-commandes">
+		<ul>
+		{% for c in listeCommandes %}
+			<li><a href="#com{{ c.numero }}">{{ c.numero }}</a></li>
+		{% endfor %}
+		</ul>
+		
+		{% for c in listeCommandes %}
+		<div id="com{{ c.numero }}">
+			<table>
+				<thead>
+					<tr><th>P/S</th><th>Quantité</th><th>Quantité reçue</th></tr>
+				</thead>
+				<tbody>
+					{% for ligne in c.lignecommande_set.all %}
+					<tr>
+						<td>{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}{% else %}Stock{% endif %}</td>
+						<td>{{ ligne.quantite }}</td>
+						<td>{{ ligne.quantite_recu }}</td>
+					</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+			{% if forloop.first %}
+			<p>Verre de stock à commander</p>
+			<table>
+				<tr>
+					<th>Verre</th><th>Diametre</th>
+					<th>Sph.</th><th>Cyl.</th>
+					<th>Traitement</th><th>Couleur</th>
+					<th>Qte</th><th>Seuil</th><th>En commande</th><th>A commander</th>
+					<th>Actions</th>
+				</tr>
+				{% for l in liste %}
+				<tr>
+					<td>{{ l.lignestock.vtype.nom }}</td><td>{{ l.lignestock.diametre.nom }}</td>
+					<td>{{ l.lignestock.sphere }}</td><td>{{ l.lignestock.cylindre }}</td>
+					<td>{{ l.lignestock.traitement.nom }}</td><td>{{ l.lignestock.couleur.nom }}</td>
+					<td>{{ l.lignestock.quantite }}</td><td>{{ l.lignestock.seuil }}</td>
+					<td>{{ l.qtcom }}</td><td>{{ l.qtacom }}</td>
+					<td>
+						Voir stock
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+			<p>Verre de stock ayant atteint le seuil</p>
+			<table>
+				<tr>
+					<th>Verre</th><th>Diametre</th>
+					<th>Sph.</th><th>Cyl.</th>
+					<th>Traitement</th><th>Couleur</th>
+					<th>Qte</th><th>Seuil</th>
+					<th>Actions</th>
+				</tr>
+				{% for l in listeStock %}
+				<tr>
+					<td>{{ l.vtype.nom }}</td><td>{{ l.diametre.nom }}</td>
+					<td>{{ l.sphere }}</td><td>{{ l.cylindre }}</td>
+					<td>{{ l.traitement.nom }}</td><td>{{ l.couleur.nom }}</td>
+					<td>{{ l.quantite }}</td><td>{{ l.seuil }}</td>
+					<td>
+						Voir stock
+					</td>
+				</tr>
+				{% endfor %}
+			</table>
+			<p>
+			{% jbt "validation_commande" "btValidation" "ui-icon-circle-check" "valider la commande..." %}
+			</p>
+			{% endif %}
+		</div>
+		{% endfor %}
+		
+	</div>
+</div>
+
+{% endblock %}

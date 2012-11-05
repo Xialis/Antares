@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load antares_tags %}
+
+{% block center %}
+<h1>Commandes</h1>
+<div class="divbox">
+	<h2>Commande par Fournisseurs</h2>
+	<table>
+		<thead>
+			<tr><th>Fournisseur</th><th>Commandes en cours</th><th>Actions</th></tr>
+		</thead>
+		<tbody>
+		{% for f in listeFournisseur %}
+			<tr>
+				<td>{{ f.nom }}</td><td>{{ f.commande_set.count }}</td>
+				<td>{% bt "" "ui-icon-folder-open" "Voir" "commande.views.commandesF" f.id %}</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+{% endblock %}
