@@ -15,6 +15,7 @@ from client.forms import FormRechercheClient, FormAjoutClient, FormAjoutPrescrip
 import client.func as cfunc
 
 from fournisseur.models import Type, Diametre, Traitement, Couleur
+import fournisseur.func as fourfunc
 
 from stock.models import LigneStock
 
@@ -408,10 +409,13 @@ def etapeRecapitulatif(request):
         ou Enregistrement des modifications (s'il y en a)
         Enregistrement de la prescrition
         Enregistrement de la Facture (génération ID)
+
         Enregistrement LigneFacture (verres)
+        Si stock : traitement / Si "à commander" traitement.
+
         Enregistrement Monture(s)
         Enregistrement Options
-        Si stock : traitement / Si "à commander" traitement.
+
         Reset assistant
         '''
 
@@ -443,13 +447,17 @@ def etapeRecapitulatif(request):
         facture.client = client
         facture.prescription = prescription
         facture.interlocuteur = Interlocuteur.objects.get(id=1)  # TODO: gerer l'interlocuteur
-        func.sauvFacture(facture)
+        facture = func.sauvFacture(facture)
 
         # Traitement LigneFacture
         t_lignes = func.getVerres(request)
         for ligne in t_lignes:
             ligne.facture = facture
             ligne.save()
+
+        # Si facture: Actualisation Commande ou Stock
+        if facture.bproforma:
+            fourfunc.stock_ou_commande(facture.lignefacture_set.all())
 
         # Traitement monture(s)
         t_montures = func.getMontures(request)
@@ -463,8 +471,6 @@ def etapeRecapitulatif(request):
             option.facture = facture
             option.save()
 
-        # Traitement stock/commande
-        
         return func.reset(request)
 
     c['client'] = client
