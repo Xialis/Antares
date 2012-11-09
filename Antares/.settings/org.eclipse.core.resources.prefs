@@ -7,6 +7,7 @@ encoding//client/func.py=utf-8
 encoding//client/models.py=utf-8
 encoding//client/views.py=utf-8
 encoding//commande/context_processors.py=utf-8
+encoding//commande/forms.py=utf-8
 encoding//commande/func.py=utf-8
 encoding//commande/models.py=utf-8
 encoding//commande/views.py=utf-8

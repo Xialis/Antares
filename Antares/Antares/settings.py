@@ -137,6 +137,7 @@ INSTALLED_APPS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.messages.context_processors.messages',
     'facture.context_processors.app_context',
     'client.context_processors.app_context',
     'commande.context_processors.app_context',

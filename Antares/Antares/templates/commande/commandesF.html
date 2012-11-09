@@ -29,6 +29,7 @@
 	    $("#dialog-validation").dialog("open");
 	    return false;
 	}
+	
 </script>
 {% endblock %}
 
@@ -62,7 +63,12 @@
 				<tbody>
 					{% for ligne in c.lignecommande_set.all %}
 					<tr>
-						<td>{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}{% else %}Stock{% endif %}</td>
+						<td>{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}
+						{{ ligne.ligne_facture.facture.client.nom }} {{ ligne.ligne_facture.facture.client.prenom }} 
+						( Oeil: {{ ligne.ligne_facture.oeil }} ) 
+						{% bt "" "ui-icon-print" "Voir facture (PDF)" "" %}
+						{% else %}Stock{% endif %}
+						</td>
 						<td>{{ ligne.quantite }}</td>
 						<td>{{ ligne.quantite_recu }}</td>
 					</tr>
@@ -92,35 +98,19 @@
 				</tr>
 				{% endfor %}
 			</table>
-			<p>Verre de stock ayant atteint le seuil</p>
-			<table>
-				<tr>
-					<th>Verre</th><th>Diametre</th>
-					<th>Sph.</th><th>Cyl.</th>
-					<th>Traitement</th><th>Couleur</th>
-					<th>Qte</th><th>Seuil</th>
-					<th>Actions</th>
-				</tr>
-				{% for l in listeStock %}
-				<tr>
-					<td>{{ l.vtype.nom }}</td><td>{{ l.diametre.nom }}</td>
-					<td>{{ l.sphere }}</td><td>{{ l.cylindre }}</td>
-					<td>{{ l.traitement.nom }}</td><td>{{ l.couleur.nom }}</td>
-					<td>{{ l.quantite }}</td><td>{{ l.seuil }}</td>
-					<td>
-						Voir stock
-					</td>
-				</tr>
-				{% endfor %}
-			</table>
-			<p>
 			{% jbt "validation_commande" "btValidation" "ui-icon-circle-check" "valider la commande..." %}
-			</p>
+			{% else %}
+				{% bt "" "ui-icon-print" "Voir la commande (PDF)" "" %}
 			{% endif %}
 		</div>
 		{% endfor %}
 		
 	</div>
+</div>
+
+<div class="divbox">
+	<h2>Outils</h2>
+	{% bt "a_impr" "ui-icon-print" "Recapitulatif commandes en cours (PDF)" "" %}
 </div>
 
 {% endblock %}
