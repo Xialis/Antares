@@ -56,3 +56,32 @@ class Prescription(models.Model):
 
     def __unicode__(self):
         return self.prescripteur.nom + " c: " + self.client.nom
+
+    def transposition(self):
+        ptrans = Prescription()
+
+        # nouvelle sphere = sphere + cylindre-negatif
+        # nouveau cylindre = cylindre-negatif * -1
+        # nouvel axe = (axe + 90) % 180 (0<=axe<=179)
+        if self.cylindre_od and self.cylindre_od < 0:
+            ptrans.sphere_od = self.sphere_od + self.cylindre_od
+            ptrans.cylindre_od = abs(self.cylindre_od)
+            ptrans.axe_od = (self.axe_od + 90) % 180
+        else:
+            ptrans.sphere_od = self.sphere_od
+            ptrans.cylindre_od = self.cylindre_od
+            ptrans.axe_od = self.axe_od
+
+        if self.cylindre_og and self.cylindre_og < 0:
+            ptrans.sphere_og = self.sphere_og + self.cylindre_og
+            ptrans.cylindre_og = abs(self.cylindre_og)
+            ptrans.axe_og = (self.axe_og + 90) % 180
+        else:
+            ptrans.sphere_og = self.sphere_og
+            ptrans.cylindre_og = self.cylindre_og
+            ptrans.axe_og = self.axe_og
+
+        ptrans.addition_od = self.addition_od
+        ptrans.addition_og = self.addition_og
+
+        return ptrans

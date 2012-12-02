@@ -14,6 +14,24 @@
 			show: 'fold',
 			hide: 'explode',
 		});
+		
+		$("#dialog-reception").dialog({
+			modal: true,
+			autoOpen: false,
+			title: "Reception de ce(s) verre(s) ?",
+			width:'auto',
+			show: 'fold',
+			hide: 'explode',
+		});
+		
+		$("#dialog-reception-annulation").dialog({
+			modal: true,
+			autoOpen: false,
+			title: "Annulation de reception !",
+			width:'auto',
+			show: 'fold',
+			hide: 'explode',
+		});
 	});
 	
 	function validation_commande() {
@@ -30,19 +48,34 @@
 	    return false;
 	}
 	
+	
+	function reception_commande(ligneCommandeID, qte_com, qte_recu) {
+		
+		qte_max = qte_com - qte_recu
+		
+		$( "#id_lignecommande_id" ).val(ligneCommandeID);
+		$( "#id_recu" ).val(qte_max);
+		
+		$( "#qte_max" ).find('span').remove();
+		$( "#qte_max" ).append("<span>" + qte_max + "</span>");
+	
+		$("#dialog-reception").dialog('option', 'buttons', {
+	        "Valider": function() {
+	            $( "#form-reception" ).submit();
+	            $(this).dialog("close");
+	        },
+	        "Annuler": function() {
+	            $(this).dialog("close");
+	        }
+	    });
+	    $("#dialog-reception").dialog("open");
+	    return false;
+	}
+	
 </script>
 {% endblock %}
 
 {% block center %}
-<div id="dialog-validation">
-	<div class="ui-widget">
-		<div class="ui-state-error ui-corner-all">
-			<p><span class="ui-icon ui-icon-alert"></span>
-			Attention, pas d'annulation !</p>
-		</div>
-		<p>Validation de la commande ?</p>
-	</div>
-</div>
 
 <h1>Commandes</h1>
 <div class="divbox">
@@ -50,7 +83,7 @@
 	<div id="tabs-commandes">
 		<ul>
 		{% for c in listeCommandes %}
-			<li><a href="#com{{ c.numero }}">{{ c.numero }}</a></li>
+			<li><a href="#com{{ c.numero }}">{{ c.numero }} ({{ c.lignecommande_set.all.count }})</a></li>
 		{% endfor %}
 		</ul>
 		
@@ -58,7 +91,9 @@
 		<div id="com{{ c.numero }}">
 			<table>
 				<thead>
-					<tr><th>P/S</th><th>Quantité</th><th>Quantité reçue</th></tr>
+					<tr>
+						<th>P/S</th><th>Type</th><th>Formule</th><th>Quantité</th><th>Quantité reçue</th><th>Actions</th>
+					</tr>
 				</thead>
 				<tbody>
 					{% for ligne in c.lignecommande_set.all %}
@@ -69,8 +104,22 @@
 						{% bt "" "ui-icon-print" "Voir facture (PDF)" "" %}
 						{% else %}Stock{% endif %}
 						</td>
+						<td>{% if ligne.ligne_facture %}{{ ligne.ligne_facture.vtype.nom }} / {{ ligne.ligne_facture.couleur }} / {{ ligne.ligne_facture.traitement }}
+						{% else %}{{ ligne.ligne_stock.vtype.nom }} / {{ ligne.ligne_stock.couleur }} / {{ ligne.ligne_stock.traitement }}{% endif %}</td>
+						<td>{% if ligne.ligne_facture %}
+						<p>{% formule ligne.ligne_facture.facture.prescription ligne.ligne_facture.oeil %} 
+						&Oslash;: {{ ligne.ligne_facture.diametre }}
+						</p>
+						{% else %}
+						<p>
+							{{ ligne.ligne_stock.sphere }} 
+							{% if ligne.ligne_stock.cylindre != 0 %}({{ ligne.ligne_stock.cylindre }}) {% endif %}
+							&Oslash;: {{ ligne.ligne_stock.diametre }} 
+						</p>
+						{% endif %}</td>
 						<td>{{ ligne.quantite }}</td>
 						<td>{{ ligne.quantite_recu }}</td>
+						<td>{% jbt "reception_commande" "btReception" "ui-icon-circle-check" "Reçu..." ligne.id ligne.quantite ligne.quantite_recu %}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -112,5 +161,43 @@
 	<h2>Outils</h2>
 	{% bt "a_impr" "ui-icon-print" "Recapitulatif commandes en cours (PDF)" "" %}
 </div>
+
+<!-- Dialog //-->
+<div id="dialog-validation">
+	<div class="ui-widget">
+		<div class="ui-state-error ui-corner-all">
+			<p><span class="ui-icon ui-icon-alert"></span>
+			Attention, pas d'annulation !</p>
+		</div>
+		<p>Validation de la commande ?</p>
+	</div>
+</div>
+
+<div id="dialog-reception">
+	<div class="ui-widget">
+		<p>Verre reçu ?</p>
+		<form action="" method="POST" id="form-reception">{% csrf_token %}
+			<table>
+				<tr><th>Qte MAX</th><th>Qte Reçue</th></tr>
+				<tr><td id="qte_max"></td><td>{{ comRecepForm.recu }}</td></tr>
+			</table>
+			{% for hidden in comRecepForm.hidden_fields %}
+			{{ hidden }}
+			{% endfor %}
+		</form>
+	</div>
+</div>
+
+<div id="dialog-reception-annulation">
+	<div class="ui-widget">
+		<div class="ui-state-error ui-corner-all">
+			<p><span class="ui-icon ui-icon-alert"></span>
+			Annulation de la reception du(des) verre(s). Cette action ne peut être annulée.</p>
+		</div>
+		<p>Voulez-vous continuer ?</p>
+	</div>
+</div>
+
+<!-- fin Dialog //-->
 
 {% endblock %}

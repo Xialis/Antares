@@ -6,5 +6,5 @@ class ComRecepForm(Form):
     error_css_class = 'error'
     required_css_class = 'required'
 
-    recu = IntegerField(verbose_name=u"reçu")
-    lignecommande_id = HiddenInput()
+    recu = IntegerField(u"reçu")
+    lignecommande_id = IntegerField(widget=HiddenInput())

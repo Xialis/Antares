@@ -107,6 +107,7 @@ def getPrescription_T(request):
 
 
 def transposition(prescription):
+    # TODO: Remplacer par la fonction de class !
     ptrans = Prescription()
 
     # nouvelle sphere = sphere + cylindre-negatif

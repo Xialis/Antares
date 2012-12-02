@@ -133,6 +133,7 @@ INSTALLED_APPS = (
     'client',
     'facture',
     'commande',
+    'sortiespdf',
     'south',
 )
 

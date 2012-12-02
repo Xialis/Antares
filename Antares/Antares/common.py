@@ -10,3 +10,9 @@ def jq_datefield(f, **kwargs):
         formfield.widget.attrs.update({'class': 'datePicker', 'readonly': 'true'})
 
     return formfield
+
+
+def NORM(decimal):
+    if decimal is None:
+        return ""
+    return "{0:.2f}".format(decimal)

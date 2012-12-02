@@ -1,5 +1,8 @@
+# -*- coding: utf-8 -*-
 from django import template
 from django.core.urlresolvers import reverse
+
+from facture.func import transposition
 
 register = template.Library()
 
@@ -42,3 +45,20 @@ def jbt(jfunc, aid, uiiconstyle, text, *args):
 @register.inclusion_tag("_inc/formfield_errors.html")
 def ffe(errors):
     return {'errors': errors}
+
+
+@register.inclusion_tag("_inc/formule.html")
+def formule(prescription, oeil):
+    t = transposition(prescription)
+    if oeil == 'T' or oeil == 'D':
+        sphere = t.sphere_od
+        cylindre = t.cylindre_od
+        axe = t.axe_od
+        addition = t.addition_od
+    else:
+        sphere = t.sphere_og
+        cylindre = t.cylindre_og
+        axe = t.axe_og
+        addition = t.addition_og
+
+    return {'sphere': sphere, 'cylindre': cylindre, 'axe': axe, 'addition': addition}

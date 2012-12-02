@@ -23,4 +23,5 @@ urlpatterns = patterns('',
     url(r'client/', include('client.urls')),
     url(r'facture/', include('facture.urls')),
     url(r'commande/', include('commande.urls')),
+    url(r'sortiespdf/', include('sortiespdf.urls')),
 )
