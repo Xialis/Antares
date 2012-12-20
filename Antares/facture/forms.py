@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.forms import ModelForm
-from django.forms import HiddenInput, IntegerField, CharField, ModelChoiceField
+from django.forms import ModelChoiceField, RadioSelect, ChoiceField
 from facture.models import LigneFacture, Monture, Option, Facture
 from fournisseur.models import Type, Diametre, Couleur, Traitement
 
@@ -32,8 +32,8 @@ def categorie_vtype():
     liste = []
     unifocaux = []
     progressifs = []
-
-    for vtype in Type.objects.order_by('nom'):
+    req = Type.objects.order_by('nom')
+    for vtype in req:
         if vtype.progressif == True:
             progressifs.append([vtype.id, vtype.nom])
         else:
@@ -52,6 +52,17 @@ class MontureForm(ModelForm):
     class Meta:
         model = Monture
         exclude = ('facture', 'numero',)
+        widgets = {
+                   'oeil': RadioSelect(),
+                   }
+
+    def choixvpvl(self):
+        VISION = (
+            ('', '----------'),
+              ('P', 'Près'),
+              ('L', 'Loin'),
+          )
+        self.fields['vision'] = ChoiceField(choices=VISION)
 
 
 class OptionForm(ModelForm):

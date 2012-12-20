@@ -1,6 +1,50 @@
 {% extends "base.html" %}
 {% load antares_tags %}
+
+{% block head %}
+<script>
+	$(document).ready(function() {
+		
+		$( "#a_reset" ).click(function(e) {
+			e.preventDefault();
+			
+			$("#dialog-reset").dialog('option', 'buttons', {
+		        "Oui": function() {
+		            $(this).dialog("close");
+		            document.location.href="{% url facture.func.reset %}" 
+		            
+		        },
+		        "Non": function() {
+		            $(this).dialog("close");
+		            
+		        }
+		    });
+		    $("#dialog-reset").dialog("open");
+		});
+		
+		$("#dialog-reset").dialog({
+			modal: true,
+			autoOpen: false,
+			title: "RESET de la saisie",
+			width:'auto',
+			show: 'fold',
+			hide: 'explode',
+		});
+	});
+</script>
+{% endblock %}
+
 {% block center %}
+<div id="dialog-reset">
+	Voulez-vous abandonner la saisie ?
+	<div class="ui-widget">
+		<div class="ui-state-error ui-corner-all">
+			<p><span class="ui-icon ui-icon-alert"></span>
+			Attention, cette action n'est pas réversible.</p>
+		</div>
+	</div>
+</div>
+
 
 <h1>Facture / Pro forma</h1>
 
@@ -8,9 +52,7 @@
 	<div class="navigation">
 		<div class="side_right">
 			<span><b>{{ appFacture.etape_no }} / {{ appFacture.etapes|length }}</b></span> 
-			{% bt "a_prec" "ui-icon-seek-prev" "Précédent" "facture.func.etapePrecedente" %} 
-			{% bt "a_suiv" "ui-icon-seek-next" "Suivant" "facture.func.etapeSuivante" %} 
-			{% bt "a_reset" "ui-icon-trash" "RESET" "facture.func.reset" %} 
+			 
 		</div>
 		<span>Etapes:</span>
 		<ul class="ul_left">
@@ -76,4 +118,9 @@
 	</div>
 	
 </div>
+{% endblock %}
+
+{% block bar %}
+	{% bt "a_reset" "ui-icon-trash" "RESET" "" %}
+	{% bt "a_prec" "ui-icon-seek-prev" "Précédent" "facture.func.etapePrecedente" %} 
 {% endblock %}

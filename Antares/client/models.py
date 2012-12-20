@@ -85,3 +85,49 @@ class Prescription(models.Model):
         ptrans.addition_og = self.addition_og
 
         return ptrans
+
+    def ametropie(self):
+        if self.cylindre_od is not None and self.cylindre_od < 0:
+            sph_od = self.sphere_od - self.cylindre_od
+        else:
+            sph_od = self.sphere_od
+
+        if self.cylindre_og is not None and self.cylindre_og < 0:
+            sph_og = self.sphere_og - self.cylindre_og
+        else:
+            sph_og = self.sphere_og
+
+        if sph_od < 0:
+            retour = u"Myopie / "
+        elif sph_og > 0:
+            retour = u"Hypermétropie / "
+        else:
+            retour = u"Emmétropie / "
+
+        if sph_od < 0:
+            retour += u"Myopie"
+        elif sph_og > 0:
+            retour += u"Hypermétropie"
+        else:
+            retour += u"Emmétropie"
+
+        return retour
+
+    def presbytie(self):
+        if (self.addition_od is not None and self.addition_od != 0) or (self.addition_og is not None and self.addition_og != 0):
+            return "Oui"
+        else:
+            return "Non"
+
+    def astigmatisme(self):
+        if self.cylindre_od is not None and self.cylindre_od != 0:
+            retour = "Oui / "
+        else:
+            retour = "Non / "
+
+        if self.cylindre_og is not None and self.cylindre_og != 0:
+            retour += "Oui"
+        else:
+            retour += "Non"
+
+        return retour

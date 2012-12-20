@@ -194,20 +194,25 @@ def getVerres(request):
 
 
 def getNbreMontures(request):
-    t = request.session['appFacture']['LigneFacture']
+    t = request.session['appFacture']['Montures']
     taille = len(t)
-    nbre = t[taille - 1].monture + 1
-    return nbre
+    return taille
 
 
 def enrMontures(formSetMonture, request):
     t = []
-    x = 1
+    x = 0
     for f in formSetMonture:
-        monture = f.save(commit=False)
-        monture.numero = x
-        x += 1
-        t.append(monture)
+        nom = f.cleaned_data.get('nom')
+        tarif = f.cleaned_data.get('tarif')
+
+        if nom is None and tarif is None:
+            pass
+        else:
+            monture = f.save(commit=False)
+            monture.numero = x
+            x += 1
+            t.append(monture)
 
     request.session['appFacture']['Montures'] = t
     request.session['appFacture']['etapeMontures_post'] = request.POST
@@ -243,6 +248,8 @@ def getOptions(request):
 def etapePrecedente(request):
     request.session['appFacture']['etape'] -= 1
     request.session.modified = True
+    if request.session['appFacture']['etape'] < 0:
+        request.session['appFacture']['etape'] = 0
     return redirect(ctrl)
 
 
@@ -269,8 +276,8 @@ def initCtrl(request):
         etapes = [[u"Recherche", etapeRecherche],
                    [u"Info client", etapeInfo],
                    [u"Prescription", etapePrescription],
-                   [u"Verres", etapeVerres],
                    [u"Montures", etapeMontures],
+                   [u"Verres", etapeVerres],
                    [u"Options", etapeOptions],
                    [u"Recapitulatif", etapeRecapitulatif]
                 ]

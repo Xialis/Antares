@@ -1,6 +1,6 @@
 {% extends "base.html" %}
-
-{% block head %}
+{% load antares_tags %}
+{% block head %}{{ block.super }}
 {% include "_inc/head_listeClient_dataTable.html" %}
 {% endblock %}
 
@@ -8,86 +8,95 @@
 
 <div class="first span-20 border">
 	<div class="first span-10 border">
-		<h2>Ajouter un Client</h2>
-		<form method="POST" action="">{% csrf_token %}
-			<table class="formAsTable">
-			{{ formAjoutClient.as_table }}
-			</table>
-			<input type="submit" value="OK" name="ajClient">
-		</form>
+		<div class="divbox">
+			<h2>Ajouter un Client</h2>
+			<form method="POST" action="" id="client_formAjouter">{% csrf_token %}
+				<table class="formAsTable">
+				{{ formAjoutClient.as_table }}
+				</table>
+				{% sbt "#facture_formAjouter" "ajClient" "ajClient" "ui-icon-circle-plus" "Ajouter" %}
+			</form>
+		</div>
 	</div>
 	<div class="span-10 last">
-		<h2>Chercher Client</h2>
-		<form id="client_formRechercheClient" method="POST" action="">{% csrf_token %}
-			<table class="formAsTable">
-			{{ formRechercheClient.as_table }}
-			</table>
-			<input type="submit" value="OK" name="reClient">
-			<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>
-		</form>
+		<div class="divbox">
+			<h2>Chercher Client</h2>
+			<form id="client_formRechercheClient" method="POST" action="">{% csrf_token %}
+				<table class="formAsTable">
+				{{ formRechercheClient.as_table }}
+				</table>
+				{% sbt "#client_formRechercheClient" "reClient" "reClient" "ui-icon-search" "Filtrer" %}
+				{% jbt "clearForm" "areclientclear" "ui-icon-closethick" "Effacer le filtrage" "$('#client_formRechercheClient')" %}
+			</form>
+		</div>
 	</div>
 	<hr>
-	
-	<h2>Liste <span class="h2info">{{ listeFiltree|yesno:"(filtrée)," }}</span></h2>
-	{% if listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
-	<table id="listeClient" class='tableListing'>
-		<thead>
-			<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
-		</thead>
-		
-		<tbody>
+	<div class="divbox">
+		<h2>Liste <span class="h2info">{{ listeFiltree|yesno:"(filtrée)," }}</span></h2>
+		{% if listeFiltree %}<a onClick="clearForm($('#client_formRechercheClient'));" class="action">Effacer le fitrage</a>{% endif %}
+		<table id="listeClient" class='tableListing'>
+			<thead>
+				<tr><th>Code</th><th>Nom / Prénom</th><th>Tèl</th><th>Email</th><th>Actions</th></tr>
+			</thead>
 			
-		</tbody>
-	</table>
+			<tbody>
+				
+			</tbody>
+		</table>
+	</div>
 </div>
 
 <div class="last span-10">
 	<div class="span-10">
-		<h2>Ajouter un Organisme</h2>
-		<form method="POST" action="">{% csrf_token %}
-			<table class="formAsTable">
-			{{ formAjoutOrganisme.as_table }}
+		<div class="divbox">
+			<h2>Ajouter un Organisme</h2>
+			<form method="POST" action="">{% csrf_token %}
+				<table class="formAsTable">
+				{{ formAjoutOrganisme.as_table }}
+				</table>
+				<input type="submit" value="OK" name="ajOrganisme">
+			</form>
+			<h3>Liste</h3>
+			<table class='tableListing'>
+				<tr><th>Nom</th><th>Contact</th><th>Actions</th></tr>
+				{% for organisme in listeOrganisme %}
+				<tr>
+					<td>{{ organisme.nom }}</td>
+					<td>
+						<ul>
+							<li>{{ organisme.contact_nom }}</li>
+							<li>{{ organisme.contact_tel }}</li>
+							<li>{{ organisme.contact_mail }}</li>
+						</ul>
+					</td>
+					<td><a href="" class="action">Modifier</a></td>
+				</tr>
+				{% endfor %}
 			</table>
-			<input type="submit" value="OK" name="ajOrganisme">
-		</form>
-		<h3>Liste</h3>
-		<table class='tableListing'>
-			<tr><th>Nom</th><th>Contact</th><th>Actions</th></tr>
-			{% for organisme in listeOrganisme %}
-			<tr>
-				<td>{{ organisme.nom }}</td>
-				<td>
-					<ul>
-						<li>{{ organisme.contact_nom }}</li>
-						<li>{{ organisme.contact_tel }}</li>
-						<li>{{ organisme.contact_mail }}</li>
-					</ul>
-				</td>
-				<td><a href="" class="action">Modifier</a></td>
-			</tr>
-			{% endfor %}
-		</table>
+		</div>
 	</div>
 	<hr />
 	<div class="span-10 last">
-		<h2>Ajouter un Prescripteur</h2>
-		<form method="POST" action="">{% csrf_token %}
-			<table class="formAsTable">
-			{{ formAjoutPrescripteur.as_table }}
+		<div class="divbox">
+			<h2>Ajouter un Prescripteur</h2>
+			<form method="POST" action="">{% csrf_token %}
+				<table class="formAsTable">
+				{{ formAjoutPrescripteur.as_table }}
+				</table>
+				<input type="submit" value="OK" name="ajPrescripteur">
+			</form>
+			<h3>Liste</h3>
+			<table class='tableListing'>
+				<tr><th>Nom</th><th>Téléphone</th><th>Actions</th></tr>
+				{% for prescripteur in listePrescripteur %}
+				<tr>
+					<td>{{ prescripteur.nom }}</td>
+					<td>{{ prescripteur.telephone }}</td>
+					<td><a href="" class="action">Modifier</a></td>
+				</tr>
+				{% endfor %}
 			</table>
-			<input type="submit" value="OK" name="ajPrescripteur">
-		</form>
-		<h3>Liste</h3>
-		<table class='tableListing'>
-			<tr><th>Nom</th><th>Téléphone</th><th>Actions</th></tr>
-			{% for prescripteur in listePrescripteur %}
-			<tr>
-				<td>{{ prescripteur.nom }}</td>
-				<td>{{ prescripteur.telephone }}</td>
-				<td><a href="" class="action">Modifier</a></td>
-			</tr>
-			{% endfor %}
-		</table>
+		</div>
 	</div>
 </div>
 

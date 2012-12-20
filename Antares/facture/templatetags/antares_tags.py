@@ -27,12 +27,15 @@ def jbt(jfunc, aid, uiiconstyle, text, *args):
 
     onclickstr = jfunc + "("
     for arg in args:
-        try:
-            float(arg)
-        except:
-            string = "\"" + arg + "\""
+        if arg.lstrip()[0] == '$':
+            string = arg
         else:
-            string = str(arg)
+            try:
+                float(arg)
+            except:
+                string = "\"" + arg + "\""
+            else:
+                string = str(arg)
 
         onclickstr += str(string) + ','
 

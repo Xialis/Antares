@@ -14,15 +14,15 @@ class Facture(models.Model):
     organisme = models.ForeignKey('client.OrganismePayeur', blank=True, null=True)
 
 OEIL = (
+        ('T', 'ODG'),
         ('D', 'OD'),
         ('G', 'OG'),
-        ('T', 'ODG'),
     )
 
 
 class LigneFacture(models.Model):
     facture = models.ForeignKey('Facture')
-    monture = models.PositiveIntegerField()
+    monture = models.PositiveIntegerField()  # Correspondance verres -> monture
     oeil = models.CharField(max_length=1, choices=OEIL)
     vtype = models.ForeignKey('fournisseur.Type', verbose_name="type")
     diametre = models.ForeignKey('fournisseur.Diametre')
@@ -40,9 +40,17 @@ class Option(models.Model):
 class Interlocuteur(models.Model):
     nom = models.CharField(max_length=25, unique=True)
 
+VISION = (
+          ('P', 'Près'),
+          ('L', 'Loin'),
+          ('M', 'Progressif'),
+          )
+
 
 class Monture(models.Model):
     facture = models.ForeignKey('facture.Facture')
     numero = models.PositiveIntegerField()  # Correspondance verres -> monture
-    nom = models.CharField(max_length=50)
+    nom = models.CharField(max_length=50, blank=True, null=True)
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
+    vision = models.CharField(max_length=1, choices=VISION)
+    oeil = models.CharField(max_length=1, choices=OEIL, default='T')

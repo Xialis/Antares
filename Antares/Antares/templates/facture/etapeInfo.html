@@ -10,9 +10,6 @@
 			<table class="formAsTable">
 			{{ formClient.as_table }}
 			</table>
-			<p>
-				{% sbt "#client_formClient" "ajClient" "ajClient" "ui-icon-circle-check" "Continuer" %}
-			</p>
 		</form>
 	</div>
 </div>
@@ -39,4 +36,8 @@
 	{% endif %}
 </div>
 
+{% endblock %}
+
+{% block bar%}{{ block.super }}
+{% sbt "#client_formClient" "ajClient" "ajClient" "ui-icon-circle-check" "Valider et aller à l'étape suivante" %}
 {% endblock %}

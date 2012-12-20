@@ -1,7 +1,7 @@
 {% extends "facture/base.html" %}
 {% load antares_tags %}
 
-{% block head %}
+{% block head %}{{ block.super }}
 {% include "_inc/head_datepicker.html" %}
 
 <script>
@@ -92,9 +92,6 @@ $(document).ready(function(e){
 					</tr>
 				</table>
 			</fieldset>
-			<p>
-				{% sbt "#client_formPrescription" "ajPrescription" "ajPrescription" "ui-icon-circle-check" "Continuer" %}
-			</p>
 		</form>
 	</div>
 	<br>
@@ -137,4 +134,8 @@ $(document).ready(function(e){
 	</div>
 </div>
 
+{% endblock %}
+
+{% block bar %}{{ block.super }}
+{% sbt "#client_formPrescription" "ajPrescription" "ajPrescription" "ui-icon-circle-check" "Valider et aller à l'étape suivante" %}
 {% endblock %}

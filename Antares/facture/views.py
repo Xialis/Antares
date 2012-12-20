@@ -183,8 +183,8 @@ def etapePrescription(request):
 #
 def etapeVerres(request):
     c = {}
-
-    LigneFormSet = formset_factory(LigneForm, extra=6)
+    extra = func.getNbreMontures(request) * 2
+    LigneFormSet = formset_factory(LigneForm, extra=extra)
     formSetLigne = LigneFormSet()
     formSetLigne.forms[0].empty_permitted = False
 
@@ -315,39 +315,60 @@ def ajax_info(request, qs=None):
     return HttpResponse(simplejson.dumps(data))
 
 
-# ==
+#===============================================================================
 # Etape Montures
-#
+#===============================================================================
 def etapeMontures(request):
     c = {}
-    nbreMonture = func.getNbreMontures(request)
-    MontureFormSet = formset_factory(MontureForm, extra=nbreMonture)
+    EXTRA = 3
+    restauration = None
+    MontureFormSet = formset_factory(MontureForm, extra=EXTRA)
     formSetMonture = MontureFormSet()
-    for f in formSetMonture:
-        f.empty_permitted = False
+    for form in formSetMonture:
+        form.empty_permitted = True
+        if request.session['appFacture']['progressif_og'] or request.session['appFacture']['progressif_od']:
+            pass
+        else:
+            form.choixvpvl()
+    formSetMonture[0].empty_permitted = False
 
     # ============================
     # Restauration
-    if request.method == 'GET' and 'appFacture' in request.session:
-        if 'etapeMontures_post' in request.session['appFacture']:
-            formSetMonture = MontureFormSet(request.session['appFacture']['etapeMontures_post'])
-            for f in formSetMonture:
-                f.empty_permitted = False
+    if request.method == 'GET' and 'Montures' in request.session['appFacture']:
+
+        ms = func.getMontures(request)
+        data = []
+        for m in ms:
+            data.append(m.__dict__)
+
+        MontureFormSet = formset_factory(MontureForm, extra=EXTRA - len(data))
+        formSetMonture = MontureFormSet(initial=data)
+        for form in formSetMonture:
+            form.empty_permitted = True
+        formSetMonture[0].empty_permitted = False
+        restauration = len(data)
     # Fin restauration
     # ============================
 
+    # ============================
+    # Traitement POST
     if request.method == 'POST':
 
         if 'ajMontures' in request.POST:
             formSetMonture = MontureFormSet(request.POST)
             for f in formSetMonture:
-                f.empty_permitted = False
+                f.empty_permitted = True
+            formSetMonture[0].empty_permitted = False
 
             if formSetMonture.is_valid():
                 func.enrMontures(formSetMonture, request)
                 return func.etapeSuivante(request)
 
+    # Fin POST
+    # ============================
+
     c['formSetMonture'] = formSetMonture
+    c['restauration'] = restauration
     c.update(csrf(request))
     return render_to_response("facture/etapeMontures.html", c, context_instance=RequestContext(request))
 
