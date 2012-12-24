@@ -9,17 +9,22 @@
 <div class="first span-22 border">
 	<div class="divbox">
 		<h2>Montures</h2>
-		
+		<div class="aide">
+			<ul>
+				<li>Si pas de monture vendu avec les verres, laisser le nom vide et définisser le tarif à 0.</li>
+				<li>Pour ne commander qu'un seul verre, selectionner l'oeil correspondant dans la(les) case(s) "oeil"</li>
+			</ul>
+		</div>
+		{% if restauration %}
 		<div class="ui-widget divinfo">
 			<div class="ui-state-highlight ui-corner-all">
 				<p>
 					<span class="ui-icon ui-icon-info"></span>
-					Si pas de monture vendu avec les verres, laisser le nom vide et définisser le tarif à 0.<br>
-					Pour ne commander qu'un seul verre, selectionner l'oeil correspondant dans la(les) case(s) "oeil"
-					{% if restauration %}<br>Monture(s) déjà renseignée(s) : {{ restauration }}{% endif %}
+					Monture(s) déjà renseignée(s) : {{ restauration }}
 				</p>
 			</div>
 		</div>
+		{% endif %}
 		<br>
 		
 		<form action="" method="POST" id="facture_formMontures">{% csrf_token %}

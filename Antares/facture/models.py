@@ -32,6 +32,37 @@ class LigneFacture(models.Model):
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
     remise_monture = models.DecimalField(max_digits=8, decimal_places=0)
 
+    def calculRemise(self):
+        remise = 0
+        if self.traitement.remise_monture is None:
+            trm = 0
+        else:
+            trm = self.traitement.remise_monture
+
+        if self.couleur.remise_monture is None:
+            crm = 0
+        else:
+            crm = self.couleur.remise_monture
+
+        if self.vtype.remise_monture is None:
+            vrm = 0
+        else:
+            vrm = self.vtype.remise_monture
+
+        if self.oeil == 'T':
+            remise += (trm + crm + vrm) * 2
+        else:
+            remise += (trm + crm + vrm)
+
+        return remise
+
+    def calculTotal(self):
+        tarif_type = self.vtype.tarif
+        tarif_couleur = self.couleur.tarif
+        tarif_traitement = self.traitement.tarif
+        total = tarif_type + tarif_couleur + tarif_traitement
+        return total
+
 
 class Option(models.Model):
     facture = models.ForeignKey('facture.Facture')

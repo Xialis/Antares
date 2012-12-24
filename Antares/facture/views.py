@@ -3,10 +3,11 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.contrib import messages
 from django.core.context_processors import csrf
+from django.core.exceptions import ObjectDoesNotExist
 from django.forms.formsets import formset_factory
 from django.http import HttpResponse
 from django.utils import simplejson
-from django.core.exceptions import ObjectDoesNotExist
+from django.utils.functional import curry
 
 from client.models import Client, Prescription
 from client.forms import FormRechercheClient, FormAjoutClient, FormAjoutPrescription, FormAjoutPrescripteur
@@ -180,49 +181,147 @@ def etapePrescription(request):
 
 def etapeVerres(request):
     c = {}
-    extra = func.getNbreMontures(request) * 2
-    LigneFormSet = formset_factory(LigneForm, extra=extra)
-    formSetLigne = LigneFormSet()
-    formSetLigne.forms[0].empty_permitted = False
+    montures = func.getMontures(request)
+    formsets = []
+    for m in montures:
+        if m.vision == 'M':
+            progressif = True
+        else:
+            progressif = False
+
+        extra = 2  # ODG
+        LigneFormSet = formset_factory(LigneForm, extra=extra)
+        LigneFormSet.form = staticmethod(curry(LigneForm, progressif=progressif))
+        formSetLigne = LigneFormSet(prefix=str(m.numero))
+        formSetLigne.forms[0].empty_permitted = False
+        formsets.append({"monture": m, "formset": formSetLigne})
 
     # ============================
-    # Restauration
+    # Restauration / chargement à partir de la session
     if request.method == 'GET' and 'appFacture' in request.session:
-        if 'etapeVerres_post' in request.session['appFacture']:
-            formSetLigne = LigneFormSet(request.session['appFacture']['etapeVerres_post'])
-            formSetLigne.forms[0].empty_permitted = False
-            for form in formSetLigne:
-                chdata = form._get_changed_data()
-                if 'vtype' in chdata:
-                    form.filtre_vtype(form._raw_value('vtype'))
+        verres = func.getVerres(request)
+        if len(verres) != 0:
+            if len(verres) != len(montures):
+                c['restauration_erreur'] = 1
+            else:
+                formsets = []
+                for m in montures:
+                    if m.numero < len(verres):
+                        if m.vision == 'M':
+                            progressif = True
+                        else:
+                            progressif = False
+
+                        if len(verres[m.numero]) == 2:
+                            if progressif != any(verres[m.numero][0].vtype.progressif, verres[m.numero][1].vtype.progressif):
+                                c['restauration_erreur'] = 2
+                        else:
+                            if progressif != verres[m.numero][0].vtype.progressif:
+                                c['restauration_erreur'] = 2
+                                LigneFormSet.form = staticmethod(curry(LigneForm, progressif=progressif))
+                                formSetLigne = LigneFormSet(prefix=str(m.numero))
+                                formSetLigne.forms[0].empty_permitted = False
+                                for form in formSetLigne:
+                                    chdata = form._get_changed_data()
+                                    if 'vtype' in chdata:
+                                        form.filtre_vtype(form._raw_value('vtype'))
+
+                                formsets.append({"monture": m, "formset": formSetLigne})
+                            else:
+                                prefix = str(m.numero)
+                                data = {
+                                        prefix + '-TOTAL_FORMS': u'2',
+                                        prefix + '-INITIAL_FORMS': u'0',
+                                        prefix + '-MAX_NUM_FORMS': u'',
+                                        prefix + '-0-vtype': verres[m.numero][0].vtype,
+                                        prefix + '-0-diametre': verres[m.numero][0].diametre,
+                                        prefix + '-0-couleur': verres[m.numero][0].couleur,
+                                        prefix + '-0-traitement': verres[m.numero][0].traitement,
+                                        }
+
+                                if len(verres[m.numero]) == 2:
+                                    dataG = {
+                                             prefix + '-1-vtype': verres[m.numero][1].vtype,
+                                             prefix + '-1-diametre': verres[m.numero][1].diametre,
+                                             prefix + '-1-couleur': verres[m.numero][1].couleur,
+                                             prefix + '-1-traitement': verres[m.numero][1].traitement,
+                                             }
+                                    data.update(dataG)
+
+                                LigneFormSet.form = staticmethod(curry(LigneForm, progressif=progressif))
+                                formSetLigne = LigneFormSet(data, prefix=str(m.numero))
+                                formSetLigne.forms[0].empty_permitted = False
+                                for form in formSetLigne:
+                                    chdata = form._get_changed_data()
+                                    if 'vtype' in chdata:
+                                        form.filtre_vtype(form._raw_value('vtype'))
+
+                                formsets.append({"monture": m, "formset": formSetLigne})
+
     # Fin restauration
     # ============================
 
     if request.method == 'POST':
 
         if 'ajVerres' in request.POST:
-            formSetLigne = LigneFormSet(request.POST)
-            formSetLigne.forms[0].empty_permitted = False
+            formsets = []
+            valide = True
+            for m in montures:
+                if m.vision == 'M':
+                    progressif = True
+                else:
+                    progressif = False
 
-            # On charge les choix disponibles pour validation...
-            for form in formSetLigne:
-                chdata = form._get_changed_data()
-                if 'vtype' in chdata:
-                    form.filtre_vtype(form._raw_value('vtype'))
+                extra = 2
+                LigneFormSet = formset_factory(LigneForm, extra=extra)
+                LigneFormSet.form = staticmethod(curry(LigneForm, progressif=progressif))
+                formSetLigne = LigneFormSet(request.POST, prefix=str(m.numero))
+                formSetLigne.forms[0].empty_permitted = False
 
-            if formSetLigne.is_valid():
-                func.enrVerres(formSetLigne, request)
+                # On charge les choix disponibles pour validation...
+                for form in formSetLigne:
+                    chdata = form._get_changed_data()
+                    if 'vtype' in chdata:
+                        vtype = Type.objects.get(id=form._raw_value('vtype'))
+                        form.filtre_vtype(vtype)
+
+                if formSetLigne.is_valid():
+                    valide = valide and True
+                else:
+                    valide = False
+
+                formsets.append({"monture": m, "formset": formSetLigne})
+
+            # -endfor
+
+            if valide == True:
+                func.enrVerres(formsets, request)
                 return func.etapeSuivante(request)
+            else:
+                formsets = []
+                for m in montures:
+                    if m.vision == 'M':
+                        progressif = True
+                    else:
+                        progressif = False
 
-            # Si le formulaire est rempli ou en partie on filtre les champs
-            formSetLigne = LigneFormSet(request.POST)  # Si on ne refait pas un formset, le is_valid casse tout...
-            formSetLigne.forms[0].empty_permitted = False
-            for form in formSetLigne:
-                chdata = form._get_changed_data()
-                if 'vtype' in chdata:
-                    form.filtre_vtype(form._raw_value('vtype'))
+                    extra = 2
+                    LigneFormSet = formset_factory(LigneForm, extra=extra)
+                    LigneFormSet.form = staticmethod(curry(LigneForm, progressif=progressif))
+                    formSetLigne = LigneFormSet(request.POST, prefix=str(m.numero))  # Si on ne refait pas un formset, le is_valid casse tout...
+                    formSetLigne.forms[0].empty_permitted = False
+                    for form in formSetLigne:
+                        chdata = form._get_changed_data()
+                        if 'vtype' in chdata:
+                            vtype = Type.objects.get(id=form._raw_value('vtype'))
+                            form.filtre_vtype(vtype)
 
-    c['formSetLigne'] = formSetLigne
+                    formsets.append({"monture": m, "formset": formSetLigne})
+
+        # -endif ajVerres
+    # -endif POST
+
+    c['formsets'] = formsets
     c.update(csrf(request))
     return render_to_response("facture/etapeVerres.html", c, context_instance=RequestContext(request))
 

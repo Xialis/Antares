@@ -303,3 +303,9 @@ a.l-button, a.l-button:hover { color: white; height: 1em;}
   animation: blink 2s infinite;
   animation-timing-function: linear;
 }
+
+.aide {
+  background: rgba(44,83,158,0.8);
+  border-radius: 5px;
+  
+}

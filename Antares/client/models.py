@@ -119,6 +119,12 @@ class Prescription(models.Model):
         else:
             return "Non"
 
+    def progressif(self):
+        if (self.addition_od is not None and self.addition_od != 0) or (self.addition_og is not None and self.addition_og != 0):
+            return True
+        else:
+            return False
+
     def astigmatisme(self):
         if self.cylindre_od is not None and self.cylindre_od != 0:
             retour = "Oui / "

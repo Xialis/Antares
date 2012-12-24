@@ -15,11 +15,12 @@ class LigneForm(ModelForm):
 
     class Meta:
         model = LigneFacture
-        exclude = ('facture', 'monture', 'oeil', 'tarif')
+        exclude = ('facture', 'monture', 'oeil', 'tarif', 'remise_monture')
 
     def __init__(self, *args, **kwargs):
+        progressif = kwargs.pop('progressif', True)
         super(LigneForm, self).__init__(*args, **kwargs)
-        self.fields['vtype'].choices = categorie_vtype()
+        self.fields['vtype'].choices = categorie_vtype(progressif)
 
     def filtre_vtype(self, vtype):
         self.fields['diametre'].queryset = Diametre.objects.filter(type=vtype)
@@ -28,11 +29,14 @@ class LigneForm(ModelForm):
         return self
 
 
-def categorie_vtype():
+def categorie_vtype(progressif):
     liste = []
     unifocaux = []
     progressifs = []
-    req = Type.objects.order_by('nom')
+    if progressif == False:
+        req = Type.objects.order_by('nom').filter(progressif=False)
+    else:
+        req = Type.objects.order_by('nom')
     for vtype in req:
         if vtype.progressif == True:
             progressifs.append([vtype.id, vtype.nom])
@@ -40,8 +44,8 @@ def categorie_vtype():
             unifocaux.append([vtype.id, vtype.nom])
 
     liste.append(['', '----------'])
-    liste.append([u"Unifocaux", unifocaux])
     liste.append([u"Progressifs", progressifs])
+    liste.append([u"Unifocaux", unifocaux])
     return liste
 
 

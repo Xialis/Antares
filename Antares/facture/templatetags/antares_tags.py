@@ -35,7 +35,7 @@ def jbt(jfunc, aid, uiiconstyle, text, *args):
             if arg.lstrip()[0] == '$':
                 string = arg
             else:
-                string = "\"" + arg + "\""
+                string = "'" + arg + "'"
         else:
             string = str(arg)
 
@@ -72,3 +72,13 @@ def formule(prescription, oeil):
 @register.filter(name='norm')
 def norm(value):
     return NORM(value)
+
+
+@register.filter(name='vision')
+def vision(value):
+    if value == 'P':
+        return u"près"
+    elif value == 'L':
+        return u"loin"
+    else:
+        return u"progressif"

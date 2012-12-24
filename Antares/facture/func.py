@@ -1,12 +1,15 @@
 # -*- coding: utf-8 -*-
 from datetime import date
 from django.shortcuts import redirect
-from facture.views import *
-from facture.models import LigneFacture, Monture, Option, Facture
-from facture.forms import LigneForm
+
+from facture.views import etapeRecherche, etapeInfo, etapePrescription, etapeMontures, etapeVerres, etapeOptions, etapeRecapitulatif
+from facture.models import Facture
 from Antares.Verrou import Verrou
 
 
+#===============================================================================
+# gestion Client
+#===============================================================================
 def utiliserClient(request, cid):
     request.session['appFacture']['client_id'] = cid
     request.session['appFacture']['etape'] = 1
@@ -80,7 +83,7 @@ def enrPrescription(prescription, request):
             request.session['appFacture']['progressif_og'] = False
 
         # Transposition
-        request.session['appFacture']['prescription_t'] = transposition(prescription)
+        request.session['appFacture']['prescription_t'] = prescription.transposition()
 
         # Sphere en cylindre moins (test vision)
         request.session['appFacture']['prescription_sphod'] = getSphereCylNeg(prescription.sphere_od, prescription.cylindre_od)
@@ -107,34 +110,7 @@ def getPrescription_T(request):
 
 
 def transposition(prescription):
-    # TODO: Remplacer par la fonction de class !
-    ptrans = Prescription()
-
-    # nouvelle sphere = sphere + cylindre-negatif
-    # nouveau cylindre = cylindre-negatif * -1
-    # nouvel axe = (axe + 90) % 180 (0<=axe<=179)
-    if prescription.cylindre_od and prescription.cylindre_od < 0:
-        ptrans.sphere_od = prescription.sphere_od + prescription.cylindre_od
-        ptrans.cylindre_od = abs(prescription.cylindre_od)
-        ptrans.axe_od = (prescription.axe_od + 90) % 180
-    else:
-        ptrans.sphere_od = prescription.sphere_od
-        ptrans.cylindre_od = prescription.cylindre_od
-        ptrans.axe_od = prescription.axe_od
-
-    if prescription.cylindre_og and prescription.cylindre_og < 0:
-        ptrans.sphere_og = prescription.sphere_og + prescription.cylindre_og
-        ptrans.cylindre_og = abs(prescription.cylindre_og)
-        ptrans.axe_og = (prescription.axe_og + 90) % 180
-    else:
-        ptrans.sphere_og = prescription.sphere_og
-        ptrans.cylindre_og = prescription.cylindre_og
-        ptrans.axe_og = prescription.axe_og
-
-    ptrans.addition_od = prescription.addition_od
-    ptrans.addition_og = prescription.addition_og
-
-    return ptrans
+    raise DeprecationWarning("Utiliser la fonction de la class Prescription !")
 
 
 def getSphereCylNeg(sphere, cylindre):
@@ -148,37 +124,51 @@ def getSphereCylNeg(sphere, cylindre):
     return ns
 
 
-def enrVerres(formSetLigne, request):
+#===============================================================================
+# gestion Verres
+#===============================================================================
+def enrVerres(formsets, request):
+    u"""Enregistre les verres dans la session
+
+    Arguments:
+    formsets -- cf. facture.views.etapeVerres pour le format
+    request -- la requete en cours (accès à la session)
+
+    """
     t = []
-    nbre = len(formSetLigne.cleaned_data)
-    nloop = nbre / 2
-    for x in range(0, nloop):
-        start = x * 2
-        if len(formSetLigne[start].cleaned_data) != 0:
-            lfd = formSetLigne[start].save(commit=False)
-            lfd.oeil = 'D'
-            lfd.monture = x
+    for x in xrange(0, len(formsets)):  # nombre d'ensemble (monture)
+        monture = formsets[x]["monture"]
+        formset = formsets[x]["formset"]
+        tm = []
 
-            # tarif: tarif_type + tarif_couleur + tarif_traitement
-            tarif_type = lfd.vtype.tarif
-            tarif_couleur = lfd.couleur.tarif
-            tarif_traitement = lfd.traitement.tarif
-            lfd.tarif = tarif_type + tarif_couleur + tarif_traitement
+        lfd = formset[0].save(commit=False)
+        lfd.oeil = 'D'
+        lfd.monture = monture.numero
+        lfd.tarif = lfd.calculTotal()
+        lfd.remise_monture = lfd.calculRemise()
 
-            if len(formSetLigne[start + 1].cleaned_data) != 0:
-                lfg = formSetLigne[start + 1].save(commit=False)
-                lfg.oeil = 'G'
-                lfg.monture = x
-                tarif_type = lfg.vtype.tarif
-                tarif_couleur = lfg.couleur.tarif
-                tarif_traitement = lfg.traitement.tarif
-                lfg.tarif = tarif_type + tarif_couleur + tarif_traitement
-                t.append(lfd)
-                t.append(lfg)
-            else:
+        if len(formset[1].cleaned_data) != 0:
+            # on a un OG
+            lfg = formset[1].save(commit=False)
+            lfg.oeil = 'G'
+            lfg.monture = monture.numero
+            lfg.tarif = lfg.calculTotal()
+            lfg.remise_monture = lfg.calculRemise()
+            tm.append(lfd)
+            tm.append(lfg)
+        else:
+            # les deux yeux d'un coup ?
+            # voir monture.oeil
+            if monture.oeil == 'T':
                 lfd.oeil = 'T'
-                lfd.tarif = lfd.tarif * 2
-                t.append(lfd)
+                lfd.tarif *= 2
+                lfd.remise_monture *= 2
+            else:
+                lfd.oeil = monture.oeil
+
+            tm.append(lfd)
+
+        t.append(tm)
 
     request.session['appFacture']['LigneFacture'] = t
     request.session['appFacture']['etapeVerres_post'] = request.POST

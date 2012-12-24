@@ -1,7 +1,7 @@
 {% extends "facture/base.html" %}
 {% load antares_tags %}
 
-{% block head %}
+{% block head %}{{ block.super }}
 
 <script>
 $(document).ready(function(e){
@@ -46,7 +46,7 @@ function validation_fac() {
 	</div>
 </div>
 
-<div class="first span-11">
+<div class="first span-12">
 	<div class="divbox">
 		<h2>Client</h2>
 		<p>Verifier les infos</p>
@@ -74,14 +74,17 @@ function validation_fac() {
 		<h2>Verres</h2>
 		<p>Verifier les infos</p>
 		<table>
-			<tr><th>M</th><th>Type</th><th>Diamètre</th><th>Couleur</th><th>Traitement</th><th>Tarif</th></tr>
-			{% for v in t_verres %}
-			<tr>
-				<td>{{ v.monture|add:1 }}</td>
-				<td>{{ v.vtype }}</td><td>{{ v.diametre }}</td>
-				<td>{{ v.couleur }}</td><td>{{ v.traitement }}</td>
-				<td>{{ v.tarif }}</td>
-			</tr>
+			<tr><th>Oeil</th><th>Type</th><th>Diamètre</th><th>Couleur</th><th>Traitement</th><th>Tarif</th></tr>
+			{% for grp in t_verres %}
+			<tr><td colspan="6">Monture {{ forloop.counter }}</td></tr>
+				{% for v in grp %}
+				<tr>
+					<td>{{ v.oeil }}</td>
+					<td>{{ v.vtype }}</td><td>{{ v.diametre }}</td>
+					<td>{{ v.couleur }}</td><td>{{ v.traitement }}</td>
+					<td>{{ v.tarif }}</td>
+				</tr>
+				{% endfor %}
 			{% endfor %}
 		</table>
 	</div>
@@ -100,7 +103,7 @@ function validation_fac() {
 	</div>
 </div>
 
-<div class="span-11 last">
+<div class="span-10 last">
 	<div class="divbox">
 		<h2>Prescription</h2>
 		<p>Verifier les infos</p>
@@ -108,24 +111,24 @@ function validation_fac() {
 		<table>
 			<tr><th>Oeil</th><th>Sphère</th><th>Cylindre</th><th>Add</th><th>Axe</th></tr>
 			<tr>
-				<td>OD</td><td>{{ prescription.sphere_od }}</td><td>{{ prescription.cylindre_od|default:'n.r' }}</td>
-				<td>{{ prescription.addition_od|default:'n.r' }}</td><td>{{ prescription.axe_od|default:'n.r' }}</td>
+				<td>OD</td><td>{{ prescription.sphere_od|norm }}</td><td>{{ prescription.cylindre_od|norm|default:'n.r' }}</td>
+				<td>{{ prescription.addition_od|norm|default:'n.r' }}</td><td>{{ prescription.axe_od|default:0 }}</td>
 			</tr>
 			<tr>
-				<td>OG</td><td>{{ prescription.sphere_og }}</td><td>{{ prescription.cylindre_og|default:'n.r'}}</td>
-				<td>{{ prescription.addition_og|default:'n.r' }}</td><td>{{ prescription.axe_og|default:'n.r' }}</td>
+				<td>OG</td><td>{{ prescription.sphere_og|norm }}</td><td>{{ prescription.cylindre_og|norm|default:'n.r'}}</td>
+				<td>{{ prescription.addition_og|norm|default:'n.r' }}</td><td>{{ prescription.axe_og|default:0 }}</td>
 			</tr>
 		</table>
 		<div class="tableTitle">Transposition:</div>
 		<table>
 			<tr><th>Oeil</th><th>Sphère</th><th>Cylindre</th><th>Add</th><th>Axe</th></tr>
 			<tr>
-				<td>OD</td><td>{{ prescription_t.sphere_od }}</td><td>{{ prescription_t.cylindre_od|default:'n.r' }}</td>
-				<td>{{ prescription_t.addition_od|default:'n.r' }}</td><td>{{ prescription_t.axe_od|default:'n.r' }}</td>
+				<td>OD</td><td>{{ prescription_t.sphere_od|norm }}</td><td>{{ prescription_t.cylindre_od|norm|default:'n.r' }}</td>
+				<td>{{ prescription_t.addition_od|norm|default:'n.r' }}</td><td>{{ prescription_t.axe_od|default:0 }}</td>
 			</tr>
 			<tr>
-				<td>OG</td><td>{{ prescription_t.sphere_og }}</td><td>{{ prescription_t.cylindre_og|default:'n.r' }}</td>
-				<td>{{ prescription_t.addition_og|default:'n.r' }}</td><td>{{ prescription_t.axe_og|default:'n.r' }}</td>
+				<td>OG</td><td>{{ prescription_t.sphere_og|norm }}</td><td>{{ prescription_t.cylindre_og|norm|default:'n.r' }}</td>
+				<td>{{ prescription_t.addition_og|norm|default:'n.r' }}</td><td>{{ prescription_t.axe_og|default:0 }}</td>
 			</tr>
 		</table>
 	</div>

@@ -1,6 +1,6 @@
 {% extends "facture/base.html" %}
 {% load antares_tags %}
-{% block head %}
+{% block head %}{{ block.super }}
 <script src='/media/jquery.formset.min.js'></script>
 
 <script type="text/javascript">
@@ -36,11 +36,12 @@
 					{% endfor %}
 				</tbody>
 			</table>
-			<p>
-				{% sbt "#facture_OptionsForm" "ajOption" "ajOption" "ui-icon-circle-check" "Continuer" %}
-			</p>
 		</form>
 	</div>
 </div>
 
+{% endblock %}
+
+{% block bar %}{{ block.super }}
+{% sbt "#facture_OptionsForm" "ajOption" "ajOption" "ui-icon-circle-check" "Valider et passer à l'étape suivante..." %}
 {% endblock %}
