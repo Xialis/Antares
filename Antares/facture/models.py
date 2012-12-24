@@ -12,6 +12,7 @@ class Facture(models.Model):
     proforma = models.ForeignKey('self', blank=True, null=True)
     interlocuteur = models.ForeignKey('facture.Interlocuteur')
     organisme = models.ForeignKey('client.OrganismePayeur', blank=True, null=True)
+    solde = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
 
 OEIL = (
         ('T', 'ODG'),
@@ -29,6 +30,7 @@ class LigneFacture(models.Model):
     couleur = models.ForeignKey('fournisseur.Couleur')
     traitement = models.ForeignKey('fournisseur.Traitement', blank=True, null=True)
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
+    remise_monture = models.DecimalField(max_digits=8, decimal_places=0)
 
 
 class Option(models.Model):

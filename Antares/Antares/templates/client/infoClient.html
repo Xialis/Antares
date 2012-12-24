@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% load antares_tags %}
+{% block head %}{{ block.super }}
+
+{% endblock %}
+
+{% block center %}
+
+<div class="first span-23 border">
+	
+	<div class="divbox">
+		<h2>Pro forma ({{ proformas|length }})</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Numero</th><th>Date création</th><th>Date modification</th>
+					<th>Prescription</th><th>Interlocteur</th><th>Organisme</th><th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for p in proformas %}
+				<tr>
+					<td>{{ p.numero }}</td><td>{{ p.date_creation }}</td><td>{{ p.date_modification }}</td>
+					<td>Lien, popup, anchor</td><td>{{ p.interlocuteur.nom }}</td><td>{{ p.organisme.nom|default:"-" }}</td>
+					<td>{% bt "" "ui-icon-print" "Voir (PDF)" "sortiespdf.views.facture" p.id %} 
+					 {% jbt "" "btMod" "ui-icon-pencil" "Editer..." p.id %} 
+					 {% jbt "" "btFac" "ui-icon-cart" "Facturer..." p.id %}
+					 {% jbt "" "btSuppr" "ui-icon-trash" "Suppr..." p.id %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="divbox">
+		<h2>Facture(s) ({{ factures|length }})</h2>
+		<table>
+			<thead>
+				<tr>
+					<th>Numero</th><th>Date création</th><th>Date modification</th>
+					<th>Prescription</th><th>Interlocteur</th><th>Organisme</th><th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				{% for f in factures %}
+				<tr>
+					<td>{{ f.numero }}</td><td>{{ f.date_creation }}</td><td>{{ f.date_modification }}</td>
+					<td>Lien, popup, anchor</td><td>{{ f.interlocuteur.nom }}</td><td>{{ f.organisme.nom|default:"-" }}</td>
+					<td>{% bt "" "ui-icon-print" "Voir (PDF)" "sortiespdf.views.facture" f.id %} 
+					 {% jbt "" "btMod" "ui-icon-pencil" "Editer..." f.id %} 
+					 {% jbt "" "btSuppr" "ui-icon-trash" "Suppr..." f.id %}
+					</td>
+				</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</div>
+	
+	<div class="divbox">
+		<h2>Prescription(s) ({{ prescriptions|length }})</h2>
+		<table>
+			<tr>
+				<th>Prescripteur</th>
+				<th>Date de réalisation</th>
+				<th>Erreur ?</th>
+				<th>Sphere OD</th>
+				<th>Cylindre OD</th>
+				<th>Addition OD</th>
+				<th>Axe OD</th>
+				<th>Sphere OG</th>
+				<th>Cylindre OG</th>
+				<th>Addition OG</th>
+				<th>Axe OG</th>
+				<th>Action</th>
+			</tr>
+			{% for p in prescriptions %}
+			<tr>
+				<td>{{ p.prescripteur }}</td>
+				<td>{{ p.date_realisation }}</td>
+				<td>{{ p.erreur }}</td>
+				<td>{{ p.sphere_od|norm }}</td>
+				<td>{{ p.cylindre_od|norm }}</td>
+				<td>{{ p.addition_od|norm }}</td>
+				<td>{{ p.axe_od }}</td>
+				<td>{{ p.sphere_og|norm }}</td>
+				<td>{{ p.cylindre_og|norm }}</td>
+				<td>{{ p.addition_og|norm }}</td>
+				<td>{{ p.axe_og }}</td>
+				<td>{% jbt "" "btprescMod" "ui-icon-pencil" "Editer..." p.id %} 
+					{% jbt "" "btprescSuppr" "ui-icon-trash" "Suppr..." p.id %}
+				</td>
+			</tr>
+			{% endfor %}
+		</table>
+	</div>
+
+</div>
+
+<div class="last span-7">
+	<div class="divbox">
+		<h2>Info</h2>
+	</div>
+</div>
+
+{% endblock %}

@@ -16,3 +16,18 @@ def NORM(decimal):
     if decimal is None:
         return ""
     return "{0:.2f}".format(decimal)
+
+
+def MILLE(decimal):
+    dstr = str(decimal)
+    retour = ""
+    compteur = 0
+    for x in reversed(xrange(0, len(dstr))):
+        if compteur == 3:
+            retour = " " + retour
+            compteur = 0
+
+        retour = dstr[x] + retour
+        compteur += 1
+
+    return retour

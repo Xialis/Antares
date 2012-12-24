@@ -167,11 +167,14 @@ function getInfo(id, oeil) {
 			
 			{% endfor %}
 			</table>
-			{% sbt "#facture_formVerres" "ajVerres" "ajVerres" "ui-icon-circle-check" "Continuer" %}
 		</form>
 	</div>
 	<br />
 	<hr />
 </div>
 
+{% endblock %}
+
+{% block bar %}{{ block.super }}
+{% sbt "#facture_formVerres" "ajVerres" "ajVerres" "ui-icon-circle-check" "Valider et aller à l'étape suivante" %}
 {% endblock %}

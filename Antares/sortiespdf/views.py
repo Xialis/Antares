@@ -11,7 +11,7 @@ from io import BytesIO
 
 from django.http import HttpResponse
 
-from Antares.common import NORM
+from Antares.common import NORM, MILLE
 from facture.models import Facture, Monture
 
 import os
@@ -23,8 +23,10 @@ def facture(request, fid):
     Géneration du pdf facture/proforma
     """
 
+    f = Facture.objects.get(id=fid)
+
     response = HttpResponse(mimetype='application/pdf')
-    response['Content-Disposition'] = 'attachment; filename="fid.pdf"'
+    response['Content-Disposition'] = 'attachment; filename="' + f.numero + '.pdf"'
 
     reportlab.rl_config.warnOnMissingFontGlyphs = 0
     pdfmetrics.registerFont(TTFont('Vera', os.path.join(APP_ROOT, 'fonts/Vera.ttf')))
@@ -53,7 +55,6 @@ def facture(request, fid):
     p.drawText(otext)
 
     # -- Table client
-    f = Facture.objects.get(id=fid)
     data = [[u'Code client', f.client.code],
             [u'Nom', f.client.nom],
             [u'Prénom', f.client.prenom],
@@ -85,39 +86,71 @@ def facture(request, fid):
 
     # -- Tables prescription
     titre(10 * mm, 220 * mm, 80 * mm, u"Prescription", p)
-    
+
+    tableauPrescription(13 * mm, 216 * mm,
+                        u"Prescripteur: " + f.prescription.prescripteur.nom,
+                        f.prescription.date_realisation.strftime("%d/%m/%y"),
+                        f.prescription, p)
+
+    vl = vp = vpr = False
+    montures = Monture.objects.filter(facture=f)
+    for m in montures:
+        if m.vision == 'L':
+            vl = True
+        elif m.vision == 'P':
+            vp = True
+        else:
+            vpr = True
+
+    ystart = 195
+    ymarge = 21
+
+    if vl == True:
+        tableauPrescription(13 * mm, ystart * mm,
+                            u"Formule commandée (norme internationale): ",
+                            u"Loin",
+                            f.prescription.transposition(), p)
+        ystart -= ymarge
+
+    if vp == True:
+        tableauPrescription(13 * mm, ystart * mm,
+                            u"Formule commandée (norme internationale): ",
+                            u"Près",
+                            f.prescription.transposition(), p)
+        ystart -= ymarge
+
+    if vpr == True:
+        tableauPrescription(13 * mm, ystart * mm,
+                            u"Formule commandée (norme internationale): ",
+                            u"Progressif",
+                            f.prescription.transposition(), p)
+        ystart -= ymarge
+
     otext = p.beginText()
-    otext.setTextOrigin(15 * mm, 216 * mm)
+    otext.setTextOrigin(12 * mm, (ystart - 2) * mm)
     otext.setFont('Vera', 8)
-    otext.textLine(u"Prescripteur: " + f.prescription.prescripteur.nom)
+    otext.textLine(u"Informations sur votre vue:")
+    otext.textLine(u"- Amétropie (OD/OG): " + f.prescription.ametropie())
+    otext.textLine(u"- Astigmatisqme (OD/OG): " + f.prescription.astigmatisme())
+    otext.textLine(u"- Presbytie: " + f.prescription.presbytie())
     p.drawText(otext)
-    
-    sphere_od = NORM(f.prescription.sphere_od)
-    cylindre_od = NORM(f.prescription.cylindre_od)
-    if f.prescription.axe_od is not None:
-        axe_od = str(f.prescription.axe_od) + " °"
-    else:
-        axe_od = ""
-    addition_od = NORM(f.prescription.addition_od)
+    # -- Fin tables prescription
 
-    sphere_og = NORM(f.prescription.sphere_og)
-    cylindre_og = NORM(f.prescription.cylindre_og)
-    if f.prescription.axe_og is not None:
-        axe_og = str(f.prescription.axe_og) + " °"
-    else:
-        axe_og = ""
-    addition_og = NORM(f.prescription.addition_og)
+    # -- Options
+    ystart -= 25
+    titre(10 * mm, ystart * mm, 80 * mm, u"Options (" + str(f.option_set.all().count()) + ")", p)
+    ystart -= 4
 
-    date_realisation = f.prescription.date_realisation
-    str_date = date_realisation.strftime("%d/%m/%y")
+    datao = [[u"Désignation", "Tarif"],
+            ]
+    totalo = 0
+    for o in f.option_set.all():
+        d = [o.nom, MILLE(o.tarif)]
+        totalo += o.tarif
+        datao.append(d)
 
-    datap = [[str_date, u"SPHERE", u"CYLINDRE", u"AXE", u"ADDITION"],
-             [u"OD", sphere_od, cylindre_od, axe_od, addition_od],
-             [u"OG", sphere_og, cylindre_og, axe_og, addition_og]]
-
-    t = Table(datap, colWidths=15 * mm)
-    tstyle = TableStyle([('BACKGROUND', (0, 0), (0, -1), lightgrey),
-                           ('BACKGROUND', (0, 0), (-1, 0), lightgrey),
+    t = Table(datao, colWidths=30 * mm)
+    tstyle = TableStyle([('BACKGROUND', (0, 0), (-1, 0), lightgrey),
                            ('GRID', (0, 0), (-1, -1), 0.5, black),
                            ('FONT', (0, 0), (-1, -1), 'Vera'),
                            ('FONTSIZE', (0, 0), (-1, -1), 7),
@@ -126,54 +159,13 @@ def facture(request, fid):
                            ('LEFTPADDING', (0, 0), (-1, -1), 2),
                            ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
                            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-                           ('BACKGROUND', (0, 0), (0, 0), white),
                            ])
 
     t.setStyle(tstyle)
-    t.wrapOn(p, h, w)
-    t.drawOn(p, 13 * mm, 200 * mm)
-
-    otext = p.beginText()
-    otext.setTextOrigin(15 * mm, 195 * mm)
-    otext.setFont('Vera', 8)
-    otext.textLine(u"Formule commandée (norme internationale): ")
-    p.drawText(otext)
-
-    ptrans = f.prescription.transposition()
-    tsphere_od = NORM(ptrans.sphere_od)
-    tcylindre_od = NORM(ptrans.cylindre_od)
-    if ptrans.axe_od is not None:
-        taxe_od = str(ptrans.axe_od) + " °"
-    else:
-        taxe_od = ""
-    taddition_od = NORM(ptrans.addition_od)
-
-    tsphere_og = NORM(ptrans.sphere_og)
-    tcylindre_og = NORM(ptrans.cylindre_og)
-    if ptrans.axe_og is not None:
-        taxe_og = str(ptrans.axe_og) + " °"
-    else:
-        taxe_og = ""
-    taddition_og = NORM(ptrans.addition_og)
-    datat = [['', u"SPHERE", u"CYLINDRE", u"AXE", u"ADDITION"],
-             [u"OD", tsphere_od, tcylindre_od, taxe_od, taddition_od],
-             [u"OG", tsphere_og, tcylindre_og, taxe_og, taddition_og]]
-
-    t = Table(datat, colWidths=15 * mm)
-    t.setStyle(tstyle)
-
-    t.wrapOn(p, h, w)
-    t.drawOn(p, 13 * mm, 179 * mm)
-    
-    otext = p.beginText()
-    otext.setTextOrigin(12 * mm, 175 * mm)
-    otext.setFont('Vera', 8)
-    otext.textLine(u"Informations sur votre vue:")
-    otext.textLine(u"- Amétropie (OD/OG): " + f.prescription.ametropie())
-    otext.textLine(u"- Astigmatisqme (OD/OG): " + f.prescription.astigmatisme())
-    otext.textLine(u"- Presbytie: " + f.prescription.presbytie())
-    p.drawText(otext)
-    # -- Fin tables prescription
+    w, h = t.wrapOn(p, h, w)
+    t.drawOn(p, 13 * mm, (ystart * mm) - h)
+    ystart = ystart - h - (2 * mm)
+    # -- fin options
 
     # -- Equipements
     testyle = TableStyle([('BACKGROUND', (0, 0), (1, 0), lightgrey),
@@ -198,6 +190,9 @@ def facture(request, fid):
 
     monture_suivante = True
     ypos = 218 * mm
+    totalverre = 0
+    totalmonture = 0
+    totalremise = 0
     for lf in f.lignefacture_set.all().order_by('oeil').order_by('monture'):
 
         if monture_suivante == True:
@@ -229,15 +224,66 @@ def facture(request, fid):
         datae[0][5] = lf.couleur.nom
         datae[1][1] = lf.diametre.nom
         datae[1][3] = lf.traitement.nom
-        datae[1][5] = lf.tarif
+        datae[1][5] = MILLE(lf.tarif)
 
         t = Table(datae, colWidths=[10 * mm, 10 * mm, 12 * mm, 28 * mm, 12 * mm, 28 * mm])
         t.setStyle(testyle)
-    
+
         w, h = t.wrapOn(p, h, w)
         t.drawOn(p, 98 * mm, ypos - h)
         ypos = ypos - h - (2 * mm)
+
+        totalmonture += monture.tarif
+        totalverre += lf.tarif
+
+        if lf.traitement.remise_monture is None:
+            trm = 0
+        else:
+            trm = lf.traitement.remise_monture
+
+        if lf.couleur.remise_monture is None:
+            crm = 0
+        else:
+            crm = lf.couleur.remise_monture
+
+        if lf.vtype.remise_monture is None:
+            vrm = 0
+        else:
+            vrm = lf.vtype.remise_monture
+
+        if lf.oeil == 'T':
+            totalremise += (trm + crm + vrm) * 2
+        else:
+            totalremise += (trm + crm + vrm)
+
     # -- Fin équipements
+
+    # -- Debut Facture
+    ypos = ypos - 15 * mm
+    titre(95 * mm, ypos, 105 * mm, u"Facture", p)
+    ypos -= 4 * mm
+    TOTAL = (totalverre + totalmonture - totalremise) + totalo
+    dataf = [[u"Désignation", u"Totaux"],
+             [u"Equipement(s)", MILLE(totalverre + totalmonture - totalremise)],
+             [u"Option(s)", MILLE(totalo)],
+             [u"TOTAL à payer", MILLE(TOTAL)]
+             ]
+
+    t = Table(dataf, colWidths=[35 * mm, 30 * mm])
+    t.setStyle(tstyle)
+    w, h = t.wrapOn(p, h, w)
+    ypos = ypos - h
+    t.drawOn(p, 98 * mm, ypos)
+
+    otext = p.beginText()
+    ypos = ypos - 4 * mm
+    otext.setTextOrigin(98 * mm, ypos)
+    otext.setFont('Vera', 8)
+    otext.textLine(u"Arrete la facture à la somme de:")
+    otext.textLine(n2l(int(TOTAL)) + " FRANCS CFA")
+    otext.textLine("(facture exonerée de T.V.A)")
+    p.drawText(otext)
+    # -- Fin facture
 
     # -- ligne de séparation
     p.setStrokeColor(black)
@@ -266,3 +312,114 @@ def titre(x, y, l, texte, p):
     otext.setFont('VeraBd', 12)
     otext.textLine(texte)
     p.drawText(otext)
+
+
+def tableauPrescription(x, y, titre, info, prescription, p):
+    h, w = A4
+    otext = p.beginText()
+    otext.setTextOrigin(x + 2 * mm, y)
+    otext.setFont('Vera', 8)
+    otext.textLine(titre)
+    p.drawText(otext)
+
+    sphere_od = NORM(prescription.sphere_od)
+    cylindre_od = NORM(prescription.cylindre_od)
+    if prescription.axe_od is not None:
+        axe_od = str(prescription.axe_od) + " °"
+    else:
+        axe_od = ""
+    addition_od = NORM(prescription.addition_od)
+
+    sphere_og = NORM(prescription.sphere_og)
+    cylindre_og = NORM(prescription.cylindre_og)
+    if prescription.axe_og is not None:
+        axe_og = str(prescription.axe_og) + " °"
+    else:
+        axe_og = ""
+    addition_og = NORM(prescription.addition_og)
+
+    datap = [[info, u"SPHERE", u"CYLINDRE", u"AXE", u"ADDITION"],
+             [u"OD", sphere_od, cylindre_od, axe_od, addition_od],
+             [u"OG", sphere_og, cylindre_og, axe_og, addition_og]]
+
+    t = Table(datap, colWidths=15 * mm)
+    tstyle = TableStyle([('BACKGROUND', (0, 0), (0, -1), lightgrey),
+                           ('BACKGROUND', (0, 0), (-1, 0), lightgrey),
+                           ('GRID', (0, 0), (-1, -1), 0.5, black),
+                           ('FONT', (0, 0), (-1, -1), 'Vera'),
+                           ('FONTSIZE', (0, 0), (-1, -1), 7),
+                           ('TOPPADDING', (0, 0), (-1, -1), 2),
+                           ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+                           ('LEFTPADDING', (0, 0), (-1, -1), 2),
+                           ('ALIGN', (1, 1), (-1, -1), 'RIGHT'),
+                           ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                           ('BACKGROUND', (0, 0), (0, 0), white),
+                           ])
+
+    t.setStyle(tstyle)
+    t.wrapOn(p, h, w)
+    t.drawOn(p, x, y - 16 * mm)
+
+
+schu = ["", "UN ", "DEUX ", "TROIS ", "QUATRE ", "CINQ ", "SIX ", "SEPT ", "HUIT ", "NEUF "]
+schud = ["DIX ", "ONZE ", "DOUZE ", "TREIZE ", "QUATORZE ", "QUINZE ", "SEIZE ", "DIX SEPT ", "DIX HUIT ", "DIX NEUF "]
+schd = ["", "DIX ", "VINGT ", "TRENTE ", "QUARANTE ", "CINQUANTE ", "SOIXANTE ", "SOIXANTE ", "QUATRE VINGT ", "QUATRE VINGT "]
+
+
+def n2l(nombre):
+    s = ''
+    reste = nombre
+    i = 1000000000
+    while i > 0:
+        y = reste / i
+        if y != 0:
+            centaine = y / 100
+            dizaine = (y - centaine * 100) / 10
+            unite = y - centaine * 100 - dizaine * 10
+            if centaine == 1:
+                s += "CENT "
+            elif centaine != 0:
+                s += schu[centaine] + "CENT "
+                if dizaine == 0 and unite == 0:
+                    s = s[:-1] + "S "
+            if dizaine not in [0, 1]:
+                s += schd[dizaine]
+            if unite == 0:
+                if dizaine in [1, 7, 9]:
+                    s += "DIX "
+                elif dizaine == 8:
+                    s = s[:-1] + "S "
+            elif unite == 1:
+                if dizaine in [1, 9]:
+                    s += "ONZE "
+                elif dizaine == 7:
+                    s += "ET ONZE "
+                elif dizaine in [2, 3, 4, 5, 6]:
+                    s += "ET UN "
+                elif dizaine in [0, 8]:
+                    s += "UN "
+            elif unite in [2, 3, 4, 5, 6, 7, 8, 9]:
+                if dizaine in [1, 7, 9]:
+                    s += schud[unite]
+                else:
+                    s += schu[unite]
+            if i == 1000000000:
+                if y > 1:
+                    s += "MILLIARDS "
+                else:
+                    s += "MILLIARD "
+            if i == 1000000:
+                if y > 1:
+                    s += "MILLIONS "
+                else:
+                    s += "MILLIONS "
+            if i == 1000:
+                s += "MILLE "
+        #end if y!=0
+        reste -= y * i
+        dix = False
+        i /= 1000
+    #end while
+    if len(s) == 0:
+        s += "ZERO "
+    return s

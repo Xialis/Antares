@@ -131,3 +131,23 @@ class Prescription(models.Model):
             retour += "Non"
 
         return retour
+
+    def vp(self):
+        vp = self
+        if self.addition_od is not None and self.addition_od != 0:
+            vp.sphere_od = self.sphere_od + self.addition_od
+
+        if self.addition_og is not None and self.addition_og != 0:
+            vp.sphere_og = self.sphere_og + self.addition_og
+
+        vp.addition_od = None
+        vp.addition_og = None
+
+        return vp
+
+    def vl(self):
+        vl = self
+        vl.addition_od = None
+        vl.addition_og = None
+
+        return vl

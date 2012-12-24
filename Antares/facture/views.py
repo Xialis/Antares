@@ -178,9 +178,6 @@ def etapePrescription(request):
     return render_to_response("facture/etapePrescription.html", c, context_instance=RequestContext(request))
 
 
-# ==
-# Etape verre
-#
 def etapeVerres(request):
     c = {}
     extra = func.getNbreMontures(request) * 2

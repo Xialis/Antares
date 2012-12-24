@@ -2,6 +2,7 @@
 from django import template
 from django.core.urlresolvers import reverse
 
+from Antares.common import NORM
 from facture.func import transposition
 
 register = template.Library()
@@ -27,15 +28,16 @@ def jbt(jfunc, aid, uiiconstyle, text, *args):
 
     onclickstr = jfunc + "("
     for arg in args:
-        if arg.lstrip()[0] == '$':
-            string = arg
-        else:
-            try:
-                float(arg)
-            except:
-                string = "\"" + arg + "\""
+
+        try:
+            float(arg)
+        except:
+            if arg.lstrip()[0] == '$':
+                string = arg
             else:
-                string = str(arg)
+                string = "\"" + arg + "\""
+        else:
+            string = str(arg)
 
         onclickstr += str(string) + ','
 
@@ -65,3 +67,8 @@ def formule(prescription, oeil):
         addition = t.addition_og
 
     return {'sphere': sphere, 'cylindre': cylindre, 'axe': axe, 'addition': addition}
+
+
+@register.filter(name='norm')
+def norm(value):
+    return NORM(value)

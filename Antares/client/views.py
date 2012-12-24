@@ -5,11 +5,13 @@ from django.shortcuts import render_to_response, redirect
 from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
+from django.template import RequestContext
 
 from client.models import *
 from client.forms import *
 from client.func import ajoutClient, ajoutPrescripteur, ajoutOrganisme, filtration, initFiltration
 
+from facture.models import Facture
 from facture.func import utiliserClient
 
 
@@ -59,8 +61,6 @@ def index(request):
             else:
                 formRechercheClient = FormRechercheClient()
 
-    
-
     c['listeClient'] = listeClient
     c['listeFiltree'] = b_listeFiltree
     c['listeOrganisme'] = OrganismePayeur.objects.all()
@@ -75,8 +75,13 @@ def index(request):
 
 def infoClient(request, cid):
     c = {}
+    client = Client.objects.get(id=cid)
+    c['client'] = client
+    c['proformas'] = Facture.objects.filter(client=client, bproforma=True).order_by('-date_modification')
+    c['factures'] = Facture.objects.filter(client=client, bproforma=False).order_by('-date_modification')
+    c['prescriptions'] = Prescription.objects.filter(client=client)
 
-    return render_to_response("client/infoClient.html", c)
+    return render_to_response("client/infoClient.html", c, context_instance=RequestContext(request))
 
 
 def ajaxListClient(request):
