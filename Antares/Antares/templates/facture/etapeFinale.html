@@ -1,0 +1,28 @@
+{% extends "facture/base.html" %}
+{% load antares_tags %}
+{% block head %}{{ block.super }}
+	{% if fiddownload %}
+	<meta http-equiv="refresh" content="5;URL='{% url sortiespdf.views.facture fiddownload %}">
+	{% endif %}
+
+{% endblock %}
+
+{% block centernext %}
+
+<div class="first span-22 border">
+	<div class="divbox">
+		<h2>Fin de l'assistant de facturation</h2>
+		<p>La saisie est maintenant terminée. Le téléchargement de la facture devrait apparaitre dans les 5 secondes.
+		Vous ne pouvez plus éditer la facture. Via cet assistant</p>
+		
+		{% bt "" "ui-icon-document" "Retourner à l'accueil de facturation" "facture.func.ctrl" %}
+	</div>
+</div>
+
+{% endblock %}
+
+{% block bar %}{{ block.super }}
+{% bt "" "ui-icon-document" "Retourner à l'accueil de facturation" "facture.func.reset" %}
+{% bt "" "ui-icon-print" "Voir (PDF)" "sortiespdf.views.facture" fiddownload %}
+
+{% endblock %}
