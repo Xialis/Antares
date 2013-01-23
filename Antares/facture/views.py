@@ -24,6 +24,7 @@ from stock.models import LigneStock
 import func
 from facture.forms import LigneForm, MontureForm, OptionForm, ChoixFactureForm
 
+
 @login_required
 def etapeRecherche(request):
     c = {}
@@ -57,6 +58,7 @@ def etapeRecherche(request):
     return render_to_response("facture/etapeRecherche.html", c, context_instance=RequestContext(request))
 
 
+@login_required
 def etapeInfo(request):
     c = {}
     formClient = None
@@ -143,6 +145,7 @@ def etapeInfo(request):
     return render_to_response("facture/etapeInfo.html", c, context_instance=RequestContext(request))
 
 
+@login_required
 def etapePrescription(request):
     c = {}
     formPrescription = FormAjoutPrescription()
@@ -183,6 +186,7 @@ def etapePrescription(request):
     return render_to_response("facture/etapePrescription.html", c, context_instance=RequestContext(request))
 
 
+@login_required
 def etapeVerres(request):
     c = {}
     montures = func.getMontures(request)
@@ -418,6 +422,7 @@ def ajax_info(request, qs=None):
 #===============================================================================
 # Etape Montures
 #===============================================================================
+@login_required
 def etapeMontures(request):
     c = {}
     EXTRA = 3
@@ -476,6 +481,7 @@ def etapeMontures(request):
 # ==
 # Etape Options
 #
+@login_required
 def etapeOptions(request):
     c = {}
 
@@ -504,6 +510,7 @@ def etapeOptions(request):
 # ==
 # Etape Recapitulatif
 #
+@login_required
 def etapeRecapitulatif(request):
     c = {}
     s_aF = request.session['appFacture']
@@ -632,6 +639,7 @@ def etapeRecapitulatif(request):
     return render_to_response("facture/etapeRecapitulatif.html", c, context_instance=RequestContext(request))
 
 
+@login_required
 def etapeFinale(request):
     c = {}
     c['fiddownload'] = request.session['appFacture']['fid']
