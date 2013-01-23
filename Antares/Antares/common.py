@@ -31,3 +31,12 @@ def MILLE(decimal):
         compteur += 1
 
     return retour
+
+
+def visionstr(visionchar):
+    if visionchar == 'L':
+        return u"loin"
+    elif visionchar == 'P':
+        return u"près"
+    else:
+        return u"progressif"

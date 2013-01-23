@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.forms import ModelForm
-from django.forms import ModelChoiceField, RadioSelect, ChoiceField
+from django.forms import ModelChoiceField, RadioSelect, ChoiceField, DecimalField
 from facture.models import LigneFacture, Monture, Option, Facture
 from fournisseur.models import Type, Diametre, Couleur, Traitement
 
@@ -82,6 +82,8 @@ class ChoixFactureForm(ModelForm):
     error_css_class = 'error'
     required_css_class = 'required'
 
+    avance = DecimalField(max_digits=8, decimal_places=0, required=False)
+
     class Meta:
         model = Facture
-        fields = ('bproforma', 'organisme', )
+        fields = ('interlocuteur', 'bproforma', 'organisme', )

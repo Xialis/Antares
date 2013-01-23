@@ -1,6 +1,7 @@
 eclipse.preferences.version=1
 encoding//Antares/Verrou.py=utf-8
 encoding//Antares/common.py=utf-8
+encoding//accueil/views.py=utf-8
 encoding//client/context_processors.py=utf-8
 encoding//client/forms.py=utf-8
 encoding//client/func.py=utf-8

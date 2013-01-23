@@ -8,11 +8,27 @@ class Facture(models.Model):
     date_modification = models.DateTimeField(auto_now=True)
     client = models.ForeignKey('client.Client')
     prescription = models.ForeignKey('client.Prescription')
-    bproforma = models.BooleanField(verbose_name=u"PRO FORMA ?", default=True)
+    bproforma = models.BooleanField(verbose_name=u"PRO FORMA ?", default=True, help_text=u"Décocher la case pour créer directement une facture.")
     proforma = models.ForeignKey('self', blank=True, null=True)
     interlocuteur = models.ForeignKey('facture.Interlocuteur')
     organisme = models.ForeignKey('client.OrganismePayeur', blank=True, null=True)
     solde = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
+
+    def total(self):
+        total = 0
+        lfs = self.lignefacture_set.all()
+        for lf in lfs:
+            total += lf.tarif
+
+        os = self.option_set.all()
+        for o in os:
+            total += o.tarif
+
+        ms = self.monture_set.all()
+        for m in ms:
+            total += m.tarif
+
+        return total
 
 OEIL = (
         ('T', 'ODG'),
@@ -72,6 +88,9 @@ class Option(models.Model):
 
 class Interlocuteur(models.Model):
     nom = models.CharField(max_length=25, unique=True)
+
+    def __unicode__(self):
+        return self.nom
 
 VISION = (
           ('P', 'Près'),

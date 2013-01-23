@@ -5,11 +5,11 @@
     <title>Antares :</title>
     <meta content="">
     <link type='text/css' rel='stylesheet' href='/media/blueprint/screen.css' />
-    <link type="text/css" rel='stylesheet' href="/media/jqui/css/excite-bike/jquery-ui-1.8.24.custom.css" />
+    <link type="text/css" rel='stylesheet' href="/media/jqui/css/custom-theme/jquery-ui-1.9.2.custom.css" />
     <link type="text/css" rel='stylesheet' href="/media/chosen/chosen.css" />
     <link type='text/css' rel='stylesheet' href='/media/style.css' />
-    <script src='/media/jquery-1.7.2.min.js'></script>
-    <script type="text/javascript" src="/media/jqui/js/jquery-ui-1.8.24.custom.min.js"></script>
+    <script src='/media/jquery-1.8.3.min.js'></script>
+    <script type="text/javascript" src="/media/jqui/js/jquery-ui-1.9.2.custom.min.js"></script>
     <script type="text/javascript" src="/media/jqui/js/jquery.ui.datepicker-fr.js"></script>
     <script type="text/javascript" src="/media/chosen/chosen.jquery.min.js"></script>
     <script>
@@ -54,6 +54,11 @@
 	  				<li><a href="{% url stock.views.index %}">Stocks</a></li>
 	  				<li><a href="{% url client.views.index %}">Clients</a></li>
 	  				<li><a href="{% url commande.views.index %}">Commandes</a></li>
+	  			</ul>
+	  			
+	  			<ul id="ctrl_utilisateur">
+	  				<li>Utilisateur: {{ user.username }}</li>
+	  				<li>| <a href="">Déconnecter</a></li>
 	  			</ul>
 	  		</div>
 	  		{% if messages %}

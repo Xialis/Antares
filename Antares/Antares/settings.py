@@ -138,6 +138,7 @@ INSTALLED_APPS = (
 )
 
 TEMPLATE_CONTEXT_PROCESSORS = (
+    'django.contrib.auth.context_processors.auth',
     'django.contrib.messages.context_processors.messages',
     'facture.context_processors.app_context',
     'client.context_processors.app_context',

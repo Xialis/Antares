@@ -2,6 +2,9 @@
 {% load antares_tags %}
 {% block head %}{{ block.super }}
 {% include "_inc/head_listeClient_dataTable.html" %}
+	{% if fiddownload %}
+	<meta http-equiv="refresh" content="5;URL='{% url sortiespdf.views.facture fiddownload %}">
+	{% endif %}
 {% endblock %}
 
 {% block centernext %}

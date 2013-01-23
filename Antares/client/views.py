@@ -81,6 +81,9 @@ def infoClient(request, cid):
     c['factures'] = Facture.objects.filter(client=client, bproforma=False).order_by('-date_modification')
     c['prescriptions'] = Prescription.objects.filter(client=client)
 
+    if request.GET.get('fiddownload'):
+        c['fiddownload'] = request.GET.get('fiddownload')
+
     return render_to_response("client/infoClient.html", c, context_instance=RequestContext(request))
 
 

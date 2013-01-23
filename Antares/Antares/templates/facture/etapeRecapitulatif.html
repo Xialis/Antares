@@ -46,7 +46,7 @@ function validation_fac() {
 	</div>
 </div>
 
-<div class="first span-12">
+<div class="first span-13">
 	<div class="divbox">
 		<h2>Client</h2>
 		<p>Verifier les infos</p>
@@ -82,7 +82,7 @@ function validation_fac() {
 					<td>{{ v.oeil }}</td>
 					<td>{{ v.vtype }}</td><td>{{ v.diametre }}</td>
 					<td>{{ v.couleur }}</td><td>{{ v.traitement }}</td>
-					<td>{{ v.tarif }}</td>
+					<td>{{ v.tarif|mille }}</td>
 				</tr>
 				{% endfor %}
 			{% endfor %}
@@ -96,14 +96,14 @@ function validation_fac() {
 			<tr><th>Option</th><th>Tarif</th></tr>
 			{% for o in t_options %}
 			<tr>
-				<td>{{ o.nom }}</td><td>{{ o.tarif }}</td>
+				<td>{{ o.nom }}</td><td>{{ o.tarif|mille }}</td>
 			</tr>
 			{% endfor %}
 		</table>
 	</div>
 </div>
 
-<div class="span-10 last">
+<div class="span-9 last">
 	<div class="divbox">
 		<h2>Prescription</h2>
 		<p>Verifier les infos</p>
@@ -136,10 +136,13 @@ function validation_fac() {
 		<h2>Montures</h2>
 		<p>Verifier les infos</p>
 		<table>
-			<tr><th>Monture</th><th>Tarif</th></tr>
+			<tr><th>N°</th><th>Monture</th><th>Vue</th><th>Tarif</th></tr>
 			{% for m in t_montures %}
 			<tr>
-				<td>{{ m.nom }}</td><td>{{ m.tarif }}</td>
+				<td>{{ m.numero|add:1 }}</td>
+				<td>{{ m.nom|default:"pas de monture" }}</td>
+				<td>{{ m.vision }}</td>
+				<td>{{ m.tarif|mille }}</td>
 			</tr>
 			{% endfor %}
 		</table>
@@ -147,6 +150,14 @@ function validation_fac() {
 	<div class="divbox">
 		<h2>Validation</h2>
 		<p>Pro forma / Facture...</p>
+		<div class="ui-widget divinfo">
+			<div class="ui-state-highlight ui-corner-all">
+				<p>
+					<span class="ui-icon ui-icon-info"></span>
+					<b>Solde: {{ solde|mille }} FCFA</b>
+				</p>
+			</div>
+		</div>
 		<form action="" method="POST" id="facture_choix">{% csrf_token %}
 		<table class="formAsTable">
 			{{ formFacture.as_table }}

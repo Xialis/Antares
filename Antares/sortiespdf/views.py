@@ -6,12 +6,12 @@ from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.lib.units import mm
 from reportlab.lib.colors import black, grey, lightgrey, white
 from reportlab.lib.pagesizes import A4, portrait
-from reportlab.platypus import SimpleDocTemplate, Paragraph, Table, TableStyle
+from reportlab.platypus import Table, TableStyle
 from io import BytesIO
 
 from django.http import HttpResponse
 
-from Antares.common import NORM, MILLE
+from Antares.common import NORM, MILLE, visionstr
 from facture.models import Facture, Monture
 
 import os
@@ -42,14 +42,13 @@ def facture(request, fid):
     otext = p.beginText()
     otext.setTextOrigin(10 * mm, 277 * mm)
     otext.setFont('VeraBd', 16)
-    otext.textLines('''
-    OPTIMAL s.a.r.l
-    ESPACE OPTIQUE BAMAKOIS
-    ''')
+    otext.textLines('''OPTIMAL s.a.r.l
+    ESPACE OPTIQUE BAMAKOIS''')
     p.drawText(otext)
+    otext = p.beginText()
     otext.setFont('Vera', 8)
-    otext.textLines('''
-    Medina-Coura bd du Peuple face I.O.T.A
+    otext.setTextOrigin(10 * mm, 265 * mm)
+    otext.textLines('''Medina-Coura bd du Peuple face I.O.T.A
     BP E4388
     Bamako MALI''')
     p.drawText(otext)
@@ -109,14 +108,14 @@ def facture(request, fid):
         tableauPrescription(13 * mm, ystart * mm,
                             u"Formule commandée (norme internationale): ",
                             u"Loin",
-                            f.prescription.transposition(), p)
+                            f.prescription.transposition().vl(), p)
         ystart -= ymarge
 
     if vp == True:
         tableauPrescription(13 * mm, ystart * mm,
                             u"Formule commandée (norme internationale): ",
                             u"Près",
-                            f.prescription.transposition(), p)
+                            f.prescription.transposition().vp(), p)
         ystart -= ymarge
 
     if vpr == True:
@@ -128,7 +127,7 @@ def facture(request, fid):
 
     otext = p.beginText()
     otext.setTextOrigin(12 * mm, (ystart - 2) * mm)
-    otext.setFont('Vera', 8)
+    otext.setFont('Vera', 7)
     otext.textLine(u"Informations sur votre vue:")
     otext.textLine(u"- Amétropie (OD/OG): " + f.prescription.ametropie())
     otext.textLine(u"- Astigmatisqme (OD/OG): " + f.prescription.astigmatisme())
@@ -202,7 +201,7 @@ def facture(request, fid):
             otext = p.beginText()
             otext.setTextOrigin(100 * mm, ypos)
             otext.setFont('Vera', 8)
-            otext.textOut(u"Monture: " + monture.nom + ":: Tarif: " + str(monture.tarif))
+            otext.textOut(u"Monture: " + monture.nom + ":: Tarif: " + str(monture.tarif) + " :: Vision: " + visionstr(monture.vision))
             p.drawText(otext)
             xpos, ypos = otext.getCursor()
             ypos -= 1 * mm
@@ -260,7 +259,11 @@ def facture(request, fid):
 
     # -- Debut Facture
     ypos = ypos - 15 * mm
-    titre(95 * mm, ypos, 105 * mm, u"Facture", p)
+    if f.bproforma:
+        txt = u"Facture PRO FORMA"
+    else:
+        txt = u"Facture"
+    titre(95 * mm, ypos, 105 * mm, txt, p)
     ypos -= 4 * mm
     TOTAL = (totalverre + totalmonture - totalremise) + totalo
     dataf = [[u"Désignation", u"Totaux"],
@@ -278,7 +281,7 @@ def facture(request, fid):
     otext = p.beginText()
     ypos = ypos - 4 * mm
     otext.setTextOrigin(98 * mm, ypos)
-    otext.setFont('Vera', 8)
+    otext.setFont('Vera', 7)
     otext.textLine(u"Arrete la facture à la somme de:")
     otext.textLine(n2l(int(TOTAL)) + " FRANCS CFA")
     otext.textLine("(facture exonerée de T.V.A)")
@@ -292,6 +295,62 @@ def facture(request, fid):
     lineslist = [[10 * mm, 70 * mm, 200 * mm, 70 * mm], [10 * mm, 69 * mm, 200 * mm, 69 * mm]]
     p.lines(lineslist)
     # -- fin de ligne de séparation
+
+    # -- info bad de page
+    x = 10 * mm
+    y = 66 * mm
+    otext = p.beginText()
+    otext.setTextOrigin(x, y)
+    otext.setFont('Vera', 7)
+    otext.textLine(u"OPTIMAL s.a.r.l")
+    otext.textLine(u"ESPACE OPTIQUE BAMAKOIS :: TEL. 20 21 52 27")
+    otext.textLine(u"Bon de caisse")
+    otext.textLine(u"Interlocuteur: " + f.interlocuteur.nom)
+    p.drawText(otext)
+    (x, y) = otext.getCursor()
+
+    data = [[u"Date", f.date_creation.strftime("%d / %m / %Y"), u""],
+            [u"Montant", MILLE(f.total()), u"F CFA"],
+            [u"Avance", MILLE(f.total() - f.solde), u"F CFA"],
+            [u"Solde", MILLE(f.solde), u"F CFA, à régler à la livraison"],
+            ]
+
+    tstyle = TableStyle([('BACKGROUND', (0, 0), (-1, -1), white),
+                           ('GRID', (0, 0), (-1, -1), 0.5, black),
+                           ('FONT', (0, 0), (-1, -1), 'Vera'),
+                           ('FONTSIZE', (0, 0), (-1, -1), 7),
+                           ('TOPPADDING', (0, 0), (-1, -1), 2),
+                           ('BOTTOMPADDING', (0, 0), (-1, -1), 0),
+                           ('LEFTPADDING', (0, 0), (-1, -1), 2),
+                           ('ALIGN', (0, 0), (-1, -1), 'LEFT'),
+                           ('ALIGN', (1, 0), (1, -1), 'RIGHT'),
+                           ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
+                           ])
+
+    t = Table(data, colWidths=[20 * mm, 25 * mm, 40 * mm])
+    t.setStyle(tstyle)
+    w, h = t.wrapOn(p, h, w)
+    y = y - h
+    t.drawOn(p, x, y)
+
+    # droite
+
+    x = 110 * mm
+    y = 66 * mm
+    otext = p.beginText()
+    otext.setTextOrigin(x, y)
+    otext.setFont('Vera', 7)
+    otext.textLine(u"OPTIMAL s.a.r.l")
+    otext.textLine(u"ESPACE OPTIQUE BAMAKOIS :: TEL. 20 21 52 27")
+    otext.textLine(u"Bon de caisse")
+    otext.textLine(u"Interlocuteur: " + f.interlocuteur.nom)
+    p.drawText(otext)
+    (x, y) = otext.getCursor()
+    w, h = t.wrapOn(p, h, w)
+    y = y - h
+    t.drawOn(p, x, y)
+
+    # -- fin du pdf
     p.showPage()
     p.save()
 

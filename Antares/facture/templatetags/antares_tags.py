@@ -2,7 +2,7 @@
 from django import template
 from django.core.urlresolvers import reverse
 
-from Antares.common import NORM
+from Antares.common import NORM, MILLE
 from facture.func import transposition
 
 register = template.Library()
@@ -72,6 +72,11 @@ def formule(prescription, oeil):
 @register.filter(name='norm')
 def norm(value):
     return NORM(value)
+
+
+@register.filter(name='mille')
+def mille(value):
+    return MILLE(value)
 
 
 @register.filter(name='vision')

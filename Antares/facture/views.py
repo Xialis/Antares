@@ -8,6 +8,7 @@ from django.forms.formsets import formset_factory
 from django.http import HttpResponse
 from django.utils import simplejson
 from django.utils.functional import curry
+from django.contrib.auth.decorators import login_required
 
 from client.models import Client, Prescription
 from client.forms import FormRechercheClient, FormAjoutClient, FormAjoutPrescription, FormAjoutPrescripteur
@@ -22,9 +23,8 @@ from stock.models import LigneStock
 
 import func
 from facture.forms import LigneForm, MontureForm, OptionForm, ChoixFactureForm
-from facture.models import Interlocuteur
 
-
+@login_required
 def etapeRecherche(request):
     c = {}
 
@@ -49,6 +49,10 @@ def etapeRecherche(request):
                 formRechercheClient = FormRechercheClient()
 
     c['formRechercheClient'] = formRechercheClient
+
+    if request.GET.get('fiddownload'):
+        c['fiddownload'] = request.GET.get('fiddownload')
+
     c.update(csrf(request))
     return render_to_response("facture/etapeRecherche.html", c, context_instance=RequestContext(request))
 
@@ -506,6 +510,7 @@ def etapeRecapitulatif(request):
     formFacture = ChoixFactureForm()
     dico_client = func.getClient(request)
     client_orig = None
+    solde = 0
 
     if dico_client['client'] == None:
         client = Client.objects.get(id=dico_client['client_id'])
@@ -520,6 +525,21 @@ def etapeRecapitulatif(request):
     prescription = func.getPrescription(request)
     prescription_t = func.getPrescription_T(request)
 
+    # ======================
+    # calcul du solde
+
+    for grp in t_verres:
+        for v in grp:
+            solde += v.tarif
+
+    for o in t_options:
+        solde += o.tarif
+
+    for m in t_montures:
+        solde += m.tarif
+
+    # ======================
+    # traitment POST
     if request.method == 'POST':
         '''
         Enregistrement du client (s'il n'existe pas)
@@ -535,60 +555,69 @@ def etapeRecapitulatif(request):
 
         Reset assistant
         '''
-
-        # Traitement client (-> client.id)
-        if s_aF['b_creation'] == True:
-            client = func.getClient(request)
-            client = cfunc.sauvClient(client)
-        elif 'b_modification' in s_aF and s_aF['b_modification'] == True:
-            client = func.getClient(request)
-            client_orig = Client.objects.get(id=dico_client['client_id'])
-
-            client_orig.nom = client.nom
-            client_orig.prenom = client.prenom
-            client_orig.telephone = client.telephone
-            client_orig.email = client.email
-            client = client_orig.save()
-        else:
-            client = Client.objects.get(id=dico_client['client_id'])
-
-        # Traitement de la prescription
-        prescription = func.getPrescription(request)
-        prescription.client = client
-        prescription.save()
-
         # Traitement Facture (-> facture.id)
         formFacture = ChoixFactureForm(request.POST)
-        formFacture.is_valid()
-        facture = formFacture.save(commit=False)
-        facture.client = client
-        facture.prescription = prescription
-        facture.interlocuteur = Interlocuteur.objects.get(id=1)  # TODO: gerer l'interlocuteur
-        facture = func.sauvFacture(facture)
+        if formFacture.is_valid():
+            facture = formFacture.save(commit=False)
+            cd = formFacture.cleaned_data
+            if cd['avance'] is not None:
+                facture.solde = solde - cd['avance']
+            else:
+                facture.solde = solde
 
-        # Traitement LigneFacture
-        t_lignes = func.getVerres(request)
-        for ligne in t_lignes:
-            ligne.facture = facture
-            ligne.save()
+            # Traitement client (-> client.id)
+            if s_aF['b_creation'] == True:
+                client = func.getClient(request)
+                client = cfunc.sauvClient(client)
+            elif 'b_modification' in s_aF and s_aF['b_modification'] == True:
+                client = func.getClient(request)
+                client_orig = Client.objects.get(id=dico_client['client_id'])
 
-        # Si facture: Actualisation Commande ou Stock
-        if facture.bproforma:
-            fourfunc.stock_ou_commande(facture.lignefacture_set.all())
+                client_orig.nom = client.nom
+                client_orig.prenom = client.prenom
+                client_orig.telephone = client.telephone
+                client_orig.email = client.email
+                client = client_orig.save()
+            else:
+                client = Client.objects.get(id=dico_client['client_id'])
 
-        # Traitement monture(s)
-        t_montures = func.getMontures(request)
-        for monture in t_montures:
-            monture.facture = facture
-            monture.save()
+            facture.client = client
 
-        # Traitement option(s)
-        t_options = func.getOptions(request)
-        for option in t_options:
-            option.facture = facture
-            option.save()
+            # Traitement de la prescription
+            prescription = func.getPrescription(request)
+            prescription.client = client
+            prescription.save()
 
-        return func.reset(request)
+            facture.prescription = prescription
+
+            # enregistrement de la facture
+            facture = func.sauvFacture(facture)
+            request.session['appFacture']['fid'] = facture.id
+
+            # Traitement LigneFacture
+            t_lignes = func.getVerres(request)
+            for grp in t_lignes:
+                for ligne in grp:
+                    ligne.facture = facture
+                    ligne.save()
+
+            # Traitement monture(s)
+            t_montures = func.getMontures(request)
+            for monture in t_montures:
+                monture.facture = facture
+                monture.save()
+
+            # Traitement option(s)
+            t_options = func.getOptions(request)
+            for option in t_options:
+                option.facture = facture
+                option.save()
+
+            # Si facture: Actualisation Commande ou Stock
+            if not facture.bproforma:
+                fourfunc.stock_ou_commande(facture.lignefacture_set.all())
+
+            return func.etapeSuivante(request)
 
     c['client'] = client
     c['client_orig'] = client_orig
@@ -598,5 +627,13 @@ def etapeRecapitulatif(request):
     c['prescription'] = prescription
     c['prescription_t'] = prescription_t
     c['formFacture'] = formFacture
+    c['solde'] = solde
     c.update(csrf(request))
     return render_to_response("facture/etapeRecapitulatif.html", c, context_instance=RequestContext(request))
+
+
+def etapeFinale(request):
+    c = {}
+    c['fiddownload'] = request.session['appFacture']['fid']
+    func.reset(request)
+    return render_to_response("facture/etapeFinale.html", c, context_instance=RequestContext(request))
