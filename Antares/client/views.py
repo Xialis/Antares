@@ -6,6 +6,7 @@ from django.http import HttpResponse
 from django.core.urlresolvers import reverse
 from django.utils import simplejson
 from django.template import RequestContext
+from django.contrib.auth.decorators import login_required
 
 from client.models import *
 from client.forms import *
@@ -15,6 +16,7 @@ from facture.models import Facture
 from facture.func import utiliserClient
 
 
+@login_required
 def index(request):
     c = {}
     listeClient = Client.objects.all()
@@ -73,6 +75,7 @@ def index(request):
     return render_to_response("client/index.html", c)
 
 
+@login_required
 def infoClient(request, cid):
     c = {}
     client = Client.objects.get(id=cid)
