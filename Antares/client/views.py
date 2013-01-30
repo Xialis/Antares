@@ -93,10 +93,12 @@ def infoClient(request, cid):
         if request.GET.get("mode", False) == 'direct':
             fac = facture.func.facturer(request.GET.get("pfid"))
             if fac is None:
-                messages.error(request, "Erreur de transformation")
+                messages.error(request, u"Erreur de transformation")
+            elif fac == -1:
+                messages.error(request, u"Cette proforma est déjà facturée")
             else:
-                messages.success(request, "La facture a été créée")
-                
+                messages.success(request, "La facture " + fac.numero + " a été créée")
+
             return redirect(request.path)
 
     return render_to_response("client/infoClient.html", c, context_instance=RequestContext(request))
