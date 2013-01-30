@@ -316,3 +316,53 @@ def sauvFacture(facture):
     verrou.ouvre()
 
     return facture
+
+
+#===============================================================================
+# Chargement pro forma / passage en facture
+#===============================================================================
+def facturer(pfid):
+    u"""Crée une Facture à partir d'un facture pro forma
+
+    Argument:
+    pfid -- ID de la proforma
+
+    """
+    try:
+        Facture.objects.get(proforma__id=pfid)
+    except Facture.DoesNotExist:
+        pass
+    else:
+        return -1  # -1: proforma déjà facturée
+
+    # =====
+    # Créer une nouvelle Facture à partir de la proforma
+    # class Facture > bproforma = False & proforma__id = pfid
+    # class LigneFacture, Option, Monture > dupliquer et à relier à la nouvelle facture
+    proforma = Facture.objects.get(id=pfid)
+    fac = proforma
+    fac.pk = None  # duplique lors du save()
+    fac.bproforma = False
+    fac.proforma = proforma
+
+    fac = sauvFacture(fac)  # génération du code et enregistrement
+
+    lfs = proforma.lignefacture_set.all()
+    for lf in lfs:
+        lf.pk = None
+        lf.facture = fac
+        lf.save()
+
+    os = proforma.option_set.all()
+    for o in os:
+        o.pk = None
+        o.facture = fac
+        o.save()
+
+    montures = proforma.monture_set.all()
+    for m in montures:
+        m.pk = None
+        m.facture = fac
+        m.save()
+
+    return 1

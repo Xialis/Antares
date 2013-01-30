@@ -5,6 +5,39 @@
 	{% if fiddownload %}
 	<meta http-equiv="refresh" content="5;URL='{% url sortiespdf.views.facture fiddownload %}">
 	{% endif %}
+	
+	<script>
+	$(function() {
+		$( "#dialog-facturer" ).dialog({
+			modal: true,
+			autoOpen: false,
+			width:'auto',
+			show: 'fold',
+			open: function() {
+				$('.ui-dialog-buttonpane').find('button:contains("Annuler")').button({ icons: { primary: 'ui-icon-cancel' } });
+        		$('.ui-dialog-buttonpane').find('button:contains("Modifier")').button({ icons: { primary: 'ui-icon-pencil' } });
+        		$('.ui-dialog-buttonpane').find('button:contains("Directement")').button({ icons: { primary: 'ui-icon-check' } });
+			}
+		});
+	});
+	
+	function facturer(pid) {
+		$("#dialog-facturer").dialog({
+			buttons: {
+				"Directement": function() {
+					document.location.href = "{{ request.path }}?mode=direct&pfid=" + pid;
+				},
+				"Modifier...": function() {
+					document.location.href = "{{ request.path }}?mode=edit&pfid=" + pid;
+				},
+				"Annuler": function() {
+					$( this ).dialog( "close" );
+				}
+			},
+		});
+		$("#dialog-facturer").dialog("open");
+	}
+	</script>
 
 {% endblock %}
 
@@ -28,7 +61,7 @@
 					<td>Lien, popup, anchor</td><td>{{ p.interlocuteur.nom }}</td><td>{{ p.organisme.nom|default:"-" }}</td>
 					<td>{% bt "" "ui-icon-print" "Voir (PDF)" "sortiespdf.views.facture" p.id %} 
 					 {% jbt "" "btMod" "ui-icon-pencil" "Editer..." p.id %} 
-					 {% jbt "" "btFac" "ui-icon-cart" "Facturer..." p.id %}
+					 {% jbt "facturer" "btFac" "ui-icon-cart" "Facturer..." p.id %}
 					 {% jbt "" "btSuppr" "ui-icon-trash" "Suppr..." p.id %}
 					</td>
 				</tr>
@@ -104,7 +137,26 @@
 <div class="last span-7">
 	<div class="divbox">
 		<h2>Info</h2>
+		<ul>
+			<li>Nom: {{ client.nom }}</li>
+			<li>Prénom: {{ client.prenom }}</li>
+			<li>Téléphone: {{ client.telephone }}</li>
+			<li>Email: {{ client.email|email }}</li>
+		</ul>
 	</div>
+</div>
+
+<div id="dialog-facturer" title="Facturer">
+	<p>
+		<span class="ui-icon ui-icon-alert"></span>
+		Créer une facture à partir de cette PRO FORMA ?.
+	</p>
+	<p>
+		<ul>
+			<li>Directement: Transforme la pro forma en Facture</li>
+			<li>Modifier: Charge la pro forma dans l'assitant</li>
+		</ul>
+	</p>
 </div>
 
 {% endblock %}

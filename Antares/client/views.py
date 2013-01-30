@@ -13,7 +13,7 @@ from client.forms import *
 from client.func import ajoutClient, ajoutPrescripteur, ajoutOrganisme, filtration, initFiltration
 
 from facture.models import Facture
-from facture.func import utiliserClient
+import facture.func
 
 
 @login_required
@@ -87,6 +87,18 @@ def infoClient(request, cid):
     if request.GET.get('fiddownload'):
         c['fiddownload'] = request.GET.get('fiddownload')
 
+    if request.method == 'GET':
+
+        # Facturer directement
+        if request.GET.get("mode", False) == 'direct':
+            fac = facture.func.facturer(request.GET.get("pfid"))
+            if fac is None:
+                messages.error(request, "Erreur de transformation")
+            else:
+                messages.success(request, "La facture a été créée")
+                
+            return redirect(request.path)
+
     return render_to_response("client/infoClient.html", c, context_instance=RequestContext(request))
 
 
@@ -120,7 +132,7 @@ def ajaxListClient(request):
 
     for client in listeClient:
         action = u"<a href='" + reverse(infoClient, args=[client.id]) + u"' class='l-button ui-state-default ui-corner-all'><span class='ui-icon ui-icon-folder-open'></span>Détails</a>"
-        action += u" <a href='" + reverse(utiliserClient, args=[client.id]) + u"' class='l-button ui-state-default ui-corner-all'><span class='ui-icon ui-icon-person'></span>Utiliser</a>"
+        action += u" <a href='" + reverse(facture.func.utiliserClient, args=[client.id]) + u"' class='l-button ui-state-default ui-corner-all'><span class='ui-icon ui-icon-person'></span>Utiliser</a>"
         aaData.append([client.code, client.nom + " " + client.prenom, client.telephone, client.email, action])
 
     retour.update({"aaData": aaData})
