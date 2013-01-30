@@ -5,6 +5,7 @@ from django.shortcuts import redirect
 from facture.views import etapeRecherche, etapeInfo, etapePrescription, etapeMontures, etapeVerres, etapeOptions, etapeRecapitulatif
 from facture.models import Facture
 from Antares.Verrou import Verrou
+import fournisseur.func as fourfunc
 
 
 #===============================================================================
@@ -365,4 +366,5 @@ def facturer(pfid):
         m.facture = fac
         m.save()
 
+    fourfunc.stock_ou_commande(fac.lignefacture_set.all())
     return 1
