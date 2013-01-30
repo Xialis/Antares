@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from django import template
 from django.core.urlresolvers import reverse
+from django.utils.html import escape
+from django.utils.safestring import mark_safe
 
 from Antares.common import NORM, MILLE
 from facture.func import transposition
@@ -87,3 +89,12 @@ def vision(value):
         return u"loin"
     else:
         return u"progressif"
+
+
+@register.filter(name='email')
+def email(value):
+    if value is not None or value != "":
+        s = '<a href="mailto:%s">%s</a>' % (escape(value), escape(value))
+        return mark_safe(s)
+    else:
+        return ""

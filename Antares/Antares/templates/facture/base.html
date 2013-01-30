@@ -80,7 +80,7 @@
 				<li>Nom: {{ appFacture.client.nom }}</li>
 				<li>Prénom: {{ appFacture.client.prenom }}</li>
 				<li>Téléphone: {{ appFacture.client.telephone }}</li>
-				<li>Email: {{ appFacture.client.email }}</li>
+				<li>Email: {{ appFacture.client.email|email }}</li>
 			</ul>
 			{% endif %}
 		</div>
