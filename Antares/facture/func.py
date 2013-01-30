@@ -341,12 +341,12 @@ def facturer(pfid):
     # class Facture > bproforma = False & proforma__id = pfid
     # class LigneFacture, Option, Monture > dupliquer et à relier à la nouvelle facture
     proforma = Facture.objects.get(id=pfid)
-    fac = proforma
+    fac = Facture.objects.get(id=pfid)
     fac.pk = None  # duplique lors du save()
     fac.bproforma = False
     fac.proforma = proforma
 
-    fac = sauvFacture(fac)  # génération du code et enregistrement
+    sauvFacture(fac)  # génération du code et enregistrement
 
     lfs = proforma.lignefacture_set.all()
     for lf in lfs:
@@ -367,4 +367,4 @@ def facturer(pfid):
         m.save()
 
     fourfunc.stock_ou_commande(fac.lignefacture_set.all())
-    return 1
+    return fac
