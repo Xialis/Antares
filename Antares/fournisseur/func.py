@@ -4,8 +4,6 @@ from django.core.exceptions import ObjectDoesNotExist
 from models import Type
 from stock.models import LigneStock
 
-import facture.func
-
 
 def RechercheVerres(form):
 
@@ -25,7 +23,7 @@ def stock_ou_commande(t_lignefacture):
     """
 
     for l in t_lignefacture:
-        prescription = facture.func.transposition(l.facture.prescription)
+        prescription = l.facture.prescription.transposition()
 
         if l.oeil == 'T':
             # Une lignefacture = 2 verres même type mais formules potentiellement dif.)
