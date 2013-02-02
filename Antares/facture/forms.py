@@ -36,7 +36,7 @@ def categorie_vtype(progressif):
     if progressif == False:
         req = Type.objects.order_by('nom').filter(progressif=False)
     else:
-        req = Type.objects.order_by('nom')
+        req = Type.objects.order_by('nom').filter(progressif=True)
     for vtype in req:
         if vtype.progressif == True:
             progressifs.append([vtype.id, vtype.nom])
