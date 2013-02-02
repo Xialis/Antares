@@ -4,5 +4,4 @@
 def app_context(request):
     appCommande = {}
 
-
     return {'appCommande': appCommande}
