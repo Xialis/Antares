@@ -5,7 +5,6 @@ from django.utils.html import escape
 from django.utils.safestring import mark_safe
 
 from Antares.common import NORM, MILLE
-from facture.func import transposition
 
 register = template.Library()
 
@@ -56,7 +55,7 @@ def ffe(errors):
 
 @register.inclusion_tag("_inc/formule.html")
 def formule(prescription, oeil):
-    t = transposition(prescription)
+    t = prescription.transposition()
     if oeil == 'T' or oeil == 'D':
         sphere = t.sphere_od
         cylindre = t.cylindre_od
