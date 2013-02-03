@@ -92,34 +92,31 @@
 			<table>
 				<thead>
 					<tr>
-						<th>P/S</th><th>Type</th><th>Formule</th><th>Quantité</th><th>Quantité reçue</th><th>Actions</th>
+						<th>Info prescription ou "Stock"</th><th>Type</th><th>Formule</th><th>Quantité</th><th>Quantité reçue</th><th>Actions</th>
 					</tr>
 				</thead>
 				<tbody>
 					{% for ligne in c.lignecommande_set.all %}
 					<tr>
 						<td>{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}
-						{{ ligne.ligne_facture.facture.client.nom }} {{ ligne.ligne_facture.facture.client.prenom }} 
-						( Oeil: {{ ligne.ligne_facture.oeil }} ) 
-						{% bt "" "ui-icon-print" "Voir facture (PDF)" "" %}
-						{% else %}Stock{% endif %}
+							{{ ligne.ligne_facture.facture.client.nom }} {{ ligne.ligne_facture.facture.client.prenom }} 
+							( Oeil: {{ ligne.oeil }} ) 
+							{% bt "" "ui-icon-print" "Voir facture (PDF)" "" %}
+							{% else %}Stock{% endif %}
 						</td>
 						<td>{% if ligne.ligne_facture %}{{ ligne.ligne_facture.vtype.nom }} / {{ ligne.ligne_facture.couleur }} / {{ ligne.ligne_facture.traitement }}
-						{% else %}{{ ligne.ligne_stock.vtype.nom }} / {{ ligne.ligne_stock.couleur }} / {{ ligne.ligne_stock.traitement }}{% endif %}</td>
+							{% else %}{{ ligne.ligne_stock.vtype.nom }} / {{ ligne.ligne_stock.couleur }} / {{ ligne.ligne_stock.traitement }}{% endif %}</td>
 						<td>{% if ligne.ligne_facture %}
-						<p>{% formule ligne.ligne_facture.facture.prescription ligne.ligne_facture.oeil %} 
-						&Oslash;: {{ ligne.ligne_facture.diametre }}
-						</p>
+							{% formule ligne.ligne_facture.facture.prescription ligne.oeil %} 
+							&Oslash;: {{ ligne.ligne_facture.diametre }}
 						{% else %}
-						<p>
-							{{ ligne.ligne_stock.sphere }} 
-							{% if ligne.ligne_stock.cylindre != 0 %}({{ ligne.ligne_stock.cylindre }}) {% endif %}
+							{{ ligne.ligne_stock.sphere|norm }} 
+							{% if ligne.ligne_stock.cylindre != 0 %}({{ ligne.ligne_stock.cylindre|norm }}) {% endif %}
 							&Oslash;: {{ ligne.ligne_stock.diametre }} 
-						</p>
 						{% endif %}</td>
 						<td>{{ ligne.quantite }}</td>
 						<td>{{ ligne.quantite_recu }}</td>
-						<td>{% jbt "reception_commande" "btReception" "ui-icon-circle-check" "Reçu..." ligne.id ligne.quantite ligne.quantite_recu %}</td>
+						<td>{% if not forloop.parentloop.first %}{% jbt "reception_commande" "btReception" "ui-icon-circle-check" "Reçu..." ligne.id ligne.quantite ligne.quantite_recu %}{% endif %}</td>
 					</tr>
 					{% endfor %}
 				</tbody>
@@ -137,12 +134,12 @@
 				{% for l in liste %}
 				<tr>
 					<td>{{ l.lignestock.vtype.nom }}</td><td>{{ l.lignestock.diametre.nom }}</td>
-					<td>{{ l.lignestock.sphere }}</td><td>{{ l.lignestock.cylindre }}</td>
+					<td>{{ l.lignestock.sphere|norm }}</td><td>{{ l.lignestock.cylindre|norm }}</td>
 					<td>{{ l.lignestock.traitement.nom }}</td><td>{{ l.lignestock.couleur.nom }}</td>
 					<td>{{ l.lignestock.quantite }}</td><td>{{ l.lignestock.seuil }}</td>
 					<td>{{ l.qtcom }}</td><td>{{ l.qtacom }}</td>
 					<td>
-						Voir stock
+						{% bt "" "ui-icon-suitcase" "Voir stock" "" %}
 					</td>
 				</tr>
 				{% endfor %}
