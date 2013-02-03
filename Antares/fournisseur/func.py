@@ -3,6 +3,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 from models import Type
 from stock.models import LigneStock
+import commande.func as comfunc
 
 
 def RechercheVerres(form):
@@ -37,7 +38,7 @@ def stock_ou_commande(t_lignefacture):
                                         )
             except ObjectDoesNotExist:
                 # Pas géré par le stock: on commande
-                pass  # TODO: Ajouter à la commande
+                comfunc.ajouterPrescription(l, 'D')
             else:
                 vstock_od.quantite = vstock_od.quantite - 1
                 vstock_od.save()
@@ -51,12 +52,14 @@ def stock_ou_commande(t_lignefacture):
                                         cylindre=prescription.cylindre_og
                                         )
             except ObjectDoesNotExist:
-                pass  # TODO: Ajouter à la commande
+                # Pas géré par le stock on commande
+                comfunc.ajouterPrescription(l, 'G')
             else:
                 vstock_og.quantite = vstock_og.quantite - 1
                 vstock_og.save()
 
         else:
+            # l.oeil = D ou G
             # Un seul verre à traiter (OD ou OG)
             try:
                 vstock = LigneStock.objects.get(vtype__pk=l.vtype.id,
@@ -67,7 +70,8 @@ def stock_ou_commande(t_lignefacture):
                                         cylindre=prescription.__getattribute__('cylindre_o' + l.oeil.lower())
                                         )
             except ObjectDoesNotExist:
-                pass  # TODO: Ajouter à la commande
+                # Pas géré par le stock on commande
+                comfunc.ajouterPrescription(l, l.oeil)
             else:
                 vstock.quantite = vstock.quantite - 1
                 vstock.save()

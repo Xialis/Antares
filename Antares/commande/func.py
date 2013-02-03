@@ -12,9 +12,13 @@ from commande.models import Commande, LigneCommande
 from stock.models import LigneStock
 
 
-def ajouterPrescription(ligneFacture):
+def ajouterPrescription(ligneFacture, oeil):
     """
     Ajoute un/deux verres de prescriptions à la commande en cours
+
+    Arguments:
+    ligneFacture -- object ligneFacture
+    oeil -- oeil à ajouter en prescription
     """
 
     # On récupère la commande en cours
@@ -23,11 +27,8 @@ def ajouterPrescription(ligneFacture):
     lc = LigneCommande()
     lc.commande = commande
     lc.ligne_facture = ligneFacture
-
-    if ligneFacture.oeil == 'T':
-        lc.quantite = 2
-    else:
-        lc.quantite = 1
+    lc.quantite = 1
+    lc.oeil = oeil
 
     lc.save()
     return True

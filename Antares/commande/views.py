@@ -6,7 +6,6 @@ from django.core.urlresolvers import reverse
 from django.template import RequestContext
 from django.contrib import messages
 from django.core.context_processors import csrf
-from django.forms.formsets import formset_factory
 
 # import Antares
 from fournisseur.models import Fournisseur
@@ -29,6 +28,7 @@ def index(request):
 def commandesF(request, fid):
     c = {}
     fournisseur = Fournisseur.objects.get(id=fid)
+    commande_courante = func.nouvelleCommande(fournisseur)
 
     # == Traitement POST
     if request.method == 'POST':
@@ -55,7 +55,7 @@ def commandesF(request, fid):
     # ==
 
     listeCommandes = Commande.objects.filter(fournisseur=fournisseur).order_by('-id')
-    cid = listeCommandes[0].id
+    cid = commande_courante.id
     comRecepForm = ComRecepForm()
 
     # gestion commande stock
@@ -78,4 +78,3 @@ def validationCommande(request, cid):
         messages.add_message(request, messages.ERROR, u"Erreur de validation, rien à commander !")
 
     return redirect(commandesF, fid=commande.fournisseur.id)
-

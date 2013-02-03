@@ -15,7 +15,8 @@ class Commande(models.Model):
 class LigneCommande(models.Model):
     commande = models.ForeignKey("commande.Commande")
     ligne_facture = models.ForeignKey("facture.LigneFacture", null=True, blank=True)  # Seulement en cas de verre de prescription
-    ligne_stock = models.ForeignKey("stock.LigneStock", null=True, blank=True)  # Seulement en cas de verre de prescription
+    ligne_stock = models.ForeignKey("stock.LigneStock", null=True, blank=True)  # Seulement en cas de verre de stock
+    oeil = models.CharField(max_length=1, null=True, blank=True)  # Seulement en cas de verre de prescription
     quantite = models.IntegerField(verbose_name=u"quantité")
     quantite_recu = models.IntegerField(verbose_name=u"quantité reçue", default=0)
 
