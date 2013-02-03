@@ -67,7 +67,7 @@ def formule(prescription, oeil):
         axe = t.axe_og
         addition = t.addition_og
 
-    return {'sphere': sphere, 'cylindre': cylindre, 'axe': axe, 'addition': addition}
+    return {'sphere': NORM(sphere), 'cylindre': NORM(cylindre), 'axe': axe, 'addition': NORM(addition)}
 
 
 @register.filter(name='norm')
