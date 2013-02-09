@@ -7,6 +7,7 @@ class Commande(models.Model):
     date_creation = models.DateField(auto_now_add=True)
     date_envoi = models.DateField(blank=True, null=True)
     fournisseur = models.ForeignKey("fournisseur.Fournisseur")
+    date_cloture = models.DateField(blank=True, null=True)
 
     def __unicode__(self):
         return self.numero

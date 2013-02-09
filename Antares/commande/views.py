@@ -48,13 +48,13 @@ def commandesF(request, fid):
             else:
                 messages.add_message(request, messages.SUCCESS, u"Verre(s) de prescription reçu !")
 
-            return redirect(reverse(commandesF, kwargs={'fid': fournisseur.id}) + "#com" + str(lc.id))
+            return redirect(reverse(commandesF, kwargs={'fid': fournisseur.id}) + "#com" + str(lc.commande.id))
         else:
             messages.add_message(request, messages.ERROR, u"Erreur de saisie !")
 
     # ==
 
-    listeCommandes = Commande.objects.filter(fournisseur=fournisseur).order_by('-id')
+    listeCommandes = Commande.objects.filter(fournisseur=fournisseur).filter(date_cloture=None).order_by('-id')
     cid = commande_courante.id
     comRecepForm = ComRecepForm()
 

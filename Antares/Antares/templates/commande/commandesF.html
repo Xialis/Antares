@@ -89,6 +89,7 @@
 		
 		{% for c in listeCommandes %}
 		<div id="com{{ c.numero }}">
+			{% if forloop.first %}Prochaine commande{% endif %}
 			<table>
 				<thead>
 					<tr>
@@ -98,10 +99,8 @@
 				<tbody>
 					{% for ligne in c.lignecommande_set.all %}
 					<tr>
-						<td>{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}
-							{{ ligne.ligne_facture.facture.client.nom }} {{ ligne.ligne_facture.facture.client.prenom }} 
-							( Oeil: {{ ligne.oeil }} ) 
-							{% bt "" "ui-icon-print" "Voir facture (PDF)" "" %}
+						<td>{% if ligne.ligne_facture %}{% bt "" "ui-icon-person" ligne.ligne_facture.facture.client "client.views.infoClient" ligne.ligne_facture.facture.client.id %}
+							{% bt "" "ui-icon-print" ligne.ligne_facture.facture.numero "sortiespdf.views.facture" ligne.ligne_facture.facture.id %} ( Oeil: {{ ligne.oeil }} ) 
 							{% else %}Stock{% endif %}
 						</td>
 						<td>{% if ligne.ligne_facture %}{{ ligne.ligne_facture.vtype.nom }} / {{ ligne.ligne_facture.couleur }} / {{ ligne.ligne_facture.traitement }}
@@ -146,7 +145,7 @@
 			</table>
 			{% jbt "validation_commande" "btValidation" "ui-icon-circle-check" "valider la commande..." %}
 			{% else %}
-				{% bt "" "ui-icon-print" "Voir la commande (PDF)" "" %}
+				{% bt "" "ui-icon-print" "Voir la commande (PDF)" "sortiespdf.genPDFcommande.commandepdf" c.numero %}
 			{% endif %}
 		</div>
 		{% endfor %}
