@@ -1,0 +1,117 @@
+{% load antares_tags %}
+<html>
+    <head>
+    	<meta http-equiv='Content-Type' content='Type=text/html; charset=utf-8'>
+        <title>Commande: {{ commande_select.numero }}</title>
+        <style type="text/css">
+            @page {
+                size: A4;
+                margin: 1cm;
+                @frame footer {
+                    -pdf-frame-content: footerContent;
+                    bottom: 0cm;
+                    margin-left: 9cm;
+                    margin-right: 9cm;
+                    height: 1cm;
+                }
+            }
+            
+            table { border: 1px solid #000000; width: 100%;}
+            th, td {
+            	border: 1px solid #000000;
+            	padding: 3px 2px 1px 2px; line-height: 50%; }
+            .qte { width: 30px; text-align: center; }
+        </style>
+    </head>
+    <body>
+    	<p style="border: 1px solid #AAAAAA; font-weight: bold; padding: 2px 2px 1px 2px;">
+    		OPTIMAL S.A.R.L | Bamako, MALI<br>
+    		à {{ commande_select.fournisseur.nom }}
+    	</p>
+    	<h1>Commande numero : {{ commande_select.numero }}</h1>
+        <table repeat="1">
+        	<thead>
+            	<tr>
+            		<th style="width:30%">Info prescription ou "Stock"</th>
+            		<th style="width:30%">Type</th>
+            		<th style="width:30%">Formule</th>
+            		<th style="width:5%">Quantité</th>
+            		<th style="width:5%">Quantité reçue</th>
+            	</tr>
+            </thead>
+            <tbody>
+            {% for ligne in commande_select.lignecommande_set.all %}
+                <tr>
+					<td>
+						{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}
+						{{ ligne.ligne_facture.facture.client.nom }} {{ ligne.ligne_facture.facture.client.prenom }} 
+						( Oeil: {{ ligne.oeil }} ) 
+						{% else %}Stock{% endif %}
+					</td>
+					<td>
+						{% if ligne.ligne_facture %}{{ ligne.ligne_facture.vtype.nom }} / {{ ligne.ligne_facture.couleur }} / {{ ligne.ligne_facture.traitement }}
+						{% else %}{{ ligne.ligne_stock.vtype.nom }} / {{ ligne.ligne_stock.couleur }} / {{ ligne.ligne_stock.traitement }}{% endif %}
+					</td>
+					<td>
+						{% if ligne.ligne_facture %}
+							{% formule ligne.ligne_facture.facture.prescription ligne.oeil %} 
+							&Oslash;: {{ ligne.ligne_facture.diametre }}
+						{% else %}
+							{{ ligne.ligne_stock.sphere|norm }} 
+							{% if ligne.ligne_stock.cylindre != 0 %}({{ ligne.ligne_stock.cylindre|norm }}) {% endif %}
+							&Oslash;: {{ ligne.ligne_stock.diametre }} 
+						{% endif %}
+					</td>
+					<td>{{ ligne.quantite }}</td>
+					<td>{{ ligne.quantite_recu }}</td>
+				</tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        <hr>
+    	<h1>Commande(s) en cours, non complétée(s) ({{ commandes_ouvertes.count }})</h1>
+    	{% for commande in commandes_ouvertes %}
+    		<h2>Commande numéro: {{ commande.numero }} ({{ commande.date_envoi }})</h2>
+    		<table repeat="1">
+            	<thead>
+	            	<tr>
+		            	<th style="width:30%">Info prescription ou "Stock"</th>
+	            		<th style="width:30%">Type</th>
+	            		<th style="width:30%">Formule</th>
+	            		<th style="width:5%">Quantité</th>
+	            		<th style="width:5%">Quantité reçue</th>
+	            	</tr>
+	            </thead>
+	            <tbody>
+	            {% for ligne in commande.lignecommande_set.all %}
+	                <tr>
+						<td>{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}
+							{{ ligne.ligne_facture.facture.client.nom }} {{ ligne.ligne_facture.facture.client.prenom }} 
+							( Oeil: {{ ligne.oeil }} ) 
+							{% else %}Stock{% endif %}
+						</td>
+						<td>{% if ligne.ligne_facture %}{{ ligne.ligne_facture.vtype.nom }} / {{ ligne.ligne_facture.couleur }} / {{ ligne.ligne_facture.traitement }}
+							{% else %}{{ ligne.ligne_stock.vtype.nom }} / {{ ligne.ligne_stock.couleur }} / {{ ligne.ligne_stock.traitement }}{% endif %}</td>
+						<td>{% if ligne.ligne_facture %}
+							{% formule ligne.ligne_facture.facture.prescription ligne.oeil %} 
+							&Oslash;: {{ ligne.ligne_facture.diametre }}
+						{% else %}
+							{{ ligne.ligne_stock.sphere|norm }} 
+							{% if ligne.ligne_stock.cylindre != 0 %}({{ ligne.ligne_stock.cylindre|norm }}) {% endif %}
+							&Oslash;: {{ ligne.ligne_stock.diametre }} 
+						{% endif %}</td>
+						<td>{{ ligne.quantite }}</td>
+						<td>{{ ligne.quantite_recu }}</td>
+					</tr>
+	            {% endfor %}
+	            </tbody>
+            </table>
+    	{% endfor %}
+
+        <div id="footerContent">
+            {%block page_foot%}
+                Page <pdf:pagenumber>
+            {%endblock%}
+        </div>
+    </body>
+</html>
