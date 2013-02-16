@@ -2,8 +2,8 @@
 from datetime import date
 from django.shortcuts import redirect
 
-from facture.views import etapeRecherche, etapeInfo, etapePrescription, etapeMontures, etapeVerres, etapeOptions, etapeRecapitulatif
-from facture.models import Facture
+import views
+from models import Facture
 from Antares.Verrou import Verrou
 import fournisseur.func as fourfunc
 
@@ -264,13 +264,13 @@ def reset(request):
 def initCtrl(request):
 
     if not 'appFacture' in request.session:
-        etapes = [[u"Recherche", etapeRecherche],
-                   [u"Info client", etapeInfo],
-                   [u"Prescription", etapePrescription],
-                   [u"Montures", etapeMontures],
-                   [u"Verres", etapeVerres],
-                   [u"Options", etapeOptions],
-                   [u"Recapitulatif", etapeRecapitulatif]
+        etapes = [[u"Recherche", views.etapeRecherche],
+                   [u"Info client", views.etapeInfo],
+                   [u"Prescription", views.etapePrescription],
+                   [u"Montures", views.etapeMontures],
+                   [u"Verres", views.etapeVerres],
+                   [u"Options", views.etapeOptions],
+                   [u"Recapitulatif", views.etapeRecapitulatif]
                 ]
         request.session['appFacture'] = {}
         request.session['appFacture']['etape'] = 0
