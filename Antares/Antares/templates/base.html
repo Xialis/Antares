@@ -63,11 +63,14 @@
 	  		</div>
 	  		{% if messages %}
 			<div id="messages" class="first span-30">
-				<ul class="messages">
-				    {% for message in messages %}
-				    <li{% if message.tags %} class="{{ message.tags }}"{% endif %}>{{ message }}</li>
-				    {% endfor %}
-				</ul>	
+				<div class="divbox">
+					<h2>Messages</h2>
+					<ul class="messages">
+					    {% for message in messages %}
+					    <li{% if message.tags %} class="ui-state-default {{ message.tags }}"{% endif %}><span class="ui-icon"></span>{{ message }}</li>
+					    {% endfor %}
+					</ul>	
+				</div>
 			</div>
 			{% endif %}
 	  	  	<div id="up">

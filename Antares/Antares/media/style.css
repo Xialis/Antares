@@ -309,3 +309,51 @@ a.l-button, a.l-button:hover { color: white; height: 1em;}
   border-radius: 5px;
   
 }
+
+/* messages */
+
+
+ul.messages { list-style-type: none; }
+
+
+ul.messages li {
+  position: relative;
+  border-radius: 3px;
+  padding: 5px;
+  background: none;
+  background-clip: padding-box;
+  border-width: 2px;
+  border-style: dashed;
+  margin: 5px 0 5px 0;
+  font-weight: 500;
+}
+
+ul.messages li span.ui-icon { margin: 0 5px 0 0; display: inline-block; }
+
+ul.messages li.warning {
+  border-color:#FFAB11;
+  color: #FFAB11;
+  background-color: #F9FFB2;
+}
+ul.messages li.warning span { background-position: 0 -144px; }
+
+ul.messages li.info {
+  border-color:#FFFFFF;
+  color: #FFFFFF;
+  background-color: #00BBFF;
+}
+ul.messages li.info span { background-position: -16px -144px; }
+
+ul.messages li.success {
+  border-color:#00BF1C;
+  color: #00BF1C;
+  background-color: #ADFFA3;
+}
+ul.messages li.success span { background-position: -64px -144px; }
+
+ul.messages li.error {
+  border-color:#BA0000;
+  color: #BA0000;
+  background-color: #FF9E9E;
+}
+ul.messages li.error span { background-position: -96px -128px; }
