@@ -48,12 +48,22 @@
   	<div class="container">
   		<div class="wrapper">
 	  		<div id="topmenu" class="first span-30 last">
-	  			<ul>
-	  				<li><a href="{% url facture.func.ctrl %}">Facture</a></li>
-	  				<li><a href="{% url fournisseur.views.index %}">Fournisseurs</a></li>
-	  				<li><a href="{% url stock.views.index %}">Stocks</a></li>
+	  			<ul id="menu">
+	  				<li><a href="{% url facture.func.ctrl %}">Facture</a>
+	  					<ul>
+	  						<li><a href="{% url facture.views.facnonsoldee %}">Non soldée</a></li>
+	  						<li><a href="{% url facture.func.ctrl %}">Facture</a></li>
+	  					</ul>
+	  				</li>
+	  				<li><a href="{% url fournisseur.views.index %}">Fournisseurs</a>
+		  				<ul>
+		  					<li><a href="{% url fournisseur.views.index %}">Fournisseurs</a></li>
+		  					<li><a href="{% url stock.views.index %}">Stocks</a></li>
+		  					<li><a href="{% url commande.views.index %}">Commandes</a></li>
+		  				</ul>
+	  				</li>
 	  				<li><a href="{% url client.views.index %}">Clients</a></li>
-	  				<li><a href="{% url commande.views.index %}">Commandes</a></li>
+	  				
 	  			</ul>
 	  			
 	  			<ul id="ctrl_utilisateur">
