@@ -135,11 +135,11 @@ div.divbox h2 {
 }
 
 #menu ul {
-  margin: 13px 0 0 0;
+  margin: 10px 0 0 0;
   opacity: 0;
   visibility: hidden;
   position: absolute;
-  top: 38px;
+  top: 32px;
   left: 0px;
   z-index: 0;
   background: linear-gradient(to bottom, rgba(30,87,153,0.8) 0%,rgba(32,123,234,0.8) 100%);
