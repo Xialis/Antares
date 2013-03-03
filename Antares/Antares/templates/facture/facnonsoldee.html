@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load antares_tags %}
+
+{% block head %}{{ block.super }}
+
+	<script>
+		$(function() {
+			$( "#dialog-solder" ).dialog({
+				modal: true,
+				autoOpen: false,
+				width:'auto',
+				show: 'fold',
+			});
+		});
+		
+		function solder(fid, total, solde) {
+			
+			$("#dialog-solder").dialog({
+				buttons: {
+					"Ok": function() {
+						$("#form-solder").submit();
+					},
+					"Annuler": function() {
+						$( this ).dialog( "close" );
+					}
+				},
+			});
+			$("#dialog-solder").dialog("open");
+			
+		}
+	</script>
+
+{% endblock %}
+
+{% block center %}
+<h1>Facture(s) non soldée(s)</h1>
+<div class="divbox">
+	<h2>Facture(s) ({{ facs|length }})</h2>
+	<table>
+		<thead>
+			<tr>
+				<th>Numero</th><th>Client</th><th>Date création</th>
+				<th>Interlocteur</th><th>Organisme</th>
+				<th>TOTAL</th><th>Solde</th><th>Actions</th>
+			</tr>
+		</thead>
+		<tbody>
+			{% for f in facs %}
+			<tr>
+				<td>{{ f.numero }}</td><td>{{ f.client.nom }} {{ f.client.prenom }}</td>
+				<td>{{ f.date_creation }}</td>
+				<td>{{ f.interlocuteur.nom }}</td><td>{{ f.organisme.nom|default:"-" }}</td>
+				<td>{{ f.total|mille }}</td><td>{{ f.solde|mille }}</td>
+				<td>{% bt "" "ui-icon-print" "Voir (PDF)" "sortiespdf.views.facture" f.id %} 
+				 {% jbt "solder" "btSolder" "ui-icon-script" "Solder..." f.id  f.total f.solde %} 
+				</td>
+			</tr>
+			{% endfor %}
+		</tbody>
+	</table>
+</div>
+
+<div id="dialog-solder" title="Solder">
+	<p>
+		<span class="ui-icon ui-icon-info"></span>
+		Entrer le montant remis.
+	</p>
+	<form id="form-solder" action="" method="POST">{% csrf_token %}
+		{{ formSolder }}
+	</form>
+</div>
+
+{% endblock %}

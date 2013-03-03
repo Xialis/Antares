@@ -22,7 +22,8 @@ import fournisseur.func as fourfunc
 from stock.models import LigneStock
 
 import func
-from facture.forms import LigneForm, MontureForm, OptionForm, ChoixFactureForm
+from models import Facture
+from facture.forms import LigneForm, MontureForm, OptionForm, ChoixFactureForm, SolderFactureForm
 
 
 @login_required
@@ -645,3 +646,35 @@ def etapeFinale(request):
     c['fiddownload'] = request.session['appFacture']['fid']
     func.reset(request)
     return render_to_response("facture/etapeFinale.html", c, context_instance=RequestContext(request))
+
+
+#===============================================================================
+# Voir facture non soldées
+#===============================================================================
+@login_required
+def facnonsoldee(request):
+    c = {}
+    facs = Facture.objects.exclude(bproforma=True).exclude(solde=0)
+    formSolder = SolderFactureForm()
+
+    if request.method == "POST":
+
+        formSolder = SolderFactureForm(request.POST)
+        if formSolder.is_valid():
+            cd = formSolder.cleaned_data
+            fac = Facture.objects.get(id=cd['fid'])
+            if fac.solde <= cd['remis']:
+                fac.solde = 0
+                fac.save()
+                messages.success(request, "La facture %s a été soldée !", fac.numero)
+                messages.info(request, "A rendre: %d", cd['remis'] - fac.solde)
+            else:
+                fac.solde = fac.solde - cd['remis']
+                fac.save()
+                messages.warning(request, "La facture %s n'est pas encore soldée", fac.numero)
+                messages.info(request, "Reste à percevoir: %d", fac.solde - cd['remis'])
+
+    c['facs'] = facs
+    c['formSolder'] = formSolder
+    c.update(csrf(request))
+    return render_to_response("facture/facnonsoldee.html", c, context_instance=RequestContext(request))

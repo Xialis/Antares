@@ -10,4 +10,5 @@ urlpatterns = patterns('facture',
         url(r'ajax_filtre/$', 'views.ajax_filtre', {}, 'ajax_filtre'),
         url(r'ajax_info/$', 'views.ajax_info', {}, 'ajax_info'),
         url(r'^reset', 'func.reset'),
+        url(r'^nonsoldee', 'views.facnonsoldee'),
         )
