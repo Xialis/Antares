@@ -67,8 +67,8 @@
 	  			</ul>
 	  			
 	  			<ul id="ctrl_utilisateur">
-	  				<li>Utilisateur: {{ user.username }}</li>
-	  				<li>| <a href="">Déconnecter</a></li>
+	  				<li><div>Utilisateur: {{ user.username }}</div></li>
+	  				<li><a href="">Déconnecter</a></li>
 	  			</ul>
 	  		</div>
 	  		{% if messages %}
@@ -91,14 +91,16 @@
 	  		</div>
 	  		<div class="push"></div>
 	  	</div>
-	  	<div class="first span-30 last bar">
-	  		<div class="ui-widget" id="indicateur_pagelongue">
-				<div class="ui-state-error ui-corner-all">
-					<p><span class="ui-icon ui-icon-alert"></span><b>Longue page</b></p>
+	  	<div id="wrapbar" class="first span-30 last">
+	  		<div id="bar">
+		  		<div class="ui-widget" id="indicateur_pagelongue">
+					<div class="ui-state-error ui-corner-all">
+						<p><span class="ui-icon ui-icon-alert"></span><b>Longue page</b></p>
+					</div>
 				</div>
-			</div>
-	  		<div style="display: inline-block; width:1px;height:100%;background-color:lightblue; position: relative;">&nbsp;</div>
-	  		<p style="float: right; align: right;">{% block bar %}{% endblock %}</p>
+		  		<div style="display: inline-block; width:1px;height:100%;background-color:lightblue; position: relative;">&nbsp;</div>
+		  		<p style="float: right; align: right;">{% block bar %}{% endblock %}</p>
+		  	</div>
 	  	</div>
   	</div>
   	

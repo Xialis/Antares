@@ -40,7 +40,16 @@ body {
   /*font-family: 'oxygen';*/
 }
 
-h1 { font-weight: 900; }
+h1 { 
+  font-family: 'oxygen';
+  font-weight: 900;
+  color: white;
+  border-radius: 6px;
+  box-shadow: 0 1px 1px #777;
+  padding: 4px 9px;
+  background: linear-gradient(135deg, rgba(30,87,153,0.8) 0%,rgba(41,137,216,0.8) 50%,rgba(32,124,202,0.8) 51%,rgba(125,185,232,0.8) 100%);
+  margin: 0 0 5px 0;  
+}
 
 h2, h3 { 
   font-family: 'titillium';
@@ -87,12 +96,12 @@ div.divbox h2 {
 
 
 /* topmenu */
-#topmenu { margin-bottom: 5px;}
+#topmenu { position: fixed; top: 0;}
 
 #menu, #menu ul { list-style: none; margin: 0; padding: 0; }
 #menu {
-  width: 100%;
-  margin: 0px auto;
+  width: 700px;
+  margin: 0px auto 0 0;
   border: 1px solid #7db9e8;
   border-top: 0;
   background: linear-gradient(to bottom, rgba(30,87,153,0.8) 0%,rgba(32,123,234,0.8) 100%); 
@@ -212,6 +221,66 @@ border-right: 6px solid #3b3b3b;
 
 #menu ul li:last-child > a {
   border-radius: 0 0 3px 3px;
+}
+
+
+#ctrl_utilisateur { 
+  position: absolute;
+  top: 0;
+  left: 705px;
+  width: auto;
+  right: 0;
+  margin: 0px 0 0 0;
+  border: 1px solid #7db9e8;
+  border-top: 0;
+  background: linear-gradient(to bottom, rgba(30,87,153,0.8) 0%,rgba(32,123,234,0.8) 100%); 
+  border-radius: 0px;
+  border-bottom-right-radius: 6px;
+  border-bottom-left-radius: 6px;
+  box-shadow: 0 1px 1px #777;
+  
+}
+
+#ctrl_utilisateur { list-style: none; margin: 0; padding: 0; }
+#ctrl_utilisateur li { float: left; }
+#ctrl_utilisateur li a { float: left; color: white; padding: 5px; }
+#ctrl_utilisateur li div { float: left; display: inline; color: white; padding: 5px; }
+
+/* bar fixe bas */
+/*html, body { height: 100%; }*/
+.container { min-height: 100%; height: auto !important; height: 100%; margin: 35px auto 40px; }
+
+#bar, .push { height: 35px; }
+#wrapbar { position: fixed; bottom: 0px; height: 35px;}
+
+#bar {
+  
+  background: linear-gradient(to bottom, rgba(30,87,153,0.8) 0%,rgba(32,123,234,0.8) 100%);
+  border-top-left-radius: 8px;
+  border-top-right-radius: 8px;
+  padding: 3px 5px 2px 5px;
+  color: white;
+  
+  box-shadow: 0 -1px 1px #777;
+  border: 1px solid #7db9e8;
+  border-bottom-width: 0; 
+  
+}
+
+@keyframes blink {
+  0% { opacity: 1.0; }
+  50% { opacity: 0.3; }
+}
+
+#buttonbottom {
+  animation: blink 2s infinite;
+  animation-timing-function: linear;
+}
+
+#indicateur_pagelongue {
+  display: inline-block;
+  animation: blink 2s infinite;
+  animation-timing-function: linear;
 }
 
 /* ul.errorlist */
@@ -391,39 +460,7 @@ a.l-button span.ui-icon { float: left; margin: 0 .3em 0 0;position: absolute;lef
 }*/
 a.l-button, a.l-button:hover { color: white; height: 1em;}
 
-/* bar fixe bas */
-/*html, body { height: 100%; }*/
-.container { min-height: 100%; height: auto !important; height: 100%; margin: 0 auto 40px; }
-.bar, .push { height: 30px; }
 
-.bar {
-  position: fixed;
-  bottom: 0px;
-  /*background-color: rgba(17,41,92,0.86);*/
-  background: linear-gradient(to bottom, rgba(54,151,237,1) 0%,rgba(17,41,92,1) 100%); 
-  margin: 5px 0px 0px 0px;
-  border-top-left-radius: 8px;
-  border-top-right-radius: 8px;
-  padding: 3px 5px 2px 5px;
-  color: white;
-  
-}
-
-@keyframes blink {
-  0% { opacity: 1.0; }
-  50% { opacity: 0.3; }
-}
-
-#buttonbottom {
-  animation: blink 2s infinite;
-  animation-timing-function: linear;
-}
-
-#indicateur_pagelongue {
-  display: inline-block;
-  animation: blink 2s infinite;
-  animation-timing-function: linear;
-}
 
 .aide {
   background: rgba(44,83,158,0.8);
