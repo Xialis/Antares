@@ -84,6 +84,7 @@
 	            </thead>
 	            <tbody>
 	            {% for ligne in commande.lignecommande_set.all %}
+	                {% if ligne.quantite > ligne.quantite_recu %}
 	                <tr>
 						<td>{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}
 							{{ ligne.ligne_facture.facture.client.nom }} {{ ligne.ligne_facture.facture.client.prenom }} 
@@ -103,6 +104,7 @@
 						<td>{{ ligne.quantite }}</td>
 						<td>{{ ligne.quantite_recu }}</td>
 					</tr>
+					{% endif %}
 	            {% endfor %}
 	            </tbody>
             </table>
