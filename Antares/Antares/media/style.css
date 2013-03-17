@@ -35,7 +35,9 @@
 
 body { 
   background-color: #FFF; 
-  background: url('442.png');
+  background-image: url('bg-vect.svg.png');
+  background-repeat: no-repeat;
+  background-attachment:fixed;
   color: #292929;
   /*font-family: 'oxygen';*/
 }
@@ -96,7 +98,7 @@ div.divbox h2 {
 
 
 /* topmenu */
-#topmenu { position: fixed; top: 0;}
+#topmenu { position: fixed; top: 0; z-index: 10000;}
 
 #menu, #menu ul { list-style: none; margin: 0; padding: 0; }
 #menu {
