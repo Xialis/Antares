@@ -44,7 +44,7 @@ class LigneFacture(models.Model):
     vtype = models.ForeignKey('fournisseur.Type', verbose_name="type")
     diametre = models.ForeignKey('fournisseur.Diametre')
     couleur = models.ForeignKey('fournisseur.Couleur')
-    traitement = models.ForeignKey('fournisseur.Traitement', blank=True, null=True)
+    traitement = models.ForeignKey('fournisseur.Traitement')
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
     remise_monture = models.DecimalField(max_digits=8, decimal_places=0)
 

@@ -8,8 +8,8 @@ class LigneStock(models.Model):
     diametre = models.ForeignKey('fournisseur.Diametre')
     sphere = models.DecimalField(max_digits=4, decimal_places=2)
     cylindre = models.DecimalField(max_digits=4, decimal_places=2)
-    traitement = models.ForeignKey('fournisseur.Traitement', null=True, blank=True)
-    couleur = models.ForeignKey('fournisseur.Couleur', null=True, blank=True)
+    traitement = models.ForeignKey('fournisseur.Traitement')
+    couleur = models.ForeignKey('fournisseur.Couleur')
     quantite = models.IntegerField(verbose_name=u"quantité")
     seuil = models.IntegerField()
 

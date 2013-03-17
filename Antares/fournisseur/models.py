@@ -61,16 +61,15 @@ class Type(models.Model):
     nom = models.CharField(max_length=50)
     stock = models.BooleanField()
     progressif = models.BooleanField()
-    traitements = models.ManyToManyField(Traitement, blank=True, null=True)
+    traitements = models.ManyToManyField(Traitement)
     diametres = models.ManyToManyField(Diametre)
-    couleurs = models.ManyToManyField(Couleur, blank=True, null=True)
+    couleurs = models.ManyToManyField(Couleur)
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
     remise_monture = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
-    
+
     def __unicode__(self):
         return self.nom
 
     class Meta:
         ordering = ['nom']
         unique_together = ('fournisseur', 'nom')
-

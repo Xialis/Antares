@@ -11,7 +11,7 @@ class LigneForm(ModelForm):
 
     diametre = ModelChoiceField(queryset=Diametre.objects.none())
     couleur = ModelChoiceField(queryset=Couleur.objects.none())
-    traitement = ModelChoiceField(queryset=Traitement.objects.none(), required=False)
+    traitement = ModelChoiceField(queryset=Traitement.objects.none())
 
     class Meta:
         model = LigneFacture
