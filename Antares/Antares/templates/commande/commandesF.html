@@ -145,7 +145,7 @@
 			</table>
 			{% jbt "validation_commande" "btValidation" "ui-icon-circle-check" "valider la commande..." %}
 			{% else %}
-				{% bt "" "ui-icon-print" "Voir la commande (PDF)" "sortiespdf.genPDFcommande.commandepdf" c.numero %}
+				{% bt "" "ui-icon-print" "Voir la commande (PDF)" "sortiespdf.genPDFcommande.commandepdf" c.id %}
 			{% endif %}
 		</div>
 		{% endfor %}

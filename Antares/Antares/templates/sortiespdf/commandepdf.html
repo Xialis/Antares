@@ -26,12 +26,12 @@
         </style>
     </head>
     <body>
-    	<h1>Bon de commande N° {{ commande_select.date_envoi|date:"Y" }}-{{ commande_select.numero }}</h1>
+    	<h1>BON DE COMMANDE</h1>
     	<p style="border: 1px solid #AAAAAA; font-weight: bold; padding: 2px 2px 1px 2px;">
     		OPTIMAL S.A.R.L | Bamako, MALI<br>
     		à {{ commande_select.fournisseur.nom }}
     	</p>
-    	<h1>Commande numero : {{ commande_select.numero }}</h1>
+    	<h1>Commande numero : {{ commande_select.numero }} ({{ commande_select.date_envoi }})</h1>
         <table repeat="1">
         	<thead>
             	<tr>

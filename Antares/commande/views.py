@@ -51,7 +51,7 @@ def commandesF(request, fid):
             if func.cloreCommande(lc.commande):
                 messages.add_message(request, messages.INFO, u"La commande " + lc.commande.numero + u" est terminée !")
 
-            return redirect(reverse(commandesF, kwargs={'fid': fournisseur.id}) + "#com" + str(lc.commande.id))
+            return redirect(reverse(commandesF, kwargs={'fid': fournisseur.id}) + "#com" + str(lc.commande.numero))
         else:
             messages.add_message(request, messages.ERROR, u"Erreur de saisie !")
 

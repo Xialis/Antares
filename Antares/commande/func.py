@@ -50,14 +50,22 @@ def nouvelleCommande(fournisseur):
     if courante is None or courante.date_envoi is not None:
         # Nouvelle commande
         commande = Commande()
-        numero = 0
+        numero = u"0000-0"
         try:
             derniere = Commande.objects.filter(fournisseur=fournisseur).latest('id')
             numero = derniere.numero
         except ObjectDoesNotExist:
             pass
 
-        commande.numero = unicode(int(numero) + 1)
+        annee = numero.split("-")[0]
+        index = numero.split("-")[1]
+
+        if(annee != date.today().year):
+            annee = str(date.today().year)
+            index = u"0"
+
+        numero = annee + u"-" + unicode(int(index) + 1)
+        commande.numero = numero
         commande.fournisseur = fournisseur
         commande.save()
         return commande
