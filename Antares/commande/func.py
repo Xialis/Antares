@@ -109,3 +109,26 @@ def listeStock(fournisseur):
             liste.append({'lignestock': ligne, 'qtcom': qtcom, 'qtacom': qtacom})
 
     return liste
+
+
+def cloreCommande(commande):
+    """
+    Si tous les verres d'une commande sont livrés,
+    ajouter la date de cloture (date_cloture) à la commande
+
+    retourne true si la commande a été close.
+    """
+    lignes = commande.lignecommande_set.all()
+    flag = True
+
+    for ligne in lignes:
+        if ligne.quantite_recu < ligne.quantite:
+            flag = False
+            break
+
+    if flag == True:
+        # La commande est à clore
+        commande.date_cloture = date.today()
+        commande.save()
+
+    return flag
