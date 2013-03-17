@@ -21,9 +21,12 @@
             	border: 1px solid #000000;
             	padding: 3px 2px 1px 2px; line-height: 50%; }
             .qte { width: 30px; text-align: center; }
+            tr.un { background-color: #d3d3d3;}
+            tr.deux { background-color: white;}
         </style>
     </head>
     <body>
+    	<h1>Bon de commande N° {{ commande_select.date_envoi|date:"Y" }}-{{ commande_select.numero }}</h1>
     	<p style="border: 1px solid #AAAAAA; font-weight: bold; padding: 2px 2px 1px 2px;">
     		OPTIMAL S.A.R.L | Bamako, MALI<br>
     		à {{ commande_select.fournisseur.nom }}
@@ -41,7 +44,8 @@
             </thead>
             <tbody>
             {% for ligne in commande_select.lignecommande_set.all %}
-                <tr>
+                {% if ligne.quantite > ligne.quantite_recu %}
+                <tr class="{% cycle 'un' 'deux' %}">
 					<td>
 						{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}
 						{{ ligne.ligne_facture.facture.client.nom }} {{ ligne.ligne_facture.facture.client.prenom }} 
@@ -65,11 +69,13 @@
 					<td>{{ ligne.quantite }}</td>
 					<td>{{ ligne.quantite_recu }}</td>
 				</tr>
+				{% endif %}
             {% endfor %}
             </tbody>
         </table>
         <hr>
     	<h1>Commande(s) en cours, non complétée(s) ({{ commandes_ouvertes.count }})</h1>
+    	<p>Cette partie liste les commandes en cours non reçues ou non complétées.</p>
     	{% for commande in commandes_ouvertes %}
     		<h2>Commande numéro: {{ commande.numero }} ({{ commande.date_envoi }})</h2>
     		<table repeat="1">
@@ -85,7 +91,7 @@
 	            <tbody>
 	            {% for ligne in commande.lignecommande_set.all %}
 	                {% if ligne.quantite > ligne.quantite_recu %}
-	                <tr>
+	                <tr class="{% cycle 'un' 'deux' %}">
 						<td>{% if ligne.ligne_facture %}P: {{ ligne.ligne_facture.facture.numero }}
 							{{ ligne.ligne_facture.facture.client.nom }} {{ ligne.ligne_facture.facture.client.prenom }} 
 							( Oeil: {{ ligne.oeil }} ) 
