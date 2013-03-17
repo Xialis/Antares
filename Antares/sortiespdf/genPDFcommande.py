@@ -19,7 +19,6 @@ def render_to_pdf(template_src, context_dict):
     html = template.render(context)
     result = StringIO.StringIO()
     # return HttpResponse(html)
-    #pdf = pisa.pisaDocument(StringIO.StringIO(html.encode('ISO-8859-15')), result)
     pdf = pisa.CreatePDF(StringIO.StringIO(html.encode('utf-8')), result, encoding='utf-8')
     if not pdf.err:
         response = HttpResponse(result.getvalue(), mimetype='application/pdf')
