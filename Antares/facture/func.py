@@ -270,7 +270,8 @@ def initCtrl(request):
                    [u"Montures", views.etapeMontures],
                    [u"Verres", views.etapeVerres],
                    [u"Options", views.etapeOptions],
-                   [u"Recapitulatif", views.etapeRecapitulatif]
+                   [u"Recapitulatif", views.etapeRecapitulatif],
+                   [u"Fin", views.etapeFinale]
                 ]
         request.session['appFacture'] = {}
         request.session['appFacture']['etape'] = 0
