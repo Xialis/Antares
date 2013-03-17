@@ -49,7 +49,7 @@ def commandesF(request, fid):
                 messages.add_message(request, messages.SUCCESS, u"Verre(s) de prescription reçu !")
 
             if func.cloreCommande(lc.commande):
-                messages.add_message(request, messages.INFO, u"La commande " + lc.commande.numero + " est terminée !")
+                messages.add_message(request, messages.INFO, u"La commande " + lc.commande.numero + u" est terminée !")
 
             return redirect(reverse(commandesF, kwargs={'fid': fournisseur.id}) + "#com" + str(lc.commande.id))
         else:
