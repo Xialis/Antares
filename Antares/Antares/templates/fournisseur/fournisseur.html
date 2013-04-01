@@ -36,7 +36,7 @@
 		<div class="divbox">
 			<h2>Traitement</h2>
 			<h3>Ajouter:</h3>
-			<form action="" method="POST">{% csrf_token %}
+			<form action="" method="POST" id="fournisseur_formAjTraitement">{% csrf_token %}
 				<table class="formAsTable" id="fournisseur_AjTraitement">
 				{{ formTraitement.as_table }}
 				</table>
@@ -61,7 +61,7 @@
 		<div class="divbox">
 			<h2>Diamètre</h2>
 			<h3>Ajouter:</h3>
-			<form action="" method="POST" id"fournisseur_formAjDiametre">{% csrf_token %}
+			<form action="" method="POST" id="fournisseur_formAjDiametre">{% csrf_token %}
 				<table class="formAsTable">
 				{{ formDiametre.as_table }}
 				</table>
@@ -84,8 +84,8 @@
 		<div class="divbox">
 			<h2>Couleur</h2>
 			<h3>Ajouter:</h3>
-			<form action="" method="POST">{% csrf_token %}
-				<table class="formAsTable" id="fournisseur_formAjCouleur">
+			<form action="" method="POST" id="fournisseur_formAjCouleur">{% csrf_token %}
+				<table class="formAsTable">
 				{{ formCouleur.as_table }}
 				</table>
 				{% sbt "#fournisseur_formAjCouleur" "ajCouleur" "ajCouleur" "ui-icon-circle-plus" "Ajouter" %}
