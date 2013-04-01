@@ -7,6 +7,7 @@ from django.shortcuts import render_to_response
 from fournisseur.models import Fournisseur
 from stock.models import LigneStock
 from stock.forms import AjoutForm, ModificationForm, RechercheForm
+import func
 
 
 def index(request):
@@ -22,6 +23,7 @@ def gestionStock(request, fid):
     c = {}
     fournisseur = Fournisseur.objects.get(id=fid)
     listeStock = LigneStock.objects.filter(fournisseur=fournisseur)
+    listeType = func.listevtype(listeStock)
     filtre = False
 
     formAjout = AjoutForm().filtre_fournisseur(fid).pasdechoix()
@@ -38,8 +40,10 @@ def gestionStock(request, fid):
                 nouvligne.save()
                 messages.success(request, u"Verre ajouté avec succès !")
                 formAjout = AjoutForm().filtre_fournisseur(fid)
+                listeStock = LigneStock.objects.filter(fournisseur=fournisseur)
+                listeType = func.listevtype(listeStock)
 
-        if 'stockmod' in request.POST:
+        if 'mod-lid' in request.POST:
             formModification = ModificationForm(request.POST, prefix='mod')
             if formModification.is_valid():
                 cd = formModification.cleaned_data
@@ -53,6 +57,7 @@ def gestionStock(request, fid):
                     ls.save()
 
                 listeStock = LigneStock.objects.filter(fournisseur=fournisseur)
+                listeType = func.listevtype(listeStock)
                 formModification = ModificationForm(prefix='mod')
                 messages.success(request, u"Modification sauvée")
 
@@ -90,6 +95,7 @@ def gestionStock(request, fid):
     c['formModification'] = formModification
     c['formRecherche'] = formRecherche
     c['listeStock'] = listeStock
+    c['listeType'] = listeType
     c['fournisseur'] = fournisseur
     c['messages'] = messages.get_messages(request)
     c.update(csrf(request))

@@ -1,14 +1,17 @@
 {% extends "base.html" %}
+{% load antares_tags %}
 
 {% block center %}
 
-<h2>Stock</h2>
+<div class="divbox">
+	<h2>Stock</h2>
 
-<table>
-	<tr><th>Nom fournisseur</th><th>Actions (stock)</th></tr>
-	{% for f in listeFournisseur %}
-	<tr><td>{{ f.nom }}</td><td><a href="{% url stock.views.gestionStock f.id %}" class="action">Gérer</a></td></tr>
-	{% endfor %}
-</table>
+	<table>
+		<tr><th>Nom fournisseur</th><th>Actions (stock)</th></tr>
+		{% for f in listeFournisseur %}
+		<tr><td>{{ f.nom }}</td><td>{% bt "" "ui-icon-folder-open" "Gérer le stock" "stock.views.gestionStock" f.id %}</td></tr>
+		{% endfor %}
+	</table>
+</div>
 
 {% endblock %}

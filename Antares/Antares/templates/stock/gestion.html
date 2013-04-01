@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load antares_tags %}
 {% block head %}
 <script>
 
@@ -47,7 +47,20 @@ $(document).ready(function() {
 	            },
 	            'json'
 	        );
-	    });
+	    
+		
+	});
+	
+	$('#tabs-types').tabs();
+	
+	$("#dialog-stockmod").dialog({
+			modal: true,
+			autoOpen: false,
+			title: "Modification du stock",
+			width:'auto',
+			show: 'fold',
+			hide: 'explode',
+	});
 });
 
 function modStock(lid, qte, seuil)
@@ -56,72 +69,111 @@ function modStock(lid, qte, seuil)
 	$('#id_mod-seuil').val(seuil);
 	$('#id_mod-lid').val(lid);
 	
-	$('#stockmod').fadeIn("fast");
+	
+	$("#dialog-stockmod").dialog('option', 'buttons', {
+	        "Valider": function() {
+	            $( "#form-stockmod" ).submit();
+	            $(this).dialog("close");
+	        },
+	        "Annuler": function() {
+	            $(this).dialog("close");
+	        }
+	    });
+	    $("#dialog-stockmod").dialog("open");
+	    return false;
 }
 
-function fermePopbox()
-{
-	$('#stockmod').fadeOut("fast");
-}
 
 </script>
 {% endblock %}
 
 {% block center %}
 
-<h2>Stock du fournisseur : {{ fournisseur.nom }}</h2>
+<h1>Stock du fournisseur : {{ fournisseur.nom }}</h1>
 
 <div class="first span-15 border">
-	<h2>Ajouter</h2>
-	<form action="" method="POST">{% csrf_token %}
-		<table class="formAsTable">
-		{{ formAjout.as_table }}
-		</table>
-		<input type="submit" value="Ajouter" name="ajout" />
-	</form>
+	<div class="divbox">
+		<h2>Ajouter</h2>
+		<form id="stock_ajout" action="" method="POST">{% csrf_token %}
+			<table class="formAsTable">
+			{{ formAjout.as_table }}
+			</table>
+			{% sbt "#stock_ajout" "ajout" "ajout" "ui-icon-plus" "Ajouter" %}
+		</form>
+	</div>
 </div>
 <div class="span-15 last">
-	<h2>Chercher / Filtrer</h2>
-	<form action="" method="POST">{% csrf_token %}
-		<table class="formAsTable">
-		{{ formRecherche.as_table }}
-		</table>
-		<input type="submit" value="Rechercher" name="rechercher" />
-	</form>
+	<div class="divbox">
+		<h2>Chercher / Filtrer</h2>
+		<form id="stock_rechercher" action="" method="POST">{% csrf_token %}
+			<table class="formAsTable">
+			{{ formRecherche.as_table }}
+			</table>
+			{% sbt "#stock_rechercher" "rechercher" "rechercher" "ui-icon-search" "Rechercher" %}
+		</form>
+	</div>
 </div>
 
 <div class="first span-30">
-	<h2>Liste <span class="h2info">{{ filtre|yesno:"(filtrée)," }}</span></h2>
-	<table>
-		<tr>
-			<th>Verre</th><th>Diametre</th>
-			<th>Sph.</th><th>Cyl.</th>
-			<th>Traitement</th><th>Couleur</th>
-			<th>Qte</th><th>Seuil</th>
-			<th>Actions</th>
-		</tr>
-		{% for l in listeStock %}
-		<tr>
-			<td>{{ l.vtype.nom }}</td><td>{{ l.diametre.nom }}</td>
-			<td>{{ l.sphere }}</td><td>{{ l.cylindre }}</td>
-			<td>{{ l.traitement.nom }}</td><td>{{ l.couleur.nom }}</td>
-			<td>{{ l.quantite }}</td><td>{{ l.seuil }}</td>
-			<td>
-				<a class="action" onclick="modStock({{ l.id }}, {{ l.quantite }}, {{ l.seuil }})">Modifier</a>
-			</td>
-		</tr>
-		{% endfor %}
-	</table>
+	<div class="divbox">
+		<h2>Liste <span class="h2info">{{ filtre|yesno:"(filtrée)," }}</span></h2>
+		
+		<div id="tabs-types">
+			<ul>
+				{% for t in listeType %}
+				<li><a href="#type{{ t }}">{{ t }}</a></li>
+				{% endfor %}
+			</ul>
+			
+			{% for l in listeStock %}
+			
+			{% ifchanged l.vtype.nom %}
+			
+			{% if forloop.counter0 != 0 %}
+				</table>
+			</div>
+			{%endif%}
+			
+			<div id="type{{ l.vtype.nom }}">
+				<table>
+					<tr>
+						<th>Verre</th><th>Diametre</th>
+						<th>Sph.</th><th>Cyl.</th>
+						<th>Traitement</th><th>Couleur</th>
+						<th>Qte</th><th>Seuil</th>
+						<th>Actions</th>
+					</tr>
+			{% endifchanged %}
+					
+					<tr>
+						<td>{{ l.vtype.nom }}</td><td>{{ l.diametre.nom }}</td>
+						<td>{{ l.sphere }}</td><td>{{ l.cylindre }}</td>
+						<td>{{ l.traitement.nom }}</td><td>{{ l.couleur.nom }}</td>
+						<td>{{ l.quantite }}</td><td>{{ l.seuil }}</td>
+						<td>
+							{% jbt "modStock" "btmod" "ui-icon-pencil" "Modifier..." l.id l.quantite l.seuil %}
+						</td>
+					</tr>
+			
+			{% endfor %}
+				</table>
+			</div>
+			
+		</div>
+		
+	</div>
 </div>
 
-<div id="stockmod" class="popbox">
-<form action="" method="POST">{% csrf_token %}
-<table class="formAsTable">
-{{ formModification.as_table }}
-</table>
-<input type="submit" value="Modifier" name="stockmod"> <a class="action" onclick="fermePopbox()">Annuler</a>
-</form>
 
+<div id="dialog-stockmod">
+	<div class="ui-widget">
+		<p>Modifier les valeurs du stock</p>
+		<form id="form-stockmod" action="" method="POST">{% csrf_token %}
+			<table class="formAsTable">
+			{{ formModification.as_table }}
+			</table>
+		</form>
+	</div>
 </div>
 
 {% endblock %}
