@@ -69,7 +69,7 @@
 	  			
 	  			<ul id="ctrl_utilisateur">
 	  				<li><div>Utilisateur: {{ user.username }}</div></li>
-	  				<li><a href="">Déconnecter</a></li>
+	  				<li><a href="{% url accueil.views.userlogout %}">Déconnecter</a></li>
 	  			</ul>
 	  		</div>
 	  		{% if messages %}
