@@ -151,7 +151,7 @@ def etapePrescription(request):
     c = {}
     formPrescription = FormAjoutPrescription()
     formAjoutPrescripteur = FormAjoutPrescripteur(prefix="ajPrescripteur")
-    if request.session['appFacture']['client_id']:
+    if 'client_id' in request.session['appFacture']:
         c['listePrescriptions'] = Prescription.objects.filter(client=request.session['appFacture']['client_id'])
 
     # ============================
@@ -575,10 +575,10 @@ def etapeRecapitulatif(request):
 
             # Traitement client (-> client.id)
             if s_aF['b_creation'] == True:
-                client = func.getClient(request)
+                client = func.getClient(request)['client']
                 client = cfunc.sauvClient(client)
             elif 'b_modification' in s_aF and s_aF['b_modification'] == True:
-                client = func.getClient(request)
+                client = func.getClient(request)['client']
                 client_orig = Client.objects.get(id=dico_client['client_id'])
 
                 client_orig.nom = client.nom
