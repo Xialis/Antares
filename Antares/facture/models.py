@@ -65,10 +65,15 @@ class LigneFacture(models.Model):
         else:
             vrm = self.vtype.remise_monture
 
+        remise_supplements = trm + crm
+
+        if self.vtype.progressif == True:
+            remise_supplements = remise_supplements * 2
+
         if self.oeil == 'T':
-            remise += (trm + crm + vrm) * 2
+            remise += (vrm + remise_supplements) * 2
         else:
-            remise += (trm + crm + vrm)
+            remise += (vrm + remise_supplements)
 
         return remise
 
@@ -76,7 +81,13 @@ class LigneFacture(models.Model):
         tarif_type = self.vtype.tarif
         tarif_couleur = self.couleur.tarif
         tarif_traitement = self.traitement.tarif
-        total = tarif_type + tarif_couleur + tarif_traitement
+
+        total_supplements = tarif_couleur + tarif_traitement
+
+        if self.vtype.progressif == True:
+            total_supplements = total_supplements * 2
+
+        total = tarif_type + total_supplements
         return total
 
 
