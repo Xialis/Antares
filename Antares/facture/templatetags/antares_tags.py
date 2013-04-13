@@ -45,7 +45,7 @@ def jbt(jfunc, aid, uiiconstyle, text, *args):
     onclickstr = onclickstr.rstrip(',')
     onclickstr += ")"
 
-    return {'jfunc': onclickstr, 'uiiconstyle': uiiconstyle, 'text': text}
+    return {'jfunc': onclickstr, 'aid': aid, 'uiiconstyle': uiiconstyle, 'text': text}
 
 
 @register.inclusion_tag("_inc/formfield_errors.html")
