@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+{% load antares_tags %}
+
+{% block head %}{{ block.super }}
+<script>
+	$(function() {
+		$("#dialog-interlocuteur").dialog({
+			modal: true,
+			autoOpen: false,
+			title: "Ajouter un interlocuteur",
+			width:'auto',
+			show: 'fold',
+			hide: 'explode',
+		});
+		
+		$("#dialog-supprInterlocuteur").dialog({
+			modal: true,
+			autoOpen: false,
+			title: "Supprimer un interlocuteur",
+			width:'auto',
+			show: 'fold',
+			hide: 'explode',
+		});
+	});
+	
+	function ajInterlocuteur() {
+	    
+	    $("#dialog-interlocuteur").dialog({
+	    	buttons: {
+		        "Ajouter": function() {
+		            //post du form
+		            var input = $("<input>").attr("type", "hidden").attr("name", "AjInterlocuteur").val("AjInterlocuteur");
+		            $("#facture_ajInterlocuteur").append($(input));
+		            $("#facture_ajInterlocuteur").submit();
+		            $(this).dialog("close");
+		        },
+		        "Annuler": function() {
+		            $(this).dialog("close");
+		        }
+		    },
+	    });
+	    $("#dialog-interlocuteur").dialog("open");
+	    return false;
+	}
+	
+	function modInterlocuteur(iid, nom) {
+	    
+	    $("#dialog-interlocuteur").dialog({
+	    	title: "Modifier un interlocuteur",
+	    	buttons: {
+		        "Modifier": function() {
+		            //post du form
+		            var input = $("<input>").attr("type", "hidden").attr("name", "ModInterlocuteur").val("ModInterlocuteur");
+		            $("#facture_ajInterlocuteur").append($(input));
+		            $("#facture_ajInterlocuteur").submit();
+		            $(this).dialog("close");
+		        },
+		        "Annuler": function() {
+		        	$("#id_iid").val('');
+					$("#id_nom").val('');
+		            $(this).dialog("close");
+		        }
+		    },
+	    });
+	    $("#id_iid").val(iid);
+		$("#id_nom").val(nom);
+	    $("#dialog-interlocuteur").dialog("open");
+	    return false;
+	}
+	
+	function supprInterlocuteur(iid) {
+		$("#dialog-supprInterlocuteur").dialog({
+	    	buttons: {
+		        "Ajouter": function() {
+		            //post du form
+		            var input = $("<input>").attr("type", "hidden").attr("name", "ModInterlocuteur").val("SupprInterlocuteur");
+		            $("#facture_supprInterlocuteur").submit();
+		            $(this).dialog("close");
+		        },
+		        "Annuler": function() {
+		        	
+		            $(this).dialog("close");
+		        }
+		    },
+	    });
+	    
+	    $("#dialog-supprInterlocuteur").dialog("open");
+	    return false;
+	}
+
+</script>
+{% endblock %}
+
+{% block center %}
+<h1>Paramètres de facturation</h1>
+<div class="divbox">
+	<h2>Interlocuteurs ({{ interlocuteurs|length }})</h2>
+	{% jbt "ajInterlocuteur" "btAjInterlocuteur" "ui-icon-circle-plus" "Ajouter un interlocuteur..."  %}
+	<table>
+		<thead>
+			<tr><th>Nom</th><th>Action</th></tr>
+		</thead>
+		<tbody>
+			{% for i in interlocuteurs %}
+			<tr><td>{{ i.nom }}</td>
+				<td>
+					{% jbt "modInterlocuteur" "btModInterlocuteur" "ui-icon-pencil" "Modifier..." i.id i.nom %}
+					{% jbt "supprInterlocuteur" "btSupprInterlocuteur" "ui-icon-trash" "Supprimer..." i.id %}
+				</td></tr>
+			{% endfor %}
+		</tbody>
+	</table>
+	{% jbt "ajInterlocuteur" "btAjInterlocuteur" "ui-icon-circle-plus" "Ajouter un interlocuteur..."  %}
+</div>
+
+<div id="dialog-interlocuteur">
+	<form id="facture_ajInterlocuteur" action="" method="POST">
+		<table class="formAsTable">{% csrf_token %}
+		{{ formAjoutInterlocuteur.as_table }}
+		</table>
+	</form>
+</div>
+
+<div id="dialog-supprInterlocuteur">
+	<p>ëtes vous sûr de vouloir supprimer cet interlocuteur
+	!!! Non implémenté encore !!!</p>
+	<form id="facture_supprInterlocuteur" action="" method="POST">
+		{{ formSupprInterlocuteur.as_p }}
+	</form>
+</div>
+{% endblock %}

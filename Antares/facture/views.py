@@ -22,8 +22,8 @@ import fournisseur.func as fourfunc
 from stock.models import LigneStock
 
 import func
-from models import Facture
-from facture.forms import LigneForm, MontureForm, OptionForm, ChoixFactureForm, SolderFactureForm
+from models import Facture, Interlocuteur
+from facture.forms import LigneForm, MontureForm, OptionForm, ChoixFactureForm, SolderFactureForm, AjoutInterlocuteurForm
 
 
 @login_required
@@ -678,3 +678,40 @@ def facnonsoldee(request):
     c['formSolder'] = formSolder
     c.update(csrf(request))
     return render_to_response("facture/facnonsoldee.html", c, context_instance=RequestContext(request))
+
+
+#===============================================================================
+# Parametres
+#===============================================================================
+@login_required
+def parametres(request):
+    c = {}
+    interlocuteurs = Interlocuteur.objects.all()
+    formAjoutInterlocuteur = AjoutInterlocuteurForm()
+
+    if request.method == "POST":
+
+        if "AjInterlocuteur" in request.POST:
+            form = AjoutInterlocuteurForm(request.POST)
+            if form.is_valid():
+                form.save()
+                nom = form.cleaned_data['nom']
+                messages.info(request, u"Interlocuteur " + nom + u" ajouté")
+            else:
+                messages.error(request, "Erreur dans le formulaire")
+
+        if "ModInterlocuteur" in request.POST:
+            form = AjoutInterlocuteurForm(request.POST)
+            if form.is_valid():
+                cd = form.cleaned_data
+                i = Interlocuteur.objects.get(id=cd['iid'])
+                i.nom = cd['nom']
+                i.save()
+                messages.info(request, u"Interlocuteur " + i.nom + u" modifié")
+            else:
+                messages.error(request, "Erreur dans le formulaire de modification")
+
+    c['interlocuteurs'] = interlocuteurs
+    c['formAjoutInterlocuteur'] = formAjoutInterlocuteur
+    c.update(csrf(request))
+    return render_to_response("facture/parametres.html", c, context_instance=RequestContext(request))
