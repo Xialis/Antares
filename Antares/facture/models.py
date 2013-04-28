@@ -15,6 +15,9 @@ class Facture(models.Model):
     solde = models.DecimalField(max_digits=8, decimal_places=0, blank=True, null=True)
 
     def total(self):
+        '''
+        Total après application remise sur la monture
+        '''
         total = 0
         lfs = self.lignefacture_set.all()
         for lf in lfs:
@@ -28,7 +31,31 @@ class Facture(models.Model):
         for m in ms:
             total += m.tarif
 
-        return total
+        return total - self.remiseAccordee()
+
+    def remiseAccordee(self):
+        '''
+        Remise accordée
+        Remise Max à concurrence du tarif de la monture
+        '''
+        ra = 0
+        t_remise = [0, 0, 0]
+        t_monturetarif = [0, 0, 0]
+        lfs = self.lignefacture_set.all()
+        for lf in lfs:
+            try:
+                t_monturetarif[lf.monture] = Monture.objects.get(facture_id=self.id, numero=lf.monture).tarif
+            except:
+                pass
+
+            t_remise[lf.monture] += lf.remise_monture
+
+        for m in range(0, len(t_remise)):
+            if t_monturetarif[m] >= t_remise[m]:
+                ra += t_remise[m]
+            elif t_monturetarif[m] < t_remise[m]:
+                ra += t_monturetarif[m]
+        return ra
 
 OEIL = (
         ('T', 'ODG'),
@@ -46,7 +73,7 @@ class LigneFacture(models.Model):
     couleur = models.ForeignKey('fournisseur.Couleur')
     traitement = models.ForeignKey('fournisseur.Traitement')
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
-    remise_monture = models.DecimalField(max_digits=8, decimal_places=0)
+    remise_monture = models.DecimalField(max_digits=8, decimal_places=0)  # remise max, non tempéré par monture.
 
     def calculRemise(self):
         remise = 0
@@ -117,3 +144,11 @@ class Monture(models.Model):
     tarif = models.DecimalField(max_digits=8, decimal_places=0)
     vision = models.CharField(max_length=1, choices=VISION)
     oeil = models.CharField(max_length=1, choices=OEIL, default='T')
+
+    def remise_max(self):
+        lfs = self.facture.lignefacture_set.filter(monture=self.numero)
+        remise = 0
+        for lf in lfs:
+            remise += lf.remise_monture
+
+        return remise

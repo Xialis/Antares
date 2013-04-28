@@ -519,6 +519,7 @@ def etapeRecapitulatif(request):
     dico_client = func.getClient(request)
     client_orig = None
     solde = 0
+    remise = 0
 
     if dico_client['client'] == None:
         client = Client.objects.get(id=dico_client['client_id'])
@@ -534,17 +535,29 @@ def etapeRecapitulatif(request):
     prescription_t = func.getPrescription_T(request)
 
     # ======================
-    # calcul du solde
+    # calcul du solde et remise
+    ra = 0
+    t_remise = [0, 0, 0]
+    t_monturetarif = [0, 0, 0]
 
     for grp in t_verres:
         for v in grp:
             solde += v.tarif
+            remise += v.calculRemise()
+            t_remise[v.monture] += v.calculRemise()
 
     for o in t_options:
         solde += o.tarif
 
     for m in t_montures:
         solde += m.tarif
+        t_monturetarif[m.numero] += m.tarif
+
+    for m in range(0, len(t_remise)):
+        if t_monturetarif[m] >= t_remise[m]:
+            ra += t_remise[m]
+        elif t_monturetarif[m] < t_remise[m]:
+            ra += t_monturetarif[m]
 
     # ======================
     # traitment POST
@@ -568,10 +581,6 @@ def etapeRecapitulatif(request):
         if formFacture.is_valid():
             facture = formFacture.save(commit=False)
             cd = formFacture.cleaned_data
-            if cd['avance'] is not None:
-                facture.solde = solde - cd['avance']
-            else:
-                facture.solde = solde
 
             # Traitement client (-> client.id)
             if s_aF['b_creation'] == True:
@@ -621,6 +630,14 @@ def etapeRecapitulatif(request):
                 option.facture = facture
                 option.save()
 
+            #actualisation du solde
+            if cd['avance'] is not None:
+                facture.solde = facture.total() - cd['avance']
+            else:
+                facture.solde = facture.total()
+
+            facture.save()
+
             # Si facture: Actualisation Commande ou Stock
             if not facture.bproforma:
                 fourfunc.stock_ou_commande(facture.lignefacture_set.all())
@@ -635,7 +652,10 @@ def etapeRecapitulatif(request):
     c['prescription'] = prescription
     c['prescription_t'] = prescription_t
     c['formFacture'] = formFacture
-    c['solde'] = solde
+    c['soldeinitial'] = solde
+    c['solde'] = solde - ra
+    c['remise_max'] = remise
+    c['remise_accordee'] = ra
     c.update(csrf(request))
     return render_to_response("facture/etapeRecapitulatif.html", c, context_instance=RequestContext(request))
 

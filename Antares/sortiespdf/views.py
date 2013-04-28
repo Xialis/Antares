@@ -194,17 +194,29 @@ def facture(request, fid):
     totalremise = 0
     for lf in f.lignefacture_set.all().order_by('oeil').order_by('monture'):
 
+        totalverre += lf.tarif
+        remise = 0
+        # Entête
         if monture_suivante == True:
             monture_suivante = False
             ypos -= 2 * mm
             monture = Monture.objects.get(facture_id=fid, numero=lf.monture)
+            remise = monture.remise_max()
+            totalmonture += monture.tarif
+            totalremise += remise
+
             otext = p.beginText()
             otext.setTextOrigin(100 * mm, ypos)
             otext.setFont('Vera', 8)
-            otext.textOut(u"Monture: " + monture.nom + ":: Tarif: " + str(monture.tarif) + " :: Vision: " + visionstr(monture.vision))
+            otext.textLine(u"Monture: " + monture.nom + ":: Tarif: " + MILLE(monture.tarif) + " :: Vision: " + visionstr(monture.vision))
+            if remise == 0:
+                otext.textLine(u"Votre choix de verres ne vous accorde pas de remise sur votre monture.")
+            else:
+                otext.textLine(u"Votre choix de verres vous accorde une remise de : " + str(remise) + " francs")
             p.drawText(otext)
             xpos, ypos = otext.getCursor()
-            ypos -= 1 * mm
+            ypos -= 0 * mm
+        # fin Entête
 
         datae = [[u"Oeil", "", u"Type", "", u"Couleur", ""],
                  [u"Ø", "", u"Trait.", "", u"Tarif", ""]
@@ -232,29 +244,6 @@ def facture(request, fid):
         t.drawOn(p, 98 * mm, ypos - h)
         ypos = ypos - h - (2 * mm)
 
-        totalmonture += monture.tarif
-        totalverre += lf.tarif
-
-        if lf.traitement.remise_monture is None:
-            trm = 0
-        else:
-            trm = lf.traitement.remise_monture
-
-        if lf.couleur.remise_monture is None:
-            crm = 0
-        else:
-            crm = lf.couleur.remise_monture
-
-        if lf.vtype.remise_monture is None:
-            vrm = 0
-        else:
-            vrm = lf.vtype.remise_monture
-
-        if lf.oeil == 'T':
-            totalremise += (trm + crm + vrm) * 2
-        else:
-            totalremise += (trm + crm + vrm)
-
     # -- Fin équipements
 
     # -- Debut Facture
@@ -265,9 +254,10 @@ def facture(request, fid):
         txt = u"Facture"
     titre(95 * mm, ypos, 105 * mm, txt, p)
     ypos -= 4 * mm
-    TOTAL = (totalverre + totalmonture - totalremise) + totalo
+    TOTAL = (totalverre + totalmonture - f.remiseAccordee()) + totalo
     dataf = [[u"Désignation", u"Totaux"],
-             [u"Equipement(s)", MILLE(totalverre + totalmonture - totalremise)],
+             [u"Equipement(s)", MILLE(totalverre + totalmonture)],
+             [u"Remise sur monture(s)", u"-" + MILLE(f.remiseAccordee())],
              [u"Option(s)", MILLE(totalo)],
              [u"TOTAL à payer", MILLE(TOTAL)]
              ]
@@ -287,6 +277,17 @@ def facture(request, fid):
     otext.textLine("(facture exonerée de T.V.A)")
     p.drawText(otext)
     # -- Fin facture
+
+    # -- Info
+    x = 10 * mm
+    y = 80 * mm
+    otext = p.beginText()
+    otext.setTextOrigin(x, y)
+    otext.setFont('Vera', 7)
+    otext.textLine(u"Informations:")
+    otext.textLine(u"- Remises appliquées à chaque montures, en fonction du choix de verres pour cette monture, à concurrence du tarif de la monture")
+    p.drawText(otext)
+    # -- fin Info
 
     # -- ligne de séparation
     p.setStrokeColor(black)
@@ -311,7 +312,7 @@ def facture(request, fid):
 
     data = [[u"Date", f.date_creation.strftime("%d / %m / %Y"), u""],
             [u"Montant", MILLE(f.total()), u"F CFA"],
-            [u"Avance", MILLE(f.total() - f.solde), u"F CFA"],
+            [u"Avance / déja payé", MILLE(f.total() - f.solde), u"F CFA"],
             [u"Solde", MILLE(f.solde), u"F CFA, à régler à la livraison"],
             ]
 
@@ -327,7 +328,7 @@ def facture(request, fid):
                            ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
                            ])
 
-    t = Table(data, colWidths=[20 * mm, 25 * mm, 40 * mm])
+    t = Table(data, colWidths=[26 * mm, 21 * mm, 40 * mm])
     t.setStyle(tstyle)
     w, h = t.wrapOn(p, h, w)
     y = y - h
