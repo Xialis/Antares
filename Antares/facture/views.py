@@ -684,15 +684,16 @@ def facnonsoldee(request):
             cd = formSolder.cleaned_data
             fac = Facture.objects.get(id=cd['fid'])
             if fac.solde <= cd['remis']:
+                solde = fac.solde
                 fac.solde = 0
                 fac.save()
-                messages.success(request, "La facture %s a été soldée !", fac.numero)
-                messages.info(request, "A rendre: %d", cd['remis'] - fac.solde)
+                messages.success(request, u"La facture " + fac.numero + u" a été soldée !")
+                messages.info(request, u"A rendre: " + str(cd['remis'] - solde))
             else:
                 fac.solde = fac.solde - cd['remis']
                 fac.save()
-                messages.warning(request, "La facture %s n'est pas encore soldée", fac.numero)
-                messages.info(request, "Reste à percevoir: %d", fac.solde - cd['remis'])
+                messages.warning(request, "La facture " + fac.numero + u" n'est pas encore soldée")
+                messages.info(request, "Reste à percevoir: " + str(fac.solde))
 
     c['facs'] = facs
     c['formSolder'] = formSolder
